@@ -1,5 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import api from '../../api/client';
 import {
   Apple,
   Check,
@@ -24,11 +25,25 @@ export default function MarketplacePage() {
   const initialCategory = searchParams.get('category') || 'all';
   const initialSearch = searchParams.get('search') || '';
 
+  const [productsList, setProductsList] = useState(EARTHORA_PRODUCTS);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sortBy, setSortBy] = useState('featured');
   const [maxPrice, setMaxPrice] = useState(250);
   const [certifiedOnly, setCertifiedOnly] = useState(false);
+
+  useEffect(() => {
+    api
+      .get('/products?limit=100')
+      .then(({ data }) => {
+        if (Array.isArray(data.data?.products) && data.data.products.length > 0) {
+          setProductsList(data.data.products);
+        }
+      })
+      .catch(() => {
+        // Fallback to initial EARTHORA_PRODUCTS
+      });
+  }, []);
 
   const getCategoryIcon = (id) => {
     switch (id) {
@@ -48,7 +63,7 @@ export default function MarketplacePage() {
   };
 
   const filteredProducts = useMemo(() => {
-    return EARTHORA_PRODUCTS.filter((product) => {
+    return productsList.filter((product) => {
       const matchesCategory =
         selectedCategory === 'all' || product.category === selectedCategory;
       const matchesSearch =
@@ -274,3 +289,4 @@ export default function MarketplacePage() {
     </div>
   );
 }
+

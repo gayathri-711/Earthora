@@ -144,3 +144,4 @@ export const deleteCrop = asyncHandler(async (req, res) => {
   if (!deleted) throw new ApiError(404, 'Crop not found');
   sendSuccess(res, {}, 'Crop record removed');
 });
+

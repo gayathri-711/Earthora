@@ -6,3 +6,4 @@ const router = Router();
 router.get('/', getWeatherIntelligence);
 
 export default router;
+

@@ -34,3 +34,4 @@ const soilTestSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('SoilTest', soilTestSchema);
+

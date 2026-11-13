@@ -8,7 +8,7 @@ import { useToast } from '../../context/ToastContext';
 
 export default function CheckoutPage() {
   const { user, isAuthenticated } = useAuth();
-  const { items, coupon, summary, clearCart } = useCart();
+  const { items = [], coupon, summary, clearCart } = useCart();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -25,12 +25,14 @@ export default function CheckoutPage() {
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [submitting, setSubmitting] = useState(false);
 
-  if (items.length === 0) {
+  const validItems = (items || []).filter((i) => i && i.product && typeof i.product === 'object');
+
+  if (validItems.length === 0) {
     return (
       <div className="bg-earthora-ivory min-h-screen py-24 px-4 text-center">
         <h1 className="font-heading text-3xl font-extrabold text-earthora-forest">Nothing to Checkout</h1>
         <p className="mt-2 text-xs text-earthora-muted">Add agricultural inputs or fresh harvests to your cart first.</p>
-        <Link to="/marketplace" className="btn-accent mt-6 inline-flex text-xs">
+        <Link to="/marketplace" className="btn-accent mt-6 inline-flex text-xs font-bold py-2.5 px-6">
           Explore Marketplace
         </Link>
       </div>
@@ -42,21 +44,21 @@ export default function CheckoutPage() {
     setSubmitting(true);
 
     const payload = {
-      items: items.map((i) => ({
-        productId: i.product._id,
-        slug: i.product.slug,
+      items: validItems.map((i) => ({
+        productId: i.product._id || i.product.slug,
+        slug: i.product.slug || '',
         name: i.product.name,
-        price: i.product.price,
-        quantity: i.quantity,
-        image: i.product.image,
+        price: Number(i.product.price) || 0,
+        quantity: Number(i.quantity) || 1,
+        image: i.product.image || '',
       })),
       shippingAddress: shipping,
       paymentMethod,
       couponCode: coupon?.code || null,
-      subtotal: summary.subtotal,
-      discount: summary.discount,
-      shippingFee: summary.shipping,
-      totalAmount: summary.total,
+      subtotal: summary?.subtotal ?? 0,
+      discount: summary?.discount ?? 0,
+      shippingFee: summary?.shipping ?? 0,
+      totalAmount: summary?.total ?? 0,
     };
 
     try {
@@ -76,6 +78,12 @@ export default function CheckoutPage() {
       setSubmitting(false);
     }
   };
+
+  const subtotal = summary?.subtotal ?? 0;
+  const discount = summary?.discount ?? 0;
+  const shippingFee = summary?.shipping ?? 0;
+  const tax = summary?.tax ?? 0;
+  const total = summary?.total ?? subtotal;
 
   return (
     <div className="bg-earthora-ivory min-h-screen py-14">
@@ -255,44 +263,53 @@ export default function CheckoutPage() {
               <h2 className="font-heading text-lg font-bold text-earthora-forest">Items in Order</h2>
 
               <div className="mt-4 max-h-60 space-y-3 overflow-y-auto divide-y divide-earthora-sand/40">
-                {items.map(({ product, quantity }) => (
-                  <div key={product._id} className="flex items-center justify-between pt-3 text-xs">
-                    <div className="flex items-center gap-3">
-                      <img src={product.image} alt={product.name} className="h-10 w-12 rounded-lg object-cover" />
-                      <div>
-                        <p className="font-bold text-earthora-forest line-clamp-1">{product.name}</p>
-                        <p className="text-[10px] text-earthora-muted">Qty: {quantity} × ${product.price.toFixed(2)}</p>
+                {validItems.map((item, idx) => {
+                  const product = item.product || {};
+                  const price = Number(product.price) || 0;
+                  const qty = Number(item.quantity) || 1;
+                  const line = (price * qty).toFixed(2);
+                  const image = product.image || '/assets/img/home-4/shop-1.jpg';
+                  const name = product.name || 'Organic Produce';
+
+                  return (
+                    <div key={product._id || idx} className="flex items-center justify-between pt-3 text-xs">
+                      <div className="flex items-center gap-3">
+                        <img src={image} alt={name} className="h-10 w-12 rounded-lg object-cover" />
+                        <div>
+                          <p className="font-bold text-earthora-forest line-clamp-1">{name}</p>
+                          <p className="text-[10px] text-earthora-muted">Qty: {qty} × ${price.toFixed(2)}</p>
+                        </div>
                       </div>
+                      <span className="font-bold text-earthora-forest">
+                        ${line}
+                      </span>
                     </div>
-                    <span className="font-bold text-earthora-forest">
-                      ${(product.price * quantity).toFixed(2)}
-                    </span>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               <dl className="mt-6 space-y-2 border-t border-earthora-sand/60 pt-4 text-xs text-earthora-charcoal">
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Subtotal</dt>
-                  <dd className="font-semibold">${summary.subtotal.toFixed(2)}</dd>
+                  <dd className="font-semibold">${subtotal.toFixed(2)}</dd>
                 </div>
                 {coupon && (
                   <div className="flex justify-between text-emerald-700">
                     <dt>Discount ({coupon.code})</dt>
-                    <dd className="font-semibold">-${summary.discount.toFixed(2)}</dd>
+                    <dd className="font-semibold">-${discount.toFixed(2)}</dd>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Cold-Chain Shipping</dt>
-                  <dd className="font-semibold">${summary.shipping.toFixed(2)}</dd>
+                  <dd className="font-semibold">${shippingFee.toFixed(2)}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Estimated Tax</dt>
-                  <dd className="font-semibold">${summary.tax.toFixed(2)}</dd>
+                  <dd className="font-semibold">${tax.toFixed(2)}</dd>
                 </div>
                 <div className="border-t border-earthora-sand pt-3 flex justify-between font-heading text-base font-extrabold text-earthora-forest">
                   <dt>Total Amount</dt>
-                  <dd>${summary.total.toFixed(2)}</dd>
+                  <dd>${total.toFixed(2)}</dd>
                 </div>
               </dl>
 

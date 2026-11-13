@@ -114,3 +114,4 @@ export const getSmartDashboard = asyncHandler(async (_req, res) => {
     recentActivities,
   });
 });
+

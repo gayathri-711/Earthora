@@ -15,3 +15,4 @@ router.get('/:id', getSoilTestById);
 router.post('/', protect, createSoilTest);
 
 export default router;
+

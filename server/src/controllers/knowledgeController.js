@@ -50,3 +50,4 @@ export const createArticle = asyncHandler(async (req, res) => {
 
   sendSuccess(res, { article }, 'Article published to Knowledge Hub', 201);
 });
+

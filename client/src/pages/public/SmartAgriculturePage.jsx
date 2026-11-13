@@ -185,3 +185,4 @@ export default function SmartAgriculturePage() {
     </div>
   );
 }
+

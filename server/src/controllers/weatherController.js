@@ -117,3 +117,4 @@ export const getWeatherIntelligence = asyncHandler(async (req, res) => {
   const data = REGIONAL_WEATHER[region] || REGIONAL_WEATHER.sonoma;
   sendSuccess(res, { weather: data, availableRegions: Object.keys(REGIONAL_WEATHER) });
 });
+

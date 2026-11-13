@@ -145,3 +145,4 @@ export const upvoteQuestion = asyncHandler(async (req, res) => {
   if (!question) throw new ApiError(404, 'Question not found');
   sendSuccess(res, { question }, 'Upvoted');
 });
+

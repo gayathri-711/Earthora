@@ -13,3 +13,4 @@ router.get('/:slug', getArticleBySlug);
 router.post('/', protect, createArticle);
 
 export default router;
+

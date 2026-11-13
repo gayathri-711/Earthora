@@ -95,3 +95,4 @@ export const getSoilAnalytics = asyncHandler(async (_req, res) => {
     totalTests: total,
   });
 });
+

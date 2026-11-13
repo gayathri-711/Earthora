@@ -40,3 +40,4 @@ const cropSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('Crop', cropSchema);
+
