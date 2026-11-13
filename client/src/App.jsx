@@ -40,6 +40,9 @@ import CustomerDashboard from './pages/customer/CustomerDashboard';
 import ExpertDashboard from './pages/expert/ExpertDashboard';
 import FarmerDashboard from './pages/farmer/FarmerDashboard';
 
+// AI Doubt Clearing Assistant
+import EarthoraAIChatbot from './components/chat/EarthoraAIChatbot';
+
 export default function App() {
   return (
     <BrowserRouter>
@@ -142,6 +145,9 @@ export default function App() {
                   element={<Navigate to="/dashboard/admin" replace />}
                 />
               </Routes>
+
+              {/* Universal 24/7 AI Doubt-Clearing Assistant */}
+              <EarthoraAIChatbot />
             </WishlistProvider>
           </CartProvider>
         </AuthProvider>

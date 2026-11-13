@@ -21,6 +21,7 @@ import knowledgeRoutes from './routes/knowledgeRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
 import soilRoutes from './routes/soilRoutes.js';
 import weatherRoutes from './routes/weatherRoutes.js';
+import aiRoutes from './routes/aiRoutes.js';
 import { getSmartDashboard } from './controllers/dashboardController.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -73,6 +74,8 @@ app.use('/api/v1/knowledge', knowledgeRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/farmer', farmerRoutes);
 app.use('/api/v1/admin', adminRoutes);
+app.use('/api/v1/content', contentRoutes);
+app.use('/api/v1/ai', aiRoutes);
 app.use('/api/v1', contentRoutes);
 
 if (fs.existsSync(clientDistDir)) {
