@@ -14,14 +14,14 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
   return (
     <div className="min-h-screen bg-earthora-ivory">
       <header className="border-b border-earthora-sand/80 bg-white">
-        <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-5">
-            {/* Brand Name */}
-            <Link to="/" className="flex items-center gap-3 group">
+        <div className="w-full flex flex-wrap items-center justify-between gap-4 px-4 sm:px-6 lg:px-8 xl:px-10 py-3.5">
+          <div className="flex items-center gap-4 sm:gap-6">
+            {/* Brand Symbol & Name (In Left Corner) */}
+            <Link to="/" className="flex items-center gap-3 shrink-0 group">
               <img
                 src="/assets/earthora/logo-icon.svg"
                 alt="EARTHORA"
-                className="h-10 w-10 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105"
+                className="h-10 w-10 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105 shrink-0"
               />
               <div className="flex flex-col">
                 <span className="font-heading text-2xl sm:text-3xl font-black tracking-widest text-earthora-forest leading-none">
@@ -46,7 +46,8 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
             </div>
           </div>
 
-          <div className="flex items-center gap-3">
+          {/* Features Covered to Right Side */}
+          <div className="flex items-center gap-2 sm:gap-3 ml-auto">
             <div className="hidden rounded-full bg-earthora-forest/10 px-3 py-1 text-xs font-semibold text-earthora-forest sm:inline-flex items-center gap-1.5">
               <span className="h-2 w-2 rounded-full bg-earthora-mint animate-pulse" />
               <span>{user?.name}</span>
@@ -84,7 +85,7 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
 
         {/* Tab Navigation */}
         {tabs.length > 0 && (
-          <div className="mx-auto flex max-w-7xl gap-2 overflow-x-auto px-4 sm:px-6 lg:px-8 border-t border-earthora-sand/40">
+          <div className="w-full flex gap-2 overflow-x-auto px-4 sm:px-6 lg:px-8 xl:px-10 border-t border-earthora-sand/40">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
