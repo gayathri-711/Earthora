@@ -19,7 +19,7 @@ const articleSchema = new mongoose.Schema(
     author: { type: String, default: 'Earthora Agritech Editorial' },
     authorTitle: { type: String, default: 'Agronomy Research Lead' },
     readTime: { type: String, default: '5 min read' },
-    image: { type: String, default: '/assets/img/home-4/news-1.jpg' },
+    image: { type: String, default: '/assets/img/knowledge/precision-drip-irrigation.jpg' },
     excerpt: { type: String, required: true },
     content: { type: String, required: true },
     tags: { type: [String], default: ['AgTech', 'Sustainable', 'IoT'] },

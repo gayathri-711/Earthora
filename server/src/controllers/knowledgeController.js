@@ -42,7 +42,7 @@ export const createArticle = asyncHandler(async (req, res) => {
     author: req.user?.name || 'Earthora Research Team',
     authorTitle: req.user?.title || 'Agronomy Specialist',
     readTime: readTime || '5 min read',
-    image: image || '/assets/img/home-4/news-1.jpg',
+    image: image || '/assets/img/knowledge/precision-drip-irrigation.jpg',
     excerpt,
     content,
     tags: Array.isArray(tags) ? tags : ['AgTech', 'Sustainable', 'Farming'],

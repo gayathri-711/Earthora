@@ -82,7 +82,7 @@ export default function FarmerHubPage() {
       irrigationType: applyForm.irrigationType,
       experience: '5+ Years',
       certifications: [applyForm.certifications, 'Earthora Partner Pending'],
-      image: '/assets/img/home-3/team/01.jpg',
+      image: '/assets/img/farmers/farmer-elena.jpg',
       coverImage: '/assets/img/hero/farmer-hero.jpg',
       bio: `Applying to join the Earthora Regenerative Farming Ecosystem from ${applyForm.location || 'our regional hub'}.`,
     };

@@ -21,7 +21,7 @@ The platform combines autonomous field IoT telemetry, living soil analysis (NPK,
   - Production static bundle delivery from `client/dist`.
   - Security hardening: Helmet, CORS, Express Rate Limiting, bcrypt password hashing, and role-based JWT authentication.
 
-- **Legacy Template Archive (`Main files/agriva/`)**:
+- **Legacy Template Archive (`client/`)**:
   - Original static template files preserved intact for historical reference.
 
 ---

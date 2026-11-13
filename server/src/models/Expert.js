@@ -21,7 +21,7 @@ const expertSchema = new mongoose.Schema(
       type: [String],
       default: ['Soil pH Optimization', 'Organic Pest IPM', 'Precision Drip', 'Crop Rotation'],
     },
-    image: { type: String, default: '/assets/img/home-3/team/03.jpg' },
+    image: { type: String, default: '/assets/img/experts/expert-aris-thorne.jpg' },
     availableDays: { type: [String], default: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
     verified: { type: Boolean, default: false },
     approvalStatus: {
