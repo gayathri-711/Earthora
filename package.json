@@ -1,0 +1,16 @@
+{
+  "name": "agriva-organic-platform",
+  "version": "2.0.0",
+  "private": true,
+  "description": "AGRIVA – From Farm to Home – Naturally Organic. Full-stack organic agriculture platform.",
+  "scripts": {
+    "install:all": "npm --prefix client install && npm --prefix server install",
+    "dev:client": "npm --prefix client run dev",
+    "dev:server": "npm --prefix server run dev",
+    "dev": "node scripts/dev.mjs",
+    "build": "npm --prefix client run build",
+    "seed": "npm --prefix server run seed",
+    "test:server": "npm --prefix server test"
+  }
+}
+

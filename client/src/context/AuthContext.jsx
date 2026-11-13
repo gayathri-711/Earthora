@@ -1,0 +1,95 @@
+import { createContext, useCallback, useContext, useEffect, useState } from 'react';
+import api from '../api/client';
+
+const AuthContext = createContext(null);
+
+export function AuthProvider({ children }) {
+  const [user, setUser] = useState(() => {
+    try {
+      const raw = localStorage.getItem('agriva_user');
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  });
+  const [token, setToken] = useState(() => localStorage.getItem('agriva_token'));
+  const [loading, setLoading] = useState(Boolean(localStorage.getItem('agriva_token')));
+
+  const saveSession = useCallback((nextUser, nextToken) => {
+    setUser(nextUser);
+    setToken(nextToken);
+    if (nextUser && nextToken) {
+      localStorage.setItem('agriva_user', JSON.stringify(nextUser));
+      localStorage.setItem('agriva_token', nextToken);
+    } else {
+      localStorage.removeItem('agriva_user');
+      localStorage.removeItem('agriva_token');
+    }
+  }, []);
+
+  const refreshProfile = useCallback(async () => {
+    if (!localStorage.getItem('agriva_token')) {
+      setLoading(false);
+      return;
+    }
+    try {
+      const { data } = await api.get('/auth/me');
+      setUser(data.data.user);
+      localStorage.setItem('agriva_user', JSON.stringify(data.data.user));
+    } catch {
+      saveSession(null, null);
+    } finally {
+      setLoading(false);
+    }
+  }, [saveSession]);
+
+  useEffect(() => {
+    refreshProfile();
+  }, [refreshProfile]);
+
+  const login = async (email, password) => {
+    const { data } = await api.post('/auth/login', { email, password });
+    saveSession(data.data.user, data.data.token);
+    return data.data.user;
+  };
+
+  const register = async (payload) => {
+    const { data } = await api.post('/auth/register', payload);
+    saveSession(data.data.user, data.data.token);
+    return data.data.user;
+  };
+
+  const logout = () => {
+    saveSession(null, null);
+  };
+
+  const updateUser = (updated) => {
+    setUser(updated);
+    localStorage.setItem('agriva_user', JSON.stringify(updated));
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        loading,
+        isAuthenticated: Boolean(user && token),
+        login,
+        register,
+        logout,
+        updateUser,
+        refreshProfile,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error('useAuth must be used within AuthProvider');
+  return ctx;
+}
+

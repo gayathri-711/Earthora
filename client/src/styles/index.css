@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+    color: #1c241e;
+    background-color: #fbf8f1;
+  }
+
+  h1,
+  h2,
+  h3,
+  .font-display {
+    font-family: 'Fraunces', Georgia, serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-agriva-forest px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-agriva-pine focus:outline-none focus:ring-2 focus:ring-agriva-forest/40 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-agriva-forest/25 bg-white px-5 py-2.5 text-sm font-semibold text-agriva-forest transition-colors duration-200 hover:border-agriva-forest hover:bg-agriva-oat focus:outline-none focus:ring-2 focus:ring-agriva-forest/30;
+  }
+
+  .btn-earth {
+    @apply inline-flex items-center justify-center gap-2 rounded-lg bg-agriva-earth px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-agriva-clay focus:outline-none focus:ring-2 focus:ring-agriva-earth/40;
+  }
+
+  .input-field {
+    @apply w-full rounded-lg border border-agriva-line bg-white px-3.5 py-2.5 text-sm text-agriva-ink placeholder:text-agriva-muted/70 focus:border-agriva-forest focus:outline-none focus:ring-2 focus:ring-agriva-forest/15;
+  }
+
+  .card-surface {
+    @apply rounded-xl border border-agriva-line bg-white shadow-card;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
