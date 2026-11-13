@@ -7,3 +7,4 @@ router.post('/chat', chatWithAI);
 router.get('/suggestions', getAISuggestions);
 
 export default router;
+

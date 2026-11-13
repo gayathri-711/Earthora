@@ -1,16 +1,9 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  AlertCircle,
   Clock,
-  KeyRound,
   Lock,
   Mail,
-  Shield,
-  Sparkles,
-  Sprout,
-  UserCheck,
-  Users,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -52,12 +45,6 @@ export default function LoginPage() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const fillDemo = (demoEmail, demoPass) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
-    setApprovalNotice(null);
   };
 
   return (
@@ -141,77 +128,6 @@ export default function LoginPage() {
             {loading ? 'Authenticating...' : 'Sign In to Portal'}
           </button>
         </form>
-
-        {/* Fixed Administrator Notice & 1-Click Fill */}
-        <div className="mt-8 rounded-2xl border border-purple-200 bg-purple-50/70 p-4 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Shield className="h-4.5 w-4.5 text-purple-700" />
-              <span className="text-xs font-bold text-purple-950 uppercase tracking-wider">
-                Fixed Admin Credentials
-              </span>
-            </div>
-            <span className="rounded-full bg-purple-200/80 px-2 py-0.5 text-[9px] font-extrabold uppercase text-purple-900">
-              System Fixed
-            </span>
-          </div>
-
-          <div className="mt-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-            <div className="font-mono text-[11px] text-purple-900">
-              <span className="font-semibold text-purple-950">admin@earthora.io</span> / <span className="text-purple-700 font-semibold">Earthora123!</span>
-            </div>
-            <button
-              type="button"
-              onClick={() => fillDemo('admin@earthora.io', 'Earthora123!')}
-              className="rounded-lg bg-purple-700 px-3 py-1 text-[11px] font-bold text-white transition hover:bg-purple-800 shadow-sm"
-            >
-              Autofill Admin
-            </button>
-          </div>
-        </div>
-
-        {/* Normal Roles Demo Logins */}
-        <div className="mt-4 rounded-2xl border border-earthora-sand/80 bg-earthora-sand/20 p-4">
-          <div className="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-earthora-forest">
-            <Sparkles className="h-3.5 w-3.5 text-earthora-gold" />
-            Ecosystem Portals (1-Click Fill)
-          </div>
-          <p className="mt-1 text-[11px] text-earthora-muted">
-            Prefill credentials for verified farmers, agronomists, or customer shoppers:
-          </p>
-
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            <button
-              type="button"
-              onClick={() => fillDemo('customer@earthora.io', 'Earthora123!')}
-              className="flex flex-col items-center rounded-xl border border-earthora-sand bg-white p-2 text-center hover:border-earthora-forest hover:bg-earthora-ivory transition-colors"
-            >
-              <Users className="h-4 w-4 text-blue-600 mb-1" />
-              <span className="text-[11px] font-bold text-earthora-forest">Customer</span>
-              <span className="text-[9px] text-earthora-muted">Shopper</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillDemo('farmer@earthora.io', 'Earthora123!')}
-              className="flex flex-col items-center rounded-xl border border-earthora-sand bg-white p-2 text-center hover:border-earthora-forest hover:bg-earthora-ivory transition-colors"
-            >
-              <Sprout className="h-4 w-4 text-emerald-600 mb-1" />
-              <span className="text-[11px] font-bold text-earthora-forest">Farmer</span>
-              <span className="text-[9px] text-earthora-muted">Grower Hub</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={() => fillDemo('expert@earthora.io', 'Earthora123!')}
-              className="flex flex-col items-center rounded-xl border border-earthora-sand bg-white p-2 text-center hover:border-earthora-forest hover:bg-earthora-ivory transition-colors"
-            >
-              <UserCheck className="h-4 w-4 text-earthora-olive mb-1" />
-              <span className="text-[11px] font-bold text-earthora-forest">Agronomist</span>
-              <span className="text-[9px] text-earthora-muted">Approved</span>
-            </button>
-          </div>
-        </div>
 
         <p className="mt-6 text-center text-xs text-earthora-muted">
           Don't have an Earthora account?{' '}

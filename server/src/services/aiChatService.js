@@ -19,14 +19,13 @@ const KNOWLEDGE_CATEGORIES = [
       'default password',
     ],
     title: 'Platform Authentication & Admin Access',
-    response: `### 🔐 EARTHORA Authentication & Admin Access
+    response: `### 🔐 EARTHORA Authentication & Access
 
 EARTHORA supports role-based access for 4 distinct user roles:
 
-1. **Fixed Administrator**:
-   - **Email:** \`admin@earthora.io\`
-   - **Password:** \`Earthora@2026!\`
-   - **Access:** Complete platform command center at \`/dashboard/admin\` (manage farmers, approve experts, manage products, view sales analytics, and update orders).
+1. **Platform Administrator**:
+   - Centralized platform command center located at \`/dashboard/admin\` (manage farmers, approve expert accreditations, manage catalog products, monitor order dispatch, and view analytics).
+   - **Administrative Privacy:** Admin credentials are confidential and issued privately to authorized system owners.
 
 2. **Customer & Farmer Registration**:
    - Customers and Farmers register directly at \`/register\` with instant, automatic account activation.
@@ -35,7 +34,7 @@ EARTHORA supports role-based access for 4 distinct user roles:
 
 3. **Agriculture Expert Approval Policy**:
    - When an expert registers with role *Agriculture Expert*, the account is placed in **"Pending Admin Verification"** for quality assurance.
-   - The Fixed Admin reviews credentials under **Admin Dashboard > Expert Management** and approves the profile before the expert can log in.`,
+   - The Administrator reviews credentials under **Admin Dashboard > Expert Management** and approves the profile before the expert can log in.`,
     relatedLinks: [
       { label: 'Admin Login', url: '/login' },
       { label: 'Register New Account', url: '/register' },
@@ -520,7 +519,7 @@ async function callGeminiIfAvailable(message, history = [], context = {}) {
 Brand Tagline: Rooted in Nature. Driven by Innovation.
 Context:
 - Platform URL: http://127.0.0.1:5000
-- Admin Credentials: admin@earthora.io / Earthora@2026!
+- Admin Role: Full platform administration console at /dashboard/admin
 - Expert Registration: Requires admin verification at /dashboard/admin
 - Modules: /marketplace, /crop-management, /soil-insights, /weather-intelligence, /farmer-hub, /expert-connect, /knowledge-hub, /dashboard/smart.
 - User context: ${JSON.stringify(context)}
@@ -608,7 +607,7 @@ What would you like to explore or rectify today?`,
       ],
       suggestedQuestions: [
         'How do I add and manage crops in the field roster?',
-        'What are the fixed admin login credentials?',
+        'How do user roles and permissions work in EARTHORA?',
         'How do I book a consultation with an agricultural expert?',
         'How does marketplace ordering and order tracking work?',
       ],
@@ -661,7 +660,7 @@ Thank you for your question! Here is how you can resolve or explore this in EART
    - **Expert Consultations:** Visit \`/expert-connect\` to book 1-on-1 virtual advisory sessions.
 
 2. **Login & Accounts**:
-   - Fixed Administrator credentials: **\`admin@earthora.io\`** / **\`Earthora@2026!\`**.
+   - Secure sign-in portal available at \`/login\`.
    - Expert registrations require admin verification in the Admin Dashboard.
    - Customer and Farmer registrations are instantly active.
 
@@ -674,7 +673,7 @@ Thank you for your question! Here is how you can resolve or explore this in EART
       { label: 'Contact Team', url: '/contact' },
     ],
     suggestedQuestions: [
-      'What are the fixed admin login credentials?',
+      'How do user roles and permissions work in EARTHORA?',
       'How does the agricultural expert approval process work?',
       'How do I track a crop cycle and log irrigation?',
       'How do I test soil pH and NPK balance?',
@@ -690,7 +689,7 @@ export function getQuickSuggestions() {
     {
       category: 'Getting Started',
       questions: [
-        'What are the fixed admin login credentials?',
+        'How do user roles and account permissions work?',
         'How do I register as a customer, farmer, or expert?',
         'Why does my expert registration require admin approval?',
       ],

@@ -43,3 +43,4 @@ export function getAISuggestions(_req, res) {
     data: suggestions,
   });
 }
+

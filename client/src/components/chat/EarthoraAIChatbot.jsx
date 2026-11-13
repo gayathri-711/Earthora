@@ -45,7 +45,7 @@ Ask me any question below, or select one of the suggested topics!`,
     { label: 'Expert Connect', url: '/expert-connect' },
   ],
   suggestedQuestions: [
-    'What are the fixed admin login credentials?',
+    'How do user roles and access permissions work in EARTHORA?',
     'Why is my expert registration pending admin approval?',
     'How do I add a new crop and log drip irrigation?',
     'How does marketplace shopping and order tracking work?',
@@ -53,7 +53,7 @@ Ask me any question below, or select one of the suggested topics!`,
 };
 
 const TOPIC_PRESETS = [
-  { label: '🔐 Admin & Login', prompt: 'What are the fixed admin login credentials and user roles?' },
+  { label: '🔐 User Roles & Access', prompt: 'How do user roles and account permissions work in EARTHORA?' },
   { label: '👨‍🌾 Expert Approval', prompt: 'How does the agriculture expert registration and approval process work?' },
   { label: '🌱 Crop Management', prompt: 'How do I add crops and log precision drip irrigation in Crop Management?' },
   { label: '🛒 Marketplace & Cart', prompt: 'How does marketplace checkout, discounts, and order tracking work?' },
@@ -130,19 +130,19 @@ export default function EarthoraAIChatbot() {
 
 Here is how you can resolve common platform questions:
 
-- **Admin Login:** Use \`admin@earthora.io\` with password \`Earthora@2026!\` at \`/login\`.
+- **Admin Login:** Dedicated administrative portal at \`/login\` for authorized system owners.
 - **Expert Approval:** Expert registrations require admin verification in the Admin Dashboard.
 - **Crop Management:** Visit \`/crop-management\` to register new crop plots and log irrigation inputs.
 - **Marketplace:** Visit \`/marketplace\` to buy organic seeds, bio-fertilizers, and equipment. Use code \`ORGANIC10\` for 10% off.
 - **Support:** Visit \`/contact\` or email \`support@earthora.io\`.`,
         timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         relatedLinks: [
-          { label: 'Admin Login', url: '/login' },
+          { label: 'Portal Login', url: '/login' },
           { label: 'Crop Management', url: '/crop-management' },
           { label: 'Marketplace', url: '/marketplace' },
         ],
         suggestedQuestions: [
-          'What are the fixed admin login credentials?',
+          'How do user roles and permissions work?',
           'How does expert approval work?',
           'How do I track my order?',
         ],
@@ -508,3 +508,4 @@ Here is how you can resolve common platform questions:
     </>
   );
 }
+
