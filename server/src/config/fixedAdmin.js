@@ -65,3 +65,4 @@ export async function ensureFixedAdmin() {
     console.error('Failed to ensure fixed admin account:', err.message);
   }
 }
+

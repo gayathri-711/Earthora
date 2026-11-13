@@ -82,11 +82,11 @@ export default function ContactPage() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/30 bg-earthora-mint/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-earthora-mint uppercase">
-              <Headphones className="h-4 w-4" />
-              Agronomy Support &amp; Partnerships
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
+              <Headphones className="h-4.5 w-4.5" />
+              EARTHORA ADVISORY &amp; SUPPORT
             </div>
-            <h1 className="font-heading text-4xl font-extrabold tracking-tight sm:text-5xl">
+            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
               Connect with Earthora
             </h1>
             <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">

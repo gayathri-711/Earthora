@@ -31,13 +31,17 @@ export default function Footer() {
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
           {/* Brand Col */}
           <div className="space-y-4 lg:col-span-2">
-            <Link to="/" className="flex items-center gap-2.5">
-              <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-9 w-9" />
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="/assets/earthora/logo-icon.svg"
+                alt="EARTHORA"
+                className="h-11 w-11 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105"
+              />
               <div className="flex flex-col">
-                <span className="font-heading text-xl font-black tracking-wider text-white">
+                <span className="font-heading text-2xl sm:text-3xl font-black tracking-widest text-white leading-none">
                   EARTHORA
                 </span>
-                <span className="text-[9px] font-bold tracking-[0.2em] text-earthora-mint uppercase">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.24em] text-earthora-mint uppercase mt-1">
                   Rooted in Nature · Driven by Innovation
                 </span>
               </div>

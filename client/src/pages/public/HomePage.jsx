@@ -135,12 +135,12 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-12">
             {/* Left Content */}
             <div className="space-y-6 lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-earthora-forest/20 bg-white/80 px-4 py-1.5 text-xs font-bold text-earthora-forest backdrop-blur-md shadow-subtle">
-                <Sparkles className="h-3.5 w-3.5 text-earthora-mint" />
-                <span>Next-Gen Agricultural Ecosystem</span>
+              <div className="inline-flex items-center gap-2 rounded-full border border-earthora-forest/20 bg-white/90 px-4 py-1.5 text-xs sm:text-sm font-black text-earthora-forest backdrop-blur-md shadow-subtle uppercase tracking-[0.2em]">
+                <Sparkles className="h-4 w-4 text-earthora-mint" />
+                <span>EARTHORA · NEXT-GEN AGRI ECOSYSTEM</span>
               </div>
 
-              <h1 className="font-heading text-4xl font-extrabold leading-[1.08] text-earthora-forest sm:text-5xl lg:text-6xl">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] text-earthora-forest tracking-tight">
                 Rooted in Nature. <br />
                 <span className="text-emerald-700">Driven by Innovation.</span>
               </h1>

@@ -51,10 +51,10 @@ export default function SmartAgriculturePage() {
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid items-center gap-10 lg:grid-cols-12">
             <div className="space-y-4 lg:col-span-7">
-              <span className="badge-tag border border-earthora-forest/20 bg-white text-xs font-bold uppercase tracking-wider text-earthora-forest">
-                Precision AgTech Architecture
+              <span className="badge-tag border border-earthora-forest/30 bg-white text-xs sm:text-sm font-black uppercase tracking-[0.2em] text-earthora-forest shadow-xs">
+                EARTHORA PRECISION AGTECH SUITE
               </span>
-              <h1 className="font-heading text-4xl font-extrabold text-earthora-forest sm:text-5xl">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black text-earthora-forest leading-[1.08] tracking-tight">
                 Smart Agriculture. <br />
                 <span className="text-emerald-700">Precision in Every Drop.</span>
               </h1>

@@ -15,22 +15,34 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
     <div className="min-h-screen bg-earthora-ivory">
       <header className="border-b border-earthora-sand/80 bg-white">
         <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
-          <div className="flex items-center gap-4">
-            <Link to="/" className="flex items-center gap-2.5">
-              <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-8 w-8" />
+          <div className="flex items-center gap-5">
+            {/* Brand Name */}
+            <Link to="/" className="flex items-center gap-3 group">
+              <img
+                src="/assets/earthora/logo-icon.svg"
+                alt="EARTHORA"
+                className="h-10 w-10 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105"
+              />
               <div className="flex flex-col">
-                <span className="font-heading text-lg font-extrabold tracking-wider text-earthora-forest">
+                <span className="font-heading text-2xl sm:text-3xl font-black tracking-widest text-earthora-forest leading-none">
                   EARTHORA
                 </span>
-                <span className="text-[9px] font-bold tracking-[0.16em] text-earthora-olive uppercase">
+                <span className="text-[10px] sm:text-[11px] font-black tracking-[0.22em] text-earthora-olive uppercase mt-1">
                   Agri Dashboard
                 </span>
               </div>
             </Link>
 
-            <div className="border-l border-earthora-sand/70 pl-4 hidden sm:block">
-              <h1 className="font-heading text-base font-bold text-earthora-forest">{title}</h1>
-              <p className="text-[11px] text-earthora-muted">{subtitle}</p>
+            {/* Module Name & Subtitle */}
+            <div className="border-l-2 border-earthora-sand/80 pl-4 sm:pl-5">
+              <h1 className="font-heading text-lg sm:text-2xl lg:text-3xl font-black text-earthora-forest tracking-tight leading-tight">
+                {title}
+              </h1>
+              {subtitle && (
+                <p className="text-[11px] sm:text-xs font-medium text-earthora-muted line-clamp-1 sm:line-clamp-none mt-0.5">
+                  {subtitle}
+                </p>
+              )}
             </div>
           </div>
 
@@ -81,10 +93,10 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
                   key={tab.id}
                   type="button"
                   onClick={() => onTabChange(tab.id)}
-                  className={`inline-flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-xs font-bold transition-all ${
+                  className={`inline-flex shrink-0 items-center gap-2 border-b-2 px-4 py-3 text-xs sm:text-sm font-extrabold transition-all rounded-t-lg ${
                     active
-                      ? 'border-earthora-forest text-earthora-forest'
-                      : 'border-transparent text-earthora-muted hover:text-earthora-forest'
+                      ? 'border-earthora-forest text-earthora-forest bg-earthora-sand/30 shadow-xs'
+                      : 'border-transparent text-earthora-muted hover:text-earthora-forest hover:bg-earthora-sand/15'
                   }`}
                 >
                   {Icon && <Icon className="h-4 w-4" />}

@@ -180,7 +180,7 @@ export default function ProductDetailsPage() {
                 ))}
               </div>
 
-              <h1 className="mt-4 font-heading text-3xl font-extrabold text-earthora-forest sm:text-4xl">
+              <h1 className="mt-4 font-heading text-3xl sm:text-5xl lg:text-6xl font-black text-earthora-forest tracking-tight leading-tight">
                 {product.name}
               </h1>
 

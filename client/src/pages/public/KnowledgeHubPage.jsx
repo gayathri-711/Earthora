@@ -60,12 +60,12 @@ export default function KnowledgeHubPage() {
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/30 bg-earthora-mint/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-earthora-mint uppercase">
-              <BookOpen className="h-4 w-4" />
-              Agronomy Research &amp; Field Guides
+            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
+              <BookOpen className="h-4.5 w-4.5" />
+              EARTHORA AGRONOMIC REPOSITORY
             </div>
-            <h1 className="font-heading text-4xl font-extrabold tracking-tight sm:text-5xl">
-              Earthora Knowledge Hub
+            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
+              Knowledge Hub &amp; Field Research
             </h1>
             <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">
               Peer-reviewed technical guides, precision IoT installation benchmarks, living soil

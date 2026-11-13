@@ -85,13 +85,17 @@ export default function Navbar() {
       {/* Main Navbar */}
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         {/* Brand Logo */}
-        <Link to="/" className="flex items-center gap-2.5">
-          <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-9 w-9" />
+        <Link to="/" className="flex items-center gap-3 group">
+          <img
+            src="/assets/earthora/logo-icon.svg"
+            alt="EARTHORA"
+            className="h-11 w-11 sm:h-12 sm:w-12 transition-transform duration-200 group-hover:scale-105"
+          />
           <div className="flex flex-col">
-            <span className="font-heading text-xl font-extrabold tracking-wider text-earthora-forest">
+            <span className="font-heading text-2xl sm:text-3xl font-black tracking-widest text-earthora-forest leading-none">
               EARTHORA
             </span>
-            <span className="text-[9px] font-bold tracking-[0.18em] text-earthora-olive uppercase">
+            <span className="text-[10px] sm:text-[11px] font-black tracking-[0.24em] text-earthora-olive uppercase mt-1">
               Smart Agri Ecosystem
             </span>
           </div>

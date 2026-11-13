@@ -52,10 +52,10 @@ export default function ArticleDetailsPage() {
 
         {/* Article Header */}
         <header className="mt-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-earthora-forest px-3.5 py-1 text-xs font-bold text-earthora-mint">
+          <div className="inline-flex items-center gap-2 rounded-full bg-earthora-forest px-4 py-1.5 text-xs sm:text-sm font-black text-earthora-mint tracking-wider uppercase">
             {article.category}
           </div>
-          <h1 className="mt-4 font-heading text-3xl font-extrabold text-earthora-forest sm:text-4xl lg:text-5xl leading-tight">
+          <h1 className="mt-4 font-heading text-3xl sm:text-5xl lg:text-6xl font-black text-earthora-forest leading-[1.12] tracking-tight">
             {article.title}
           </h1>
 

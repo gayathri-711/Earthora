@@ -93,11 +93,11 @@ export default function SoilInsightsPage() {
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
             <div className="max-w-3xl">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/30 bg-earthora-mint/10 px-4 py-1.5 text-xs font-semibold tracking-wider text-earthora-mint uppercase">
-                <Sprout className="h-4 w-4" />
-                Living Soil Biological Engine
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
+                <Sprout className="h-4.5 w-4.5" />
+                EARTHORA LIVING SOIL LABORATORY
               </div>
-              <h1 className="font-heading text-4xl font-extrabold tracking-tight sm:text-5xl">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
                 Soil Insights &amp; NPK Telemetry
               </h1>
               <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">

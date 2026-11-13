@@ -109,20 +109,20 @@ export default function RegisterPage() {
   return (
     <div className="bg-earthora-ivory min-h-screen py-16 flex items-center justify-center px-4">
       <div className="card-surface w-full max-w-xl border border-earthora-sand/80 p-8 shadow-xl sm:p-10">
-        <div className="flex items-center gap-2.5">
-          <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-9 w-9" />
+        <div className="flex items-center gap-3.5">
+          <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-12 w-12" />
           <div>
-            <span className="font-heading text-lg font-extrabold tracking-wider text-earthora-forest">
+            <span className="font-heading text-3xl sm:text-4xl font-black tracking-widest text-earthora-forest leading-none">
               EARTHORA
             </span>
-            <p className="text-[10px] font-bold uppercase tracking-wider text-earthora-olive">
+            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-earthora-olive mt-1">
               Smart Agri Ecosystem
             </p>
           </div>
         </div>
 
-        <h1 className="mt-6 font-heading text-2xl font-extrabold text-earthora-forest sm:text-3xl">
-          Create Your Earthora Account
+        <h1 className="mt-7 font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-earthora-forest tracking-tight">
+          Create Ecosystem Account
         </h1>
         <p className="mt-1 text-xs text-earthora-muted">
           Select your ecosystem role to access dedicated agronomy tools and marketplaces.

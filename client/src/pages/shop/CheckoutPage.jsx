@@ -88,8 +88,13 @@ export default function CheckoutPage() {
   return (
     <div className="bg-earthora-ivory min-h-screen py-14">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <h1 className="font-heading text-3xl font-extrabold text-earthora-forest">Order Checkout</h1>
-        <p className="mt-1 text-xs text-earthora-muted">
+        <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive block mb-1">
+          EARTHORA DIRECT-TRADE FULFILLMENT
+        </span>
+        <h1 className="font-heading text-4xl sm:text-5xl font-black text-earthora-forest tracking-tight">
+          Order Checkout
+        </h1>
+        <p className="mt-1.5 text-xs text-earthora-muted font-medium">
           Complete delivery destination and secure payment to schedule direct farm fulfillment.
         </p>
 
