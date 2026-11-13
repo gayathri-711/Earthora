@@ -2,7 +2,9 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
   BookOpen,
+  Check,
   CheckCircle2,
+  Clock,
   Cpu,
   Layers,
   MessageSquare,
@@ -12,8 +14,10 @@ import {
   ShieldCheck,
   Sprout,
   Trash2,
+  UserCheck,
   Users,
   Wheat,
+  XCircle,
 } from 'lucide-react';
 import {
   Bar,
@@ -29,15 +33,6 @@ import { useToast } from '../../context/ToastContext';
 import DashboardLayout from '../../layouts/DashboardLayout';
 import { EARTHORA_PRODUCTS } from '../../data/catalogData';
 
-const tabs = [
-  { id: 'overview', label: 'Overview & Analytics', icon: BarChart3 },
-  { id: 'orders', label: 'Orders & Logistics', icon: Package },
-  { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
-  { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
-  { id: 'knowledge', label: 'Knowledge Hub Articles', icon: BookOpen },
-  { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
-];
-
 export default function AdminDashboard() {
   const { showToast } = useToast();
   const [activeTab, setActiveTab] = useState('overview');
@@ -47,6 +42,7 @@ export default function AdminDashboard() {
       totalOrders: 64,
       totalCustomers: 180,
       totalFarmers: 42,
+      totalExperts: 2,
       totalProducts: 12,
       lowStockCount: 2,
     },
@@ -91,6 +87,36 @@ export default function AdminDashboard() {
     },
   ]);
 
+  const [experts, setExperts] = useState([
+    {
+      _id: 'exp-1',
+      name: 'Dr. Aris Thorne',
+      title: 'Principal Soil Microbiologist',
+      fieldOfStudy: 'Rhizosphere Ecology & Nitrogen Fixation',
+      organization: 'Earthora Agronomy Advisory',
+      location: 'Davis, CA',
+      consultationFee: 85,
+      experienceYears: 16,
+      verified: true,
+      approvalStatus: 'approved',
+      user: { email: 'expert@earthora.io', phone: '+1 555 017 9900' },
+    },
+    {
+      _id: 'exp-2',
+      name: 'Sofia Al-Mansoor',
+      title: 'Precision Irrigation Engineer',
+      fieldOfStudy: 'IoT Moisture Sensors & Water Efficiency',
+      organization: 'Global Smart Water Systems',
+      location: 'Fresno, CA',
+      consultationFee: 75,
+      experienceYears: 11,
+      verified: true,
+      approvalStatus: 'approved',
+      user: { email: 'sofia@earthora.io', phone: '+1 555 018 7744' },
+    },
+  ]);
+  const [expertFilter, setExpertFilter] = useState('all');
+
   const [articles, setArticles] = useState([
     {
       _id: 'art-1',
@@ -129,17 +155,19 @@ export default function AdminDashboard() {
 
   const loadAll = useCallback(async () => {
     try {
-      const [ovRes, ordRes, prodRes, frmRes, msgRes] = await Promise.all([
+      const [ovRes, ordRes, prodRes, frmRes, expRes, msgRes] = await Promise.all([
         api.get('/admin/overview'),
         api.get('/admin/orders'),
         api.get('/products?limit=100'),
         api.get('/admin/farmers'),
+        api.get('/admin/experts'),
         api.get('/admin/messages'),
       ]);
       if (ovRes.data.data?.stats) setOverview(ovRes.data.data);
       if (ordRes.data.data?.orders?.length > 0) setOrders(ordRes.data.data.orders);
       if (prodRes.data.data?.products?.length > 0) setProducts(prodRes.data.data.products);
       if (frmRes.data.data?.farmers?.length > 0) setFarmers(frmRes.data.data.farmers);
+      if (expRes.data.data?.experts?.length > 0) setExperts(expRes.data.data.experts);
       if (msgRes.data.data?.messages?.length > 0) setMessages(msgRes.data.data.messages);
     } catch {
       // Fallback to local default data
@@ -149,6 +177,30 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  const handleApproveExpert = async (expertId) => {
+    try {
+      const { data } = await api.patch(`/admin/experts/${expertId}/approve`);
+      setExperts((prev) =>
+        prev.map((e) => (e._id === expertId ? data.data.expert : e))
+      );
+      showToast('Agriculture Expert accepted and verified! Login access granted.', 'success');
+    } catch (err) {
+      showToast(err.message || 'Failed to approve expert', 'error');
+    }
+  };
+
+  const handleRejectExpert = async (expertId) => {
+    try {
+      const { data } = await api.patch(`/admin/experts/${expertId}/reject`);
+      setExperts((prev) =>
+        prev.map((e) => (e._id === expertId ? data.data.expert : e))
+      );
+      showToast('Agriculture Expert application rejected.', 'info');
+    } catch (err) {
+      showToast(err.message || 'Failed to reject expert', 'error');
+    }
+  };
 
   const handleToggleFarmerVerification = (farmerId) => {
     setFarmers((prev) =>
@@ -180,11 +232,30 @@ export default function AdminDashboard() {
     showToast('Knowledge Hub guide published!', 'success');
   };
 
+  const pendingExpertCount = experts.filter(
+    (e) => e.approvalStatus === 'pending' || !e.verified
+  ).length;
+
+  const dynamicTabs = [
+    { id: 'overview', label: 'Overview & Analytics', icon: BarChart3 },
+    { id: 'orders', label: 'Orders & Logistics', icon: Package },
+    { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
+    { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
+    {
+      id: 'experts',
+      label: 'Expert Approvals',
+      icon: UserCheck,
+      badge: pendingExpertCount > 0 ? pendingExpertCount : null,
+    },
+    { id: 'knowledge', label: 'Knowledge Hub Articles', icon: BookOpen },
+    { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
+  ];
+
   return (
     <DashboardLayout
       title="Earthora Platform Administration"
-      subtitle="Ecosystem governance, producer verifications, cold-chain orders, and marketplace catalog control."
-      tabs={tabs}
+      subtitle="Ecosystem governance, producer verifications, expert credentials, orders, and marketplace control."
+      tabs={dynamicTabs}
       activeTab={activeTab}
       onTabChange={setActiveTab}
     >
@@ -400,6 +471,171 @@ export default function AdminDashboard() {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Agriculture Expert Approvals & Verification Tab */}
+      {activeTab === 'experts' && (
+        <div className="space-y-6">
+          <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm overflow-x-auto">
+            <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+              <div>
+                <h3 className="font-heading text-lg font-bold text-earthora-forest flex items-center gap-2">
+                  <UserCheck className="h-5 w-5 text-earthora-olive" />
+                  Agriculture Expert Verification &amp; Access Control
+                </h3>
+                <p className="text-xs text-earthora-muted mt-0.5">
+                  Review agronomist registrations, verify academic credentials &amp; consultation fees, and accept or reject account access.
+                </p>
+              </div>
+
+              {/* Status Filter */}
+              <div className="flex items-center gap-1 rounded-xl border border-earthora-sand/80 bg-earthora-sand/20 p-1 text-xs">
+                <button
+                  type="button"
+                  onClick={() => setExpertFilter('all')}
+                  className={`rounded-lg px-3 py-1 font-semibold transition ${
+                    expertFilter === 'all'
+                      ? 'bg-white text-earthora-forest shadow-sm'
+                      : 'text-earthora-muted hover:text-earthora-forest'
+                  }`}
+                >
+                  All Experts ({experts.length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpertFilter('pending')}
+                  className={`rounded-lg px-3 py-1 font-semibold transition ${
+                    expertFilter === 'pending'
+                      ? 'bg-amber-500 text-white shadow-sm'
+                      : 'text-earthora-muted hover:text-earthora-forest'
+                  }`}
+                >
+                  Pending Review ({experts.filter((e) => e.approvalStatus === 'pending' || !e.verified).length})
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setExpertFilter('approved')}
+                  className={`rounded-lg px-3 py-1 font-semibold transition ${
+                    expertFilter === 'approved'
+                      ? 'bg-emerald-600 text-white shadow-sm'
+                      : 'text-earthora-muted hover:text-earthora-forest'
+                  }`}
+                >
+                  Approved ({experts.filter((e) => e.approvalStatus === 'approved' && e.verified).length})
+                </button>
+              </div>
+            </div>
+
+            <table className="w-full text-left text-xs">
+              <thead className="border-b border-earthora-sand/60 bg-earthora-ivory/60 text-[11px] font-bold uppercase tracking-wider text-earthora-forest">
+                <tr>
+                  <th className="px-4 py-3">Expert / Agronomist</th>
+                  <th className="px-4 py-3">Discipline &amp; Organization</th>
+                  <th className="px-4 py-3">Experience &amp; Fee</th>
+                  <th className="px-4 py-3">Location</th>
+                  <th className="px-4 py-3">Registration Status</th>
+                  <th className="px-4 py-3 text-right">Administrative Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-earthora-sand/40">
+                {experts
+                  .filter((e) => {
+                    if (expertFilter === 'pending') return e.approvalStatus === 'pending' || !e.verified;
+                    if (expertFilter === 'approved') return e.approvalStatus === 'approved' && e.verified;
+                    return true;
+                  })
+                  .map((e) => {
+                    const isPending = e.approvalStatus === 'pending' || !e.verified;
+                    const isApproved = e.approvalStatus === 'approved' && e.verified;
+                    const isRejected = e.approvalStatus === 'rejected';
+
+                    return (
+                      <tr key={e._id} className="hover:bg-earthora-sand/15 transition-colors">
+                        <td className="px-4 py-3.5">
+                          <div className="font-bold text-earthora-forest">{e.name}</div>
+                          <div className="text-[11px] text-earthora-muted">{e.title}</div>
+                          <div className="text-[10px] text-earthora-olive mt-0.5">
+                            {e.user?.email || 'Registered Expert'}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="font-semibold text-earthora-charcoal">{e.fieldOfStudy}</div>
+                          <div className="text-[11px] text-earthora-muted">{e.organization}</div>
+                        </td>
+                        <td className="px-4 py-3.5">
+                          <div className="font-semibold text-earthora-charcoal">{e.experienceYears || 5} Years exp</div>
+                          <div className="text-[11px] text-earthora-muted">${e.consultationFee || 75}/session</div>
+                        </td>
+                        <td className="px-4 py-3.5 text-earthora-muted">{e.location || 'USA'}</td>
+                        <td className="px-4 py-3.5">
+                          {isPending && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-900 border border-amber-300">
+                              <span className="h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
+                              Pending Approval
+                            </span>
+                          )}
+                          {isApproved && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 px-2.5 py-1 text-[11px] font-bold text-emerald-800 border border-emerald-300">
+                              <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
+                              Approved &amp; Verified
+                            </span>
+                          )}
+                          {isRejected && (
+                            <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-100 px-2.5 py-1 text-[11px] font-bold text-rose-800 border border-rose-300">
+                              <XCircle className="h-3.5 w-3.5 text-rose-600" />
+                              Rejected
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3.5 text-right">
+                          <div className="inline-flex items-center gap-2 justify-end">
+                            {isPending && (
+                              <>
+                                <button
+                                  type="button"
+                                  onClick={() => handleApproveExpert(e._id)}
+                                  className="inline-flex items-center gap-1 rounded-lg bg-emerald-700 px-3 py-1.5 text-xs font-bold text-white shadow-sm hover:bg-emerald-800 transition"
+                                >
+                                  <Check className="h-3.5 w-3.5" />
+                                  Accept &amp; Approve
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => handleRejectExpert(e._id)}
+                                  className="inline-flex items-center gap-1 rounded-lg border border-rose-300 bg-white px-3 py-1.5 text-xs font-semibold text-rose-700 hover:bg-rose-50 transition"
+                                >
+                                  <XCircle className="h-3.5 w-3.5" />
+                                  Reject
+                                </button>
+                              </>
+                            )}
+                            {isApproved && (
+                              <button
+                                type="button"
+                                onClick={() => handleRejectExpert(e._id)}
+                                className="rounded-lg border border-earthora-sand px-3 py-1 text-xs font-semibold text-earthora-muted hover:border-rose-300 hover:text-rose-600 transition"
+                              >
+                                Revoke Approval
+                              </button>
+                            )}
+                            {isRejected && (
+                              <button
+                                type="button"
+                                onClick={() => handleApproveExpert(e._id)}
+                                className="rounded-lg bg-emerald-700 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-800 transition"
+                              >
+                                Re-approve
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

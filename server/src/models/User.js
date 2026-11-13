@@ -23,6 +23,12 @@ const userSchema = new mongoose.Schema(
       country: { type: String, default: 'USA' },
     },
     isActive: { type: Boolean, default: true },
+    isApproved: { type: Boolean, default: true },
+    approvalStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'approved',
+    },
   },
   { timestamps: true }
 );

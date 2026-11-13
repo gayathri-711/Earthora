@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import {
+  approveExpert,
   createProductAdmin,
   deleteProductAdmin,
   deleteReviewAdmin,
@@ -10,6 +11,7 @@ import {
   getAllOrders,
   getAllReviewsAdmin,
   getAllUsers,
+  rejectExpert,
   resolveMessageAdmin,
   updateExpertVerification,
   updateFarmerVerification,
@@ -27,6 +29,8 @@ router.get('/users', getAllUsers);
 router.get('/farmers', getAllFarmers);
 router.patch('/farmers/:id', updateFarmerVerification);
 router.get('/experts', getAllExperts);
+router.patch('/experts/:id/approve', approveExpert);
+router.patch('/experts/:id/reject', rejectExpert);
 router.patch('/experts/:id', updateExpertVerification);
 router.post('/products', createProductAdmin);
 router.delete('/products/:id', deleteProductAdmin);

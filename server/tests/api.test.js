@@ -161,3 +161,104 @@ test('Marketplace order placement, stock decrement, and order tracking', async (
   assert.equal(track.status, 200);
   assert.equal(track.body.data.order.orderNumber, orderNum);
 });
+
+test('Customer registration and login are normal and immediate', async () => {
+  const regEmail = `testcust_${Date.now()}@earthora.io`;
+  const regRes = await request(app)
+    .post('/api/v1/auth/register')
+    .send({
+      name: 'New Organic Shopper',
+      email: regEmail,
+      password: 'Earthora123!',
+      role: 'customer',
+      phone: '+1 555 987 6543',
+    });
+
+  assert.equal(regRes.status, 201);
+  assert.ok(regRes.body.data.token, 'Token should be returned immediately for customers');
+  assert.equal(regRes.body.data.requiresApproval, false);
+
+  const loginRes = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: regEmail, password: 'Earthora123!' });
+
+  assert.equal(loginRes.status, 200);
+  assert.ok(loginRes.body.data.token);
+  assert.equal(loginRes.body.data.user.role, 'customer');
+});
+
+test('Admin credentials are fixed and public admin registration is rejected', async () => {
+  // Public admin signup is blocked
+  const rejectAdminReg = await request(app)
+    .post('/api/v1/auth/register')
+    .send({
+      name: 'Imposter Admin',
+      email: 'imposter@earthora.io',
+      password: 'Earthora123!',
+      role: 'admin',
+    });
+  assert.equal(rejectAdminReg.status, 403);
+
+  // Fixed admin login works
+  const adminLogin = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: 'admin@earthora.io', password: 'Earthora123!' });
+  assert.equal(adminLogin.status, 200);
+  assert.equal(adminLogin.body.data.user.role, 'admin');
+});
+
+test('Agriculture expert registration requires admin acceptance before login', async () => {
+  const expEmail = `agronomist_${Date.now()}@earthora.io`;
+
+  // 1. Register as agriculture expert
+  const expReg = await request(app)
+    .post('/api/v1/auth/register')
+    .send({
+      name: 'Dr. Jane Plantington',
+      email: expEmail,
+      password: 'Earthora123!',
+      role: 'expert',
+      fieldOfStudy: 'Biochar & Nitrogen Stabilization',
+      organization: 'Soil Carbon Institute',
+      experienceYears: 14,
+      consultationFee: 95,
+    });
+
+  assert.equal(expReg.status, 201);
+  assert.equal(expReg.body.data.requiresApproval, true);
+  assert.equal(expReg.body.data.token, null, 'No token issued before approval');
+
+  // 2. Expert cannot log in while pending
+  const prematureLogin = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: expEmail, password: 'Earthora123!' });
+  assert.equal(prematureLogin.status, 403);
+  assert.ok(prematureLogin.body.message.includes('pending administrator approval'));
+
+  // 3. Admin lists experts and finds the pending applicant
+  const expertsList = await request(app)
+    .get('/api/v1/admin/experts')
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(expertsList.status, 200);
+  const pendingExpert = expertsList.body.data.experts.find(
+    (e) => e.user?.email === expEmail || e.name === 'Dr. Jane Plantington'
+  );
+  assert.ok(pendingExpert, 'Pending expert should appear in admin queue');
+  assert.equal(pendingExpert.approvalStatus, 'pending');
+
+  // 4. Admin accepts / approves the agriculture expert
+  const approveRes = await request(app)
+    .patch(`/api/v1/admin/experts/${pendingExpert._id}/approve`)
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(approveRes.status, 200);
+  assert.equal(approveRes.body.data.expert.approvalStatus, 'approved');
+  assert.equal(approveRes.body.data.expert.verified, true);
+
+  // 5. Expert can now log in successfully!
+  const approvedLogin = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: expEmail, password: 'Earthora123!' });
+  assert.equal(approvedLogin.status, 200);
+  assert.ok(approvedLogin.body.data.token);
+  assert.equal(approvedLogin.body.data.user.role, 'expert');
+});

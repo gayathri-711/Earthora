@@ -88,7 +88,12 @@ export default function DashboardLayout({ title, subtitle, tabs = [], activeTab,
                   }`}
                 >
                   {Icon && <Icon className="h-4 w-4" />}
-                  {tab.label}
+                  <span>{tab.label}</span>
+                  {tab.badge !== undefined && tab.badge !== null && tab.badge > 0 && (
+                    <span className="rounded-full bg-amber-500 px-1.5 py-0.5 text-[10px] font-extrabold text-white">
+                      {tab.badge}
+                    </span>
+                  )}
                 </button>
               );
             })}

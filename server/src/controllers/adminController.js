@@ -97,18 +97,84 @@ export const updateFarmerVerification = asyncHandler(async (req, res) => {
 });
 
 export const getAllExperts = asyncHandler(async (_req, res) => {
-  const experts = await Expert.find().sort({ createdAt: -1 });
+  const experts = await Expert.find()
+    .populate('user', 'name email role phone isApproved approvalStatus createdAt')
+    .sort({ createdAt: -1 });
   sendSuccess(res, { experts });
 });
 
-export const updateExpertVerification = asyncHandler(async (req, res) => {
-  const expert = await Expert.findByIdAndUpdate(
-    req.params.id,
-    { verified: Boolean(req.body.verified) },
-    { new: true }
-  );
+export const approveExpert = asyncHandler(async (req, res) => {
+  const expert = await Expert.findById(req.params.id);
   if (!expert) throw new ApiError(404, 'Expert profile not found');
-  sendSuccess(res, { expert });
+
+  expert.verified = true;
+  expert.approvalStatus = 'approved';
+  await expert.save();
+
+  if (expert.user) {
+    await User.findByIdAndUpdate(expert.user, {
+      isApproved: true,
+      approvalStatus: 'approved',
+    });
+  }
+
+  const populated = await Expert.findById(expert._id).populate(
+    'user',
+    'name email role phone isApproved approvalStatus'
+  );
+  sendSuccess(
+    res,
+    { expert: populated },
+    'Agriculture Expert accepted and verified. Login access has been granted.'
+  );
+});
+
+export const rejectExpert = asyncHandler(async (req, res) => {
+  const expert = await Expert.findById(req.params.id);
+  if (!expert) throw new ApiError(404, 'Expert profile not found');
+
+  expert.verified = false;
+  expert.approvalStatus = 'rejected';
+  await expert.save();
+
+  if (expert.user) {
+    await User.findByIdAndUpdate(expert.user, {
+      isApproved: false,
+      approvalStatus: 'rejected',
+    });
+  }
+
+  const populated = await Expert.findById(expert._id).populate(
+    'user',
+    'name email role phone isApproved approvalStatus'
+  );
+  sendSuccess(res, { expert: populated }, 'Agriculture Expert registration rejected.');
+});
+
+export const updateExpertVerification = asyncHandler(async (req, res) => {
+  const { verified, approvalStatus } = req.body;
+  const isVerified = Boolean(verified);
+  const status = approvalStatus || (isVerified ? 'approved' : 'pending');
+
+  const expert = await Expert.findById(req.params.id);
+  if (!expert) throw new ApiError(404, 'Expert profile not found');
+
+  expert.verified = isVerified;
+  expert.approvalStatus = status;
+  await expert.save();
+
+  if (expert.user) {
+    await User.findByIdAndUpdate(expert.user, {
+      isApproved: isVerified,
+      approvalStatus: status,
+    });
+  }
+
+  const populated = await Expert.findById(expert._id).populate(
+    'user',
+    'name email role phone isApproved approvalStatus'
+  );
+  sendSuccess(res, { expert: populated }, 'Expert status updated.');
 });
 
 export const deleteProductAdmin = asyncHandler(async (req, res) => {

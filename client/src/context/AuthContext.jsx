@@ -58,8 +58,15 @@ export function AuthProvider({ children }) {
 
   const register = async (payload) => {
     const { data } = await api.post('/auth/register', payload);
-    saveSession(data.data.user, data.data.token);
-    return data.data.user;
+    if (data.data?.token) {
+      saveSession(data.data.user, data.data.token);
+    }
+    return {
+      user: data.data?.user,
+      token: data.data?.token,
+      requiresApproval: Boolean(data.data?.requiresApproval),
+      message: data.message,
+    };
   };
 
   const logout = () => {

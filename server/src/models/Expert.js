@@ -23,7 +23,12 @@ const expertSchema = new mongoose.Schema(
     },
     image: { type: String, default: '/assets/img/home-3/team/03.jpg' },
     availableDays: { type: [String], default: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] },
-    verified: { type: Boolean, default: true },
+    verified: { type: Boolean, default: false },
+    approvalStatus: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
   },
   { timestamps: true }
 );

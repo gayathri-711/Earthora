@@ -56,6 +56,8 @@ export async function seedIfEmpty() {
         phone: '+1 555 017 9900',
         title: 'Principal Soil Microbiologist',
         organization: 'Earthora Agronomy Advisory',
+        isApproved: true,
+        approvalStatus: 'approved',
       },
       {
         name: 'Sofia Al-Mansoor',
@@ -65,6 +67,8 @@ export async function seedIfEmpty() {
         phone: '+1 555 018 7744',
         title: 'Precision Irrigation Engineer',
         organization: 'Global Smart Water Systems',
+        isApproved: true,
+        approvalStatus: 'approved',
       },
       {
         name: 'Earthora Admin',
@@ -133,6 +137,7 @@ export async function seedIfEmpty() {
       specializations: ['Soil pH Optimization', 'Microbial Inoculation', 'Cover Crop Cycling'],
       image: '/assets/img/home-3/team/03.jpg',
       verified: true,
+      approvalStatus: 'approved',
     },
     {
       user: expertUser2._id,
@@ -149,6 +154,7 @@ export async function seedIfEmpty() {
       specializations: ['Precision Drip Automation', 'Salinity Management', 'IoT Soil Probes'],
       image: '/assets/img/home-3/team/04.jpg',
       verified: true,
+      approvalStatus: 'approved',
     },
   ]);
 

@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Award, Lock, Mail, Phone, ShieldCheck, Sprout, User, UserCheck, Users } from 'lucide-react';
+import {
+  AlertCircle,
+  Award,
+  CheckCircle2,
+  Clock,
+  Lock,
+  Mail,
+  Phone,
+  ShieldCheck,
+  Sprout,
+  User,
+  UserCheck,
+  Users,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 
@@ -13,6 +26,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
 
   const [role, setRole] = useState(initialRole);
+  const [submittedExpert, setSubmittedExpert] = useState(null);
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -33,17 +47,64 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const user = await register({ ...form, role });
-      showToast(`Welcome to the Earthora Ecosystem, ${user.name}!`, 'success');
-      if (user.role === 'farmer') navigate('/dashboard/farmer', { replace: true });
-      else if (user.role === 'expert') navigate('/dashboard/expert', { replace: true });
-      else navigate('/dashboard/customer', { replace: true });
+      const res = await register({ ...form, role });
+      if (res.requiresApproval) {
+        setSubmittedExpert(res.user);
+        showToast('Expert registration submitted! Pending administrator approval.', 'info');
+      } else {
+        showToast(`Welcome to the Earthora Ecosystem, ${res.user.name}!`, 'success');
+        if (res.user.role === 'farmer') navigate('/dashboard/farmer', { replace: true });
+        else navigate('/dashboard/customer', { replace: true });
+      }
     } catch (err) {
       showToast(err.message || 'Registration failed', 'error');
     } finally {
       setLoading(false);
     }
   };
+
+  if (submittedExpert) {
+    return (
+      <div className="bg-earthora-ivory min-h-screen py-16 flex items-center justify-center px-4">
+        <div className="card-surface w-full max-w-lg border border-earthora-sand/80 p-8 shadow-xl text-center sm:p-10">
+          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+            <Clock className="h-8 w-8" />
+          </div>
+
+          <h2 className="mt-6 font-heading text-2xl font-extrabold text-earthora-forest sm:text-3xl">
+            Application Submitted for Administrator Review
+          </h2>
+          <p className="mt-2 text-xs text-earthora-muted">
+            Thank you, <strong className="text-earthora-forest">{submittedExpert.name}</strong>. Your Agriculture Expert registration has been registered and placed in the administrative verification queue.
+          </p>
+
+          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-left text-xs">
+            <div className="flex items-center gap-2 font-bold text-amber-900">
+              <ShieldCheck className="h-4 w-4 text-amber-700" />
+              Administrative Verification Process
+            </div>
+            <p className="mt-1 text-[11px] text-amber-800 leading-relaxed">
+              In accordance with Earthora Agronomic Standards, all consulting agronomists must be reviewed and accepted by a system administrator before login credentials are activated.
+            </p>
+            <ul className="mt-3 space-y-1.5 text-[11px] text-earthora-charcoal">
+              <li>• <strong>Account Email:</strong> {submittedExpert.email}</li>
+              <li>• <strong>Role:</strong> Agriculture Expert / Agronomist</li>
+              <li>• <strong>Status:</strong> <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">Pending Admin Approval</span></li>
+            </ul>
+          </div>
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <Link to="/login" className="btn-accent py-2.5 px-6 text-xs font-bold shadow-md shadow-earthora-mint/20">
+              Go to Sign In
+            </Link>
+            <Link to="/" className="btn-secondary py-2.5 px-6 text-xs font-bold">
+              Return to Homepage
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-earthora-ivory min-h-screen py-16 flex items-center justify-center px-4">
@@ -206,11 +267,19 @@ export default function RegisterPage() {
           )}
 
           {role === 'expert' && (
-            <div className="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/50 p-4">
-              <span className="text-xs font-bold text-blue-900 uppercase tracking-wider">
-                Agronomic Accreditation Profile
-              </span>
-              <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="h-4.5 w-4.5 text-amber-600 shrink-0 mt-0.5" />
+                <div>
+                  <span className="text-xs font-bold text-amber-950 uppercase tracking-wider block">
+                    Agriculture Expert Accreditation Notice
+                  </span>
+                  <p className="mt-0.5 text-[11px] text-amber-800 leading-relaxed">
+                    Agriculture Expert accounts require administrator review and approval. After registering, your credentials will be verified by an Earthora administrator before login access is activated.
+                  </p>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 pt-1">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Field of Study / Discipline *</label>
                   <input
