@@ -63,11 +63,21 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="lg:col-span-5">
-              <img
-                src="/assets/img/home-1/about/01.jpg"
-                alt="Earthora Farmland"
-                className="aspect-[4/3] w-full rounded-2xl border border-earthora-sand object-cover shadow-elevated"
-              />
+              <div className="card-surface overflow-hidden rounded-3xl border-2 border-earthora-forest/10 p-3 shadow-elevated">
+                <img
+                  src="/assets/img/about/earthora-farm-aerial.jpg"
+                  alt="Earthora Farmland"
+                  className="aspect-[4/3] w-full rounded-2xl border border-earthora-sand/80 object-cover shadow-sm transition-transform duration-500 hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/img/hero/crops-hero.jpg';
+                  }}
+                />
+                <div className="mt-3 flex items-center justify-between text-xs px-2 text-earthora-muted">
+                  <span className="font-bold text-earthora-forest">Sonoma Pilot Research Acreage</span>
+                  <span className="text-earthora-mint font-semibold">45 Bio-Intensive Acres</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -95,6 +105,63 @@ export default function AboutPage() {
               </div>
             );
           })}
+        </div>
+      </section>
+
+      {/* Research & Field Infrastructure Gallery */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="Living Laboratories"
+          title="Where Science Meets The Soil"
+          subtitle="From rhizospheric microbiology testing to commercial IoT canopy deployments."
+        />
+
+        <div className="mt-10 grid gap-6 md:grid-cols-3">
+          <div className="card-surface overflow-hidden border border-earthora-sand/80 p-0 shadow-md">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <img
+                src="/assets/img/about/soil-research-lab.jpg"
+                alt="Soil Microbiology Lab"
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+            <div className="p-5">
+              <span className="text-[10px] font-bold text-earthora-olive uppercase tracking-wider">Research Hub</span>
+              <h4 className="mt-1 font-heading text-base font-bold text-earthora-forest">Rhizosphere Chemistry Lab</h4>
+              <p className="mt-1 text-xs text-earthora-muted">Continuous microbial plating, mycorrhizal spore counts, and CEC cation balance testing.</p>
+            </div>
+          </div>
+
+          <div className="card-surface overflow-hidden border border-earthora-sand/80 p-0 shadow-md">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <img
+                src="/assets/img/about/agtech-field-trial.jpg"
+                alt="Agtech Field Trials"
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+            <div className="p-5">
+              <span className="text-[10px] font-bold text-earthora-mint uppercase tracking-wider">Field Trials</span>
+              <h4 className="mt-1 font-heading text-base font-bold text-earthora-forest">Autonomous Canopy Scanning</h4>
+              <p className="mt-1 text-xs text-earthora-muted">Multispectral drone flights mapping NDVI index benchmarks across commercial orchard canopies.</p>
+            </div>
+          </div>
+
+          <div className="card-surface overflow-hidden border border-earthora-sand/80 p-0 shadow-md">
+            <div className="relative aspect-[16/10] overflow-hidden">
+              <img
+                src="/assets/img/farmers/farm-green-valley.jpg"
+                alt="Partner Regenerative Farm"
+                className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+            <div className="p-5">
+              <span className="text-[10px] font-bold text-emerald-700 uppercase tracking-wider">Partner Farmland</span>
+              <h4 className="mt-1 font-heading text-base font-bold text-earthora-forest">Certified Bio-Intensive Acreage</h4>
+              <p className="mt-1 text-xs text-earthora-muted">Over 200+ verified acres across California and Oregon practicing zero synthetic chemical inputs.</p>
+            </div>
+          </div>
         </div>
       </section>
 

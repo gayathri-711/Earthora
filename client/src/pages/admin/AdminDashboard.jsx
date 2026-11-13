@@ -553,10 +553,23 @@ export default function AdminDashboard() {
                     return (
                       <tr key={e._id} className="hover:bg-earthora-sand/15 transition-colors">
                         <td className="px-4 py-3.5">
-                          <div className="font-bold text-earthora-forest">{e.name}</div>
-                          <div className="text-[11px] text-earthora-muted">{e.title}</div>
-                          <div className="text-[10px] text-earthora-olive mt-0.5">
-                            {e.user?.email || 'Registered Expert'}
+                          <div className="flex items-center gap-3">
+                            <img
+                              src={e.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+                              alt={e.name}
+                              className="h-10 w-10 shrink-0 rounded-xl object-cover border border-earthora-sand/80 shadow-xs"
+                              onError={(err) => {
+                                err.currentTarget.onerror = null;
+                                err.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                              }}
+                            />
+                            <div>
+                              <div className="font-bold text-earthora-forest">{e.name}</div>
+                              <div className="text-[11px] text-earthora-muted">{e.title}</div>
+                              <div className="text-[10px] text-earthora-olive mt-0.5">
+                                {e.user?.email || 'Registered Expert'}
+                              </div>
+                            </div>
                           </div>
                         </td>
                         <td className="px-4 py-3.5">
@@ -701,6 +714,40 @@ export default function AdminDashboard() {
                 </button>
               </div>
             </form>
+          </div>
+
+          {/* Published Articles Roster */}
+          <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm space-y-4">
+            <h4 className="font-heading text-base font-bold text-earthora-forest">Published Field Guides &amp; Whitepapers</h4>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {articles.map((art) => (
+                <div key={art._id} className="rounded-2xl border border-earthora-sand/70 overflow-hidden bg-white shadow-xs flex flex-col">
+                  <div className="relative aspect-[16/10] overflow-hidden bg-earthora-forest">
+                    <img
+                      src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
+                      alt={art.title}
+                      className="h-full w-full object-cover"
+                      onError={(err) => {
+                        err.currentTarget.onerror = null;
+                        err.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
+                      }}
+                    />
+                    <div className="absolute top-2 left-2">
+                      <span className="rounded-md bg-earthora-forest/90 px-2 py-0.5 text-[10px] font-bold text-earthora-mint">
+                        {art.category}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="p-4 flex-1 flex flex-col justify-between">
+                    <div>
+                      <h5 className="font-heading text-xs font-bold text-earthora-forest line-clamp-2">{art.title}</h5>
+                      <p className="text-[11px] text-earthora-muted mt-1">Author: {art.author}</p>
+                    </div>
+                    <span className="text-[10px] text-earthora-olive font-semibold mt-2 block">Status: Published · Live</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       )}

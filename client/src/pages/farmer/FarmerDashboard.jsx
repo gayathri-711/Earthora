@@ -60,6 +60,8 @@ export default function FarmerDashboard() {
     soilType: 'Alluvial Clay Loam',
     irrigationType: 'Solar-Powered Drip & Rain Swales',
     specialty: 'Heirloom Brassicas & Bio-Intensive Roots',
+    image: '/assets/img/farmers/farmer-elena.jpg',
+    coverImage: '/assets/img/farmers/farm-green-valley.jpg',
     bio: 'Pioneering no-till biological beds and micro-catchment water conservation across 45 acres of certified bio-intensive farmland.',
     certifications: 'USDA Organic, Regenerative Organic Certified, Earthora Verified',
   });
@@ -478,9 +480,37 @@ export default function FarmerDashboard() {
 
       {/* Tab: Profile */}
       {activeTab === 'profile' && (
-        <div className="card-surface p-6 sm:p-8 border border-earthora-sand/80 shadow-sm max-w-3xl">
-          <h3 className="font-heading text-lg font-bold text-earthora-forest">Farm Profile &amp; Soil Stewardship</h3>
-          <p className="text-xs text-earthora-muted">Update your public producer dossier presented across the Earthora Ecosystem.</p>
+        <div className="card-surface overflow-hidden border border-earthora-sand/80 shadow-sm max-w-3xl p-0">
+          <div className="relative h-44 w-full overflow-hidden bg-earthora-forest">
+            <img
+              src={farmProfile.coverImage || '/assets/img/farmers/farm-green-valley.jpg'}
+              alt="Farm Cover"
+              className="h-full w-full object-cover"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/assets/img/farmers/farm-green-valley.jpg';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-6 flex items-center gap-4 text-white">
+              <img
+                src={farmProfile.image || '/assets/img/farmers/farmer-elena.jpg'}
+                alt="Farmer Avatar"
+                className="h-16 w-16 rounded-2xl border-2 border-white object-cover shadow-lg"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/assets/img/farmers/farmer-elena.jpg';
+                }}
+              />
+              <div>
+                <h3 className="font-heading text-xl font-bold text-white leading-tight">{farmProfile.farmName}</h3>
+                <p className="text-xs text-earthora-mint font-medium">{farmProfile.location} · {farmProfile.totalAcres} Acres</p>
+              </div>
+            </div>
+          </div>
+          <div className="p-6 sm:p-8">
+            <h4 className="font-heading text-base font-bold text-earthora-forest">Farm Profile &amp; Soil Stewardship</h4>
+            <p className="text-xs text-earthora-muted">Update your public producer dossier presented across the Earthora Ecosystem.</p>
 
           <form onSubmit={handleSaveFarmProfile} className="mt-6 space-y-4">
             <div className="grid gap-3 sm:grid-cols-2">
@@ -563,7 +593,8 @@ export default function FarmerDashboard() {
             </div>
           </form>
         </div>
-      )}
+      </div>
+    )}
 
       {/* New Crop Modal */}
       {newCropModal && (

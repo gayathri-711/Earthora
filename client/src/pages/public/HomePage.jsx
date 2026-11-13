@@ -374,8 +374,16 @@ export default function HomePage() {
 
               <div className="mt-6 space-y-3">
                 {EARTHORA_FARMERS.slice(0, 2).map((farmer) => (
-                  <div key={farmer._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3">
-                    <img src={farmer.image} alt={farmer.name} className="h-12 w-12 rounded-lg object-cover" />
+                  <div key={farmer._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3 bg-white/50">
+                    <img
+                      src={farmer.image}
+                      alt={farmer.name}
+                      className="h-12 w-12 rounded-xl object-cover shadow-xs border border-earthora-sand/80"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/img/farmers/farmer-elena.jpg';
+                      }}
+                    />
                     <div>
                       <h4 className="font-heading text-sm font-bold text-earthora-forest">{farmer.farmName}</h4>
                       <p className="text-xs text-earthora-muted">{farmer.location} · {farmer.totalAcres} acres</p>
@@ -409,8 +417,16 @@ export default function HomePage() {
 
               <div className="mt-6 space-y-3">
                 {EARTHORA_EXPERTS.slice(0, 2).map((exp) => (
-                  <div key={exp._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3">
-                    <img src={exp.image} alt={exp.name} className="h-12 w-12 rounded-lg object-cover" />
+                  <div key={exp._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3 bg-white/50">
+                    <img
+                      src={exp.image}
+                      alt={exp.name}
+                      className="h-12 w-12 rounded-xl object-cover shadow-xs border border-earthora-sand/80"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                      }}
+                    />
                     <div>
                       <h4 className="font-heading text-sm font-bold text-earthora-forest">{exp.name}</h4>
                       <p className="text-xs text-earthora-muted">{exp.title} · {exp.rating} ★</p>
@@ -444,7 +460,15 @@ export default function HomePage() {
           {articles.map((art) => (
             <article key={art._id} className="card-surface flex flex-col overflow-hidden hover:shadow-elevated">
               <Link to={`/knowledge-hub/${art.slug}`}>
-                <img src={art.image} alt={art.title} className="aspect-[16/10] w-full object-cover" />
+                <img
+                  src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
+                  alt={art.title}
+                  className="aspect-[16/10] w-full object-cover transition-transform duration-500 hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
+                  }}
+                />
               </Link>
               <div className="flex flex-1 flex-col p-6">
                 <div className="flex items-center gap-2 text-xs text-earthora-olive font-bold">

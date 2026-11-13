@@ -97,7 +97,7 @@ export async function seedIfEmpty() {
       experience: '14 Years',
       certifications: ['USDA Organic', 'Regenerative Organic Certified', 'Earthora Verified'],
       bio: 'Practicing no-till soil stewardship and solar drip irrigation across 45 acres of bio-intensive vegetable rows.',
-      image: '/assets/img/home-3/team/01.jpg',
+      image: '/assets/img/farmers/farmer-elena.jpg',
       verified: true,
     },
     {
@@ -115,7 +115,7 @@ export async function seedIfEmpty() {
       experience: '19 Years',
       certifications: ['USDA Organic', 'Bee Friendly Farming', 'Earthora Verified'],
       bio: 'Cultivating pollinator-protected mountain orchards and stone-milled ancient grains with zero chemical fungicides.',
-      image: '/assets/img/home-3/team/02.jpg',
+      image: '/assets/img/farmers/farmer-marcus.jpg',
       verified: true,
     },
   ]);
@@ -135,7 +135,7 @@ export async function seedIfEmpty() {
       reviewCount: 42,
       bio: 'Advising commercial organic growers globally on mycorrhizal inoculation, biochar stabilization, and regenerative NPK balancing.',
       specializations: ['Soil pH Optimization', 'Microbial Inoculation', 'Cover Crop Cycling'],
-      image: '/assets/img/home-3/team/03.jpg',
+      image: '/assets/img/experts/expert-aris-thorne.jpg',
       verified: true,
       approvalStatus: 'approved',
     },
@@ -152,7 +152,7 @@ export async function seedIfEmpty() {
       reviewCount: 31,
       bio: 'Specializing in IoT automated solenoid valves, evapotranspiration algorithms, and zero-runoff sub-surface drip design.',
       specializations: ['Precision Drip Automation', 'Salinity Management', 'IoT Soil Probes'],
-      image: '/assets/img/home-3/team/04.jpg',
+      image: '/assets/img/experts/expert-sofia-almansoor.jpg',
       verified: true,
       approvalStatus: 'approved',
     },
@@ -519,7 +519,7 @@ export async function seedIfEmpty() {
       author: 'Sofia Al-Mansoor',
       authorTitle: 'Precision Irrigation Engineer',
       readTime: '6 min read',
-      image: '/assets/img/home-4/news-1.jpg',
+      image: '/assets/img/knowledge/precision-drip-irrigation.jpg',
       tags: ['Water', 'IoT Sensors', 'Efficiency'],
       excerpt:
         'A comprehensive field trial across 12 regenerative farms demonstrates how automated root-zone moisture feedback prevents overwatering.',
@@ -533,7 +533,7 @@ export async function seedIfEmpty() {
       author: 'Dr. Aris Thorne',
       authorTitle: 'Principal Soil Microbiologist',
       readTime: '5 min read',
-      image: '/assets/img/home-4/news-2.jpg',
+      image: '/assets/img/knowledge/living-soil-mycorrhizae.jpg',
       tags: ['Soil Microbiology', 'Regenerative', 'Cover Crops'],
       excerpt:
         'Synthetic nitrogen disrupts the symbiotic fungal web that feeds plants naturally. Learn how multi-species cover crops rebuild living topsoil.',
@@ -547,7 +547,7 @@ export async function seedIfEmpty() {
       author: 'Elena Vance',
       authorTitle: 'Regenerative Farmer & Tech Lead',
       readTime: '4 min read',
-      image: '/assets/img/home-4/news-3.jpg',
+      image: '/assets/img/knowledge/drone-ndvi-mapping.jpg',
       tags: ['Drones', 'NDVI', 'Precision Agriculture'],
       excerpt:
         'How weekly normalized difference vegetation index flights pinpoint micro-deficiencies 10 days before leaf discoloration manifests.',

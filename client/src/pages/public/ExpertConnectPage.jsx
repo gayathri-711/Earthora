@@ -166,35 +166,89 @@ export default function ExpertConnectPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-earthora-forest via-earthora-forest/90 to-transparent" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
-              <Users className="h-4.5 w-4.5" />
-              EARTHORA AGRONOMY COUNCIL
-            </div>
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
-              Expert Connect &amp; Advisory Suite
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">
-              Book one-on-one virtual field consultations with accredited soil microbiologists, precision
-              irrigation engineers, and organic pest specialists. Explore our peer-reviewed grower Q&amp;A.
-            </p>
-          </div>
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
+                <Users className="h-4.5 w-4.5" />
+                EARTHORA AGRONOMY COUNCIL
+              </div>
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
+                Expert Connect &amp; Advisory Suite
+              </h1>
+              <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">
+                Book one-on-one virtual field consultations with accredited soil microbiologists, precision
+                irrigation engineers, and organic pest specialists. Explore our peer-reviewed grower Q&amp;A.
+              </p>
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <button
-              onClick={() => handleOpenBooking(experts[0])}
-              className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
-            >
-              <Video className="h-5 w-5" />
-              Book Agronomy Consultation
-            </button>
-            <button
-              onClick={() => setAskModalOpen(true)}
-              className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-            >
-              <HelpCircle className="h-5 w-5 text-earthora-mint" />
-              Ask a Community Question
-            </button>
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={() => handleOpenBooking(experts[0])}
+                  className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
+                >
+                  <Video className="h-5 w-5" />
+                  Book Agronomy Consultation
+                </button>
+                <button
+                  onClick={() => setAskModalOpen(true)}
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                >
+                  <HelpCircle className="h-5 w-5 text-earthora-mint" />
+                  Ask a Community Question
+                </button>
+              </div>
+
+              {/* Quick Advisory Stats */}
+              <div className="mt-10 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:grid-cols-4">
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-white">4</div>
+                  <div className="text-[11px] text-earthora-sand/75">Accredited Ph.Ds</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-earthora-mint">100+ hrs</div>
+                  <div className="text-[11px] text-earthora-sand/75">Live Field Telemetry</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-earthora-gold">4.95 ★</div>
+                  <div className="text-[11px] text-earthora-sand/75">Grower Satisfaction</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-white">98%</div>
+                  <div className="text-[11px] text-earthora-sand/75">Yield Improvement</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Featured Specialist Card */}
+            <div className="lg:col-span-5">
+              <div className="card-surface overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur-md text-white">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-2xl">
+                  <img
+                    src={experts[0]?.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+                    alt="Featured Specialist"
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/70 px-3 py-1 text-xs font-bold text-emerald-300 backdrop-blur-md">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Available for Booking Today
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-emerald-200">Advisory Lead</p>
+                      <h4 className="font-heading text-xl font-bold text-white">{experts[0]?.name || 'Dr. Aris Thorne'}</h4>
+                      <p className="text-xs text-white/80">{experts[0]?.title} · 16 yrs exp</p>
+                    </div>
+                    <button
+                      onClick={() => handleOpenBooking(experts[0])}
+                      className="rounded-xl bg-earthora-mint px-3.5 py-1.5 text-xs font-bold text-earthora-forest shadow-md transition-all hover:bg-white"
+                    >
+                      Book (${experts[0]?.consultationFee})
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -215,11 +269,17 @@ export default function ExpertConnectPage() {
             >
               <div className="p-6">
                 <div className="flex items-start gap-4">
-                  <img
-                    src={expert.image}
-                    alt={expert.name}
-                    className="h-16 w-16 rounded-2xl border-2 border-white object-cover shadow-md"
-                  />
+                  <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border-2 border-white shadow-md bg-earthora-sand/30">
+                    <img
+                      src={expert.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+                      alt={expert.name}
+                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                      }}
+                    />
+                  </div>
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
                       <h3 className="font-heading text-lg font-bold text-earthora-forest">
@@ -364,9 +424,13 @@ export default function ExpertConnectPage() {
 
             <div className="flex items-center gap-3">
               <img
-                src={selectedExpert.image}
+                src={selectedExpert.image || '/assets/img/experts/expert-aris-thorne.jpg'}
                 alt={selectedExpert.name}
-                className="h-12 w-12 rounded-2xl object-cover shadow"
+                className="h-14 w-14 rounded-2xl object-cover shadow border border-earthora-sand"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                }}
               />
               <div>
                 <h3 className="font-heading text-lg font-bold text-earthora-forest">

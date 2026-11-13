@@ -71,6 +71,7 @@ export default function ExpertDashboard() {
     organization: 'Earthora Agronomy Advisory',
     experienceYears: 16,
     fee: 85,
+    image: '/assets/img/experts/expert-aris-thorne.jpg',
     specializations: 'Soil pH Optimization, Microbial Inoculation, Cover Crop Cycling',
   });
 
@@ -248,7 +249,25 @@ export default function ExpertDashboard() {
       {/* Advisory Profile Tab */}
       {activeTab === 'profile' && (
         <div className="card-surface p-6 sm:p-8 border border-earthora-sand/80 shadow-sm max-w-2xl">
-          <h3 className="font-heading text-lg font-bold text-earthora-forest">Advisory Accreditation &amp; Rates</h3>
+          <div className="flex items-center gap-4 pb-6 border-b border-earthora-sand/60">
+            <img
+              src={expertProfile.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+              alt={expertProfile.name}
+              className="h-16 w-16 rounded-2xl object-cover border-2 border-white shadow-md"
+              onError={(e) => {
+                e.currentTarget.onerror = null;
+                e.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+              }}
+            />
+            <div>
+              <h3 className="font-heading text-lg font-bold text-earthora-forest">{expertProfile.name}</h3>
+              <p className="text-xs text-earthora-muted">{expertProfile.title} · {expertProfile.organization}</p>
+              <span className="inline-flex items-center gap-1 mt-1 text-[11px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md">
+                <CheckCircle2 className="h-3 w-3" /> Accredited Advisory Member
+              </span>
+            </div>
+          </div>
+          <h4 className="font-heading text-base font-bold text-earthora-forest mt-6">Advisory Accreditation &amp; Rates</h4>
           <p className="text-xs text-earthora-muted">Manage your public credential dossier visible to growers in Expert Connect.</p>
 
           <form

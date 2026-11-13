@@ -91,8 +91,9 @@ export default function SoilInsightsPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-earthora-forest via-earthora-forest/90 to-transparent" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-3xl">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
                 <Sprout className="h-4.5 w-4.5" />
                 EARTHORA LIVING SOIL LABORATORY
@@ -104,34 +105,79 @@ export default function SoilInsightsPage() {
                 Measure chemical and biological soil health: active nitrogen, phosphorus, potassium,
                 microbiome fungal-to-bacterial ratios, pH equilibrium, and organic carbon drawdown.
               </p>
+
+              <div className="mt-8 flex flex-wrap gap-4">
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
+                >
+                  <Plus className="h-5 w-5" />
+                  Log Soil Test Sample
+                </button>
+              </div>
+
+              {/* Quick Metrics */}
+              <div className="mt-10 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-md sm:grid-cols-4">
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-white">6.6</div>
+                  <div className="text-[11px] text-earthora-sand/75">Avg Monitored pH</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-earthora-mint">3.6%</div>
+                  <div className="text-[11px] text-earthora-sand/75">Topsoil Organic Carbon</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-earthora-gold">94%</div>
+                  <div className="text-[11px] text-earthora-sand/75">NPK Balanced Plots</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl font-extrabold text-white">1.2 : 1</div>
+                  <div className="text-[11px] text-earthora-sand/75">Fungal to Bacterial</div>
+                </div>
+              </div>
             </div>
 
-            <button
-              onClick={() => setShowAddModal(true)}
-              className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
-            >
-              <Plus className="h-5 w-5" />
-              Log Soil Test Sample
-            </button>
-          </div>
+            {/* Right Featured Lab Card */}
+            <div className="lg:col-span-5">
+              <div className="card-surface overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur-md text-white">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+                  <img
+                    src="/assets/img/soil/soil-lab-testing.jpg"
+                    alt="Active Spectrometry Assay"
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/70 px-3 py-1 text-xs font-bold text-emerald-300 backdrop-blur-md">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Live Soil Spectrometry Feed
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-emerald-200">Active Field Benchmark</p>
+                      <h4 className="font-heading text-lg font-bold text-white">Alluvial Clay Loam (ST-2026-042)</h4>
+                      <p className="text-[11px] text-white/80">North Plot 02 · Optimal Mycorrhizae</p>
+                    </div>
+                    <span className="rounded-xl border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-earthora-mint backdrop-blur-md">
+                      pH 6.8
+                    </span>
+                  </div>
+                </div>
 
-          {/* Quick Metrics */}
-          <div className="mt-12 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md sm:grid-cols-4">
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-white">6.6</div>
-              <div className="text-xs text-earthora-sand/75">Avg Monitored pH</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-earthora-mint">3.6%</div>
-              <div className="text-xs text-earthora-sand/75">Topsoil Organic Carbon</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-earthora-gold">94%</div>
-              <div className="text-xs text-earthora-sand/75">NPK Balanced Plots</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-white">1.2 : 1</div>
-              <div className="text-xs text-earthora-sand/75">Fungal to Bacterial Ratio</div>
+                <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="rounded-xl bg-white/5 p-2">
+                    <span className="text-[10px] text-earthora-sand/75 block">Nitrogen</span>
+                    <strong className="text-white text-xs">152 kg/ha</strong>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-2">
+                    <span className="text-[10px] text-earthora-sand/75 block">Phosphorus</span>
+                    <strong className="text-earthora-mint text-xs">51 mg/kg</strong>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-2">
+                    <span className="text-[10px] text-earthora-sand/75 block">Potassium</span>
+                    <strong className="text-earthora-gold text-xs">220 mg/kg</strong>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>

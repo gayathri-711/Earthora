@@ -21,24 +21,28 @@ const SMART_FEATURES = [
     icon: Radio,
     title: 'LoRaWAN Field Gateways',
     badge: 'Hardware Tier 1',
+    image: '/assets/img/smart-agri/soil-telemetry-probe.jpg',
     description: 'Ultra-long-range (up to 15km) low-power telemetry transmitting soil moisture, temperature, and electrical conductivity every 15 minutes.',
   },
   {
     icon: Satellite,
     title: 'Satellite NDVI Crop Scouting',
     badge: 'Remote Sensing',
+    image: '/assets/img/smart-agri/drone-remote-sensing.jpg',
     description: 'Weekly multispectral satellite passes flagging chlorophyll loss and moisture stress 7–10 days before leaf discoloration manifests.',
   },
   {
     icon: Droplets,
     title: 'Automated Solar Solenoid Valves',
     badge: 'Water Automation',
+    image: '/assets/img/smart-agri/automated-drip-actuator.jpg',
     description: 'Cloud-synced valves that trigger micro-drip cycles based on real-time root-zone water potential and regional evapotranspiration data.',
   },
   {
     icon: Database,
     title: 'AI Yield & Phenology Modeling',
     badge: 'Data Science',
+    image: '/assets/img/smart-agri/climate-weather-radar.jpg',
     description: 'Predictive algorithms trained on regional soil types and weather history calculating exact harvest maturity dates and bin estimates.',
   },
 ];
@@ -76,9 +80,13 @@ export default function SmartAgriculturePage() {
             <div className="lg:col-span-5">
               <div className="card-surface relative overflow-hidden border-2 border-earthora-forest/10 p-4 shadow-elevated">
                 <img
-                  src="/assets/img/home-3/service/01.jpg"
+                  src="/assets/img/smart-agri/smart-agtech-ecosystem.jpg"
                   alt="Precision Smart Agriculture"
                   className="aspect-[4/3] w-full rounded-xl object-cover"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/img/hero/smart-agri-hero.jpg';
+                  }}
                 />
                 <div className="mt-4 rounded-xl bg-earthora-forest p-4 text-white">
                   <div className="flex items-center justify-between text-xs">
@@ -108,13 +116,23 @@ export default function SmartAgriculturePage() {
           {SMART_FEATURES.map((item) => {
             const Icon = item.icon;
             return (
-              <div key={item.title} className="card-surface flex flex-col justify-between p-6 hover:shadow-elevated">
-                <div>
-                  <span className="badge-tag bg-earthora-beige text-[11px] font-bold text-earthora-forest mb-4">
-                    {item.badge}
-                  </span>
-                  <div className="mb-3 inline-flex rounded-xl bg-earthora-mint/20 p-3 text-earthora-forest">
-                    <Icon className="h-6 w-6" />
+              <div key={item.title} className="card-surface flex flex-col justify-between overflow-hidden border border-earthora-sand/80 p-0 hover:shadow-elevated transition-all">
+                <div className="relative aspect-[16/10] w-full overflow-hidden bg-earthora-forest">
+                  <img
+                    src={item.image}
+                    alt={item.title}
+                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                  />
+                  <div className="absolute top-3 left-3">
+                    <span className="badge-tag bg-earthora-forest/90 text-[10px] font-bold text-earthora-mint backdrop-blur-sm">
+                      {item.badge}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <div className="mb-3 inline-flex rounded-xl bg-earthora-mint/20 p-2.5 text-earthora-forest">
+                    <Icon className="h-5 w-5" />
                   </div>
                   <h3 className="font-heading text-lg font-bold text-earthora-forest">{item.title}</h3>
                   <p className="mt-2 text-xs leading-relaxed text-earthora-muted">{item.description}</p>

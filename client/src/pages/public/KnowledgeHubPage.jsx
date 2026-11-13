@@ -59,31 +59,79 @@ export default function KnowledgeHubPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-earthora-forest via-earthora-forest/90 to-transparent" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-3xl">
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
-              <BookOpen className="h-4.5 w-4.5" />
-              EARTHORA AGRONOMIC REPOSITORY
-            </div>
-            <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
-              Knowledge Hub &amp; Field Research
-            </h1>
-            <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">
-              Peer-reviewed technical guides, precision IoT installation benchmarks, living soil
-              case studies, and organic yield optimization whitepapers.
-            </p>
-          </div>
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7">
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
+                <BookOpen className="h-4.5 w-4.5" />
+                EARTHORA AGRONOMIC REPOSITORY
+              </div>
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight text-white leading-[1.08]">
+                Knowledge Hub &amp; Field Research
+              </h1>
+              <p className="mt-4 text-base leading-relaxed text-earthora-sand/90 sm:text-lg">
+                Peer-reviewed technical guides, precision IoT installation benchmarks, living soil
+                case studies, and organic yield optimization whitepapers.
+              </p>
 
-          {/* Search Box in Hero */}
-          <div className="mt-8 max-w-xl">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-earthora-muted" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search articles on mycorrhizae, drip telemetry, NDVI drones..."
-                className="w-full rounded-2xl border border-white/20 bg-white/95 py-3.5 pl-12 pr-4 text-xs font-medium text-earthora-charcoal placeholder-earthora-muted shadow-xl focus:outline-none focus:ring-2 focus:ring-earthora-mint"
-              />
+              {/* Search Box in Hero */}
+              <div className="mt-8 max-w-xl">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-earthora-muted" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search articles on mycorrhizae, drip telemetry, NDVI drones..."
+                    className="w-full rounded-2xl border border-white/20 bg-white/95 py-3.5 pl-12 pr-4 text-xs font-medium text-earthora-charcoal placeholder-earthora-muted shadow-xl focus:outline-none focus:ring-2 focus:ring-earthora-mint"
+                  />
+                </div>
+              </div>
+
+              {/* Research Metrics */}
+              <div className="mt-8 flex flex-wrap gap-4 text-xs text-earthora-sand/90">
+                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-1.5 border border-white/10">
+                  <Sparkles className="h-4 w-4 text-earthora-gold" />
+                  <span>Peer-Reviewed Field Trials</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-1.5 border border-white/10">
+                  <Clock className="h-4 w-4 text-earthora-mint" />
+                  <span>Updated Weekly</span>
+                </div>
+                <div className="flex items-center gap-2 rounded-xl bg-white/5 px-3 py-1.5 border border-white/10">
+                  <Tag className="h-4 w-4 text-emerald-300" />
+                  <span>Open Access Agronomy</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Featured Whitepaper Card */}
+            <div className="lg:col-span-5">
+              <div className="card-surface overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-4 shadow-2xl backdrop-blur-md text-white">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+                  <img
+                    src="/assets/img/knowledge/precision-drip-irrigation.jpg"
+                    alt="Featured Agronomy Whitepaper"
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/70 px-3 py-1 text-xs font-bold text-emerald-300 backdrop-blur-md">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Editor’s Pick · 6 min read
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3">
+                    <span className="text-[10px] font-bold text-earthora-mint uppercase tracking-wider">
+                      Smart Irrigation Benchmark
+                    </span>
+                    <h4 className="mt-1 font-heading text-lg font-bold text-white leading-snug">
+                      How Precision Drip &amp; LoRaWAN Sensors Cut Agricultural Water Usage by 42%
+                    </h4>
+                    <p className="mt-1 text-[11px] text-white/80 line-clamp-1">
+                      By Sofia Al-Mansoor · Precision Irrigation Engineer
+                    </p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -117,9 +165,13 @@ export default function KnowledgeHubPage() {
             >
               <div className="relative h-52 w-full overflow-hidden bg-earthora-forest">
                 <img
-                  src={art.image}
+                  src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
                   alt={art.title}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
+                  }}
                 />
                 <div className="absolute top-3 left-3">
                   <span className="rounded-full bg-earthora-forest/90 px-3 py-1 text-[11px] font-bold text-earthora-mint backdrop-blur-sm">

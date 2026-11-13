@@ -218,9 +218,13 @@ export default function FarmerHubPage() {
             >
               <div className="relative h-48 w-full overflow-hidden bg-earthora-forest">
                 <img
-                  src={farmer.coverImage}
+                  src={farmer.coverImage || '/assets/img/farmers/farm-green-valley.jpg'}
                   alt={farmer.farmName}
                   className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = '/assets/img/farmers/farm-green-valley.jpg';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-earthora-forest/90 via-transparent to-transparent" />
                 <div className="absolute bottom-3 left-4 right-4 flex items-center justify-between text-white">
@@ -237,9 +241,13 @@ export default function FarmerHubPage() {
               <div className="p-6">
                 <div className="flex items-start gap-4">
                   <img
-                    src={farmer.image}
+                    src={farmer.image || '/assets/img/farmers/farmer-elena.jpg'}
                     alt={farmer.name}
                     className="h-14 w-14 rounded-2xl border-2 border-white object-cover shadow-md"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/assets/img/farmers/farmer-elena.jpg';
+                    }}
                   />
                   <div className="flex-1">
                     <div className="flex items-center justify-between">
@@ -405,9 +413,13 @@ export default function FarmerHubPage() {
 
             <div className="flex items-center gap-4">
               <img
-                src={activeFarmer.image}
+                src={activeFarmer.image || '/assets/img/farmers/farmer-elena.jpg'}
                 alt={activeFarmer.name}
                 className="h-16 w-16 rounded-2xl object-cover shadow"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/assets/img/farmers/farmer-elena.jpg';
+                }}
               />
               <div>
                 <h3 className="font-heading text-xl font-bold text-earthora-forest">
