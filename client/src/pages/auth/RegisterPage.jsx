@@ -39,7 +39,7 @@ export default function RegisterPage() {
     fieldOfStudy: '',
     organization: '',
     experienceYears: '',
-    consultationFee: 75,
+    consultationFee: 1500,
   });
   const [loading, setLoading] = useState(false);
 
@@ -314,7 +314,7 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee ($/session)</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹/session)</label>
                   <input
                     type="number"
                     value={form.consultationFee}

@@ -83,11 +83,11 @@ export default function ProductCard({ product }) {
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-lg font-black text-earthora-forest">
-                ${Number(product.price).toFixed(2)}
+                ₹{Number(product.price).toFixed(2)}
               </span>
               {product.compareAtPrice && (
                 <span className="text-xs text-earthora-muted line-through">
-                  ${Number(product.compareAtPrice).toFixed(2)}
+                  ₹{Number(product.compareAtPrice).toFixed(2)}
                 </span>
               )}
             </div>

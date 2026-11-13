@@ -99,7 +99,7 @@ export default function CartPage() {
                         {name}
                       </Link>
                       <p className="text-xs text-earthora-muted mt-0.5">
-                        ${price.toFixed(2)} / {product.unit || 'unit'}
+                        ₹{price.toFixed(2)} / {product.unit || 'unit'}
                       </p>
                       {product.supplierName && (
                         <p className="text-[11px] text-earthora-olive font-medium mt-0.5">
@@ -134,8 +134,8 @@ export default function CartPage() {
                     </div>
 
                     {/* Line Total */}
-                    <span className="w-20 text-right font-heading text-base font-extrabold text-earthora-forest">
-                      ${lineTotal}
+                    <span className="w-24 text-right font-heading text-base font-extrabold text-earthora-forest">
+                      ₹{lineTotal}
                     </span>
 
                     {/* Remove Item */}
@@ -170,13 +170,13 @@ export default function CartPage() {
               <dl className="mt-4 space-y-3 text-xs text-earthora-charcoal">
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Subtotal</dt>
-                  <dd className="font-semibold">${subtotal.toFixed(2)}</dd>
+                  <dd className="font-semibold">₹{subtotal.toFixed(2)}</dd>
                 </div>
 
                 {coupon && (
                   <div className="flex justify-between text-emerald-700 font-semibold">
                     <dt>Discount ({coupon.code})</dt>
-                    <dd>-${discount.toFixed(2)}</dd>
+                    <dd>-₹{discount.toFixed(2)}</dd>
                   </div>
                 )}
 
@@ -184,21 +184,21 @@ export default function CartPage() {
                   <dt className="text-earthora-muted">Cold-Chain Eco-Shipping</dt>
                   <dd className="font-semibold">
                     {shipping === 0 ? (
-                      <span className="text-emerald-700 font-bold">Free (Over $50)</span>
+                      <span className="text-emerald-700 font-bold">Free (Over ₹999)</span>
                     ) : (
-                      `$${shipping.toFixed(2)}`
+                      `₹${shipping.toFixed(2)}`
                     )}
                   </dd>
                 </div>
 
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Estimated Tax (5%)</dt>
-                  <dd className="font-semibold">${tax.toFixed(2)}</dd>
+                  <dd className="font-semibold">₹{tax.toFixed(2)}</dd>
                 </div>
 
                 <div className="border-t border-earthora-sand pt-3 flex justify-between font-heading text-base font-extrabold text-earthora-forest">
                   <dt>Total Amount</dt>
-                  <dd>${total.toFixed(2)}</dd>
+                  <dd>₹{total.toFixed(2)}</dd>
                 </div>
               </dl>
 

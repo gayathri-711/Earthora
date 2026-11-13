@@ -202,11 +202,11 @@ export default function ProductDetailsPage() {
 
             <div className="flex items-baseline gap-3">
               <span className="font-heading text-3xl font-extrabold text-earthora-forest">
-                ${Number(product.price).toFixed(2)}
+                ₹{Number(product.price).toFixed(2)}
               </span>
               {product.compareAtPrice && (
                 <span className="text-sm text-earthora-muted line-through">
-                  ${Number(product.compareAtPrice).toFixed(2)}
+                  ₹{Number(product.compareAtPrice).toFixed(2)}
                 </span>
               )}
               <span className="text-xs text-earthora-muted">/ {product.unit || 'unit'}</span>

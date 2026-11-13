@@ -207,7 +207,7 @@ export function CartProvider({ children }) {
       0
     );
     const discount = coupon ? (subtotal * coupon.percent) / 100 : 0;
-    const shipping = subtotal === 0 || subtotal >= 50 ? 0 : 4.95;
+    const shipping = subtotal === 0 || subtotal >= 999 ? 0 : 49;
     const tax = Number((subtotal * 0.05).toFixed(2));
     const total = Math.max(0, subtotal - discount + shipping + tax);
     const count = safeItems.reduce((sum, item) => sum + (Number(item.quantity) || 1), 0);

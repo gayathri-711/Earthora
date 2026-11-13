@@ -33,7 +33,7 @@ export default function ExpertDashboard() {
       date: '2026-11-16',
       timeSlot: '10:00 AM - 10:45 AM',
       status: 'confirmed',
-      fee: 85,
+      fee: 1800,
     },
     {
       _id: 'c-2',
@@ -43,7 +43,7 @@ export default function ExpertDashboard() {
       date: '2026-11-18',
       timeSlot: '02:00 PM - 02:45 PM',
       status: 'confirmed',
-      fee: 85,
+      fee: 1800,
     },
   ]);
 
@@ -70,7 +70,7 @@ export default function ExpertDashboard() {
     fieldOfStudy: 'Rhizosphere Ecology & Nitrogen Fixation',
     organization: 'Earthora Agronomy Advisory',
     experienceYears: 16,
-    fee: 85,
+    fee: 1800,
     image: '/assets/img/experts/expert-aris-thorne.jpg',
     specializations: 'Soil pH Optimization, Microbial Inoculation, Cover Crop Cycling',
   });
@@ -115,7 +115,7 @@ export default function ExpertDashboard() {
             <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
               <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Consultation Revenue</span>
               <p className="mt-2 font-heading text-3xl font-extrabold text-earthora-forest">
-                ${consultations.reduce((acc, c) => acc + c.fee, 0)}
+                ₹{consultations.reduce((acc, c) => acc + c.fee, 0).toLocaleString('en-IN')}
               </p>
               <p className="mt-1 text-xs text-earthora-muted">Bi-weekly advisory payout</p>
             </div>
@@ -158,7 +158,7 @@ export default function ExpertDashboard() {
                         Grower: <strong>{c.growerName}</strong> · {c.farm}
                       </p>
                       <p className="text-[11px] text-earthora-muted mt-0.5">
-                        Slot: {c.date} at {c.timeSlot} (${c.fee})
+                        Slot: {c.date} at {c.timeSlot} (₹{c.fee})
                       </p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ export default function ExpertDashboard() {
                 />
               </div>
               <div>
-                <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee ($ / 45 min)</label>
+                <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹ / 45 min)</label>
                 <input
                   type="number"
                   value={expertProfile.fee}

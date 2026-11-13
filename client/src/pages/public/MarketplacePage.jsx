@@ -29,7 +29,7 @@ export default function MarketplacePage() {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [searchQuery, setSearchQuery] = useState(initialSearch);
   const [sortBy, setSortBy] = useState('featured');
-  const [maxPrice, setMaxPrice] = useState(250);
+  const [maxPrice, setMaxPrice] = useState(10000);
   const [certifiedOnly, setCertifiedOnly] = useState(false);
 
   useEffect(() => {
@@ -195,13 +195,13 @@ export default function MarketplacePage() {
             {/* Price Slider */}
             <div className="flex items-center gap-3">
               <span className="text-xs font-semibold text-earthora-charcoal whitespace-nowrap">
-                Max Price: <strong className="text-earthora-forest">${maxPrice}</strong>
+                Max Price: <strong className="text-earthora-forest">₹{maxPrice.toLocaleString('en-IN')}</strong>
               </span>
               <input
                 type="range"
-                min="5"
-                max="250"
-                step="5"
+                min="100"
+                max="10000"
+                step="100"
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
                 className="w-32 accent-earthora-forest"

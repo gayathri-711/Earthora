@@ -32,7 +32,7 @@ export default function OrderConfirmationPage() {
               <div className="flex justify-between">
                 <span className="text-earthora-muted">Total Amount</span>
                 <strong className="text-earthora-forest text-sm font-bold">
-                  ${Number(order.totalAmount).toFixed(2)}
+                  ₹{Number(order.totalAmount).toFixed(2)}
                 </strong>
               </div>
               <div className="flex justify-between">

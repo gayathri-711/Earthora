@@ -329,10 +329,10 @@ Accessible at \`/farmer-hub\`, the Farmer Hub showcases verified regenerative pr
 Visit \`/expert-connect\` to consult with our network of accredited agricultural researchers and specialists:
 
 1. **Featured Specialists**:
-   - **Dr. Aris Thorne, Ph.D.** – Principal Soil Microbiologist & Rhizosphere Specialist ($85/session).
-   - **Sofia Al-Mansoor, M.Sc.** – Precision Irrigation Architect & Water Engineer ($75/session).
-   - **Julian Morales, B.Sc.** – Bio-Intensive Pest & Disease Diagnostician ($65/session).
-   - **Dr. Maya Lin, Ph.D.** – Regenerative Agroecology & Carbon Sequestration Researcher ($90/session).
+   - **Dr. Aris Thorne, Ph.D.** – Principal Soil Microbiologist & Rhizosphere Specialist (₹1,800/session).
+   - **Sofia Al-Mansoor, M.Sc.** – Precision Irrigation Architect & Water Engineer (₹1,500/session).
+   - **Julian Morales, B.Sc.** – Bio-Intensive Pest & Disease Diagnostician (₹1,600/session).
+   - **Dr. Maya Lin, Ph.D.** – Regenerative Agroecology & Carbon Sequestration Researcher (₹1,750/session).
 
 2. **How to Book a Consultation**:
    - Browse the directory and click **"Book Consultation"** on any expert's card.

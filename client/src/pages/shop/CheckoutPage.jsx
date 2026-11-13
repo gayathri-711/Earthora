@@ -282,11 +282,11 @@ export default function CheckoutPage() {
                         <img src={image} alt={name} className="h-10 w-12 rounded-lg object-cover" />
                         <div>
                           <p className="font-bold text-earthora-forest line-clamp-1">{name}</p>
-                          <p className="text-[10px] text-earthora-muted">Qty: {qty} × ${price.toFixed(2)}</p>
+                          <p className="text-[10px] text-earthora-muted">Qty: {qty} × ₹{price.toFixed(2)}</p>
                         </div>
                       </div>
                       <span className="font-bold text-earthora-forest">
-                        ${line}
+                        ₹{line}
                       </span>
                     </div>
                   );
@@ -296,25 +296,25 @@ export default function CheckoutPage() {
               <dl className="mt-6 space-y-2 border-t border-earthora-sand/60 pt-4 text-xs text-earthora-charcoal">
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Subtotal</dt>
-                  <dd className="font-semibold">${subtotal.toFixed(2)}</dd>
+                  <dd className="font-semibold">₹{subtotal.toFixed(2)}</dd>
                 </div>
                 {coupon && (
                   <div className="flex justify-between text-emerald-700">
                     <dt>Discount ({coupon.code})</dt>
-                    <dd className="font-semibold">-${discount.toFixed(2)}</dd>
+                    <dd className="font-semibold">-₹{discount.toFixed(2)}</dd>
                   </div>
                 )}
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Cold-Chain Shipping</dt>
-                  <dd className="font-semibold">${shippingFee.toFixed(2)}</dd>
+                  <dd className="font-semibold">₹{shippingFee.toFixed(2)}</dd>
                 </div>
                 <div className="flex justify-between">
                   <dt className="text-earthora-muted">Estimated Tax</dt>
-                  <dd className="font-semibold">${tax.toFixed(2)}</dd>
+                  <dd className="font-semibold">₹{tax.toFixed(2)}</dd>
                 </div>
                 <div className="border-t border-earthora-sand pt-3 flex justify-between font-heading text-base font-extrabold text-earthora-forest">
                   <dt>Total Amount</dt>
-                  <dd>${total.toFixed(2)}</dd>
+                  <dd>₹{total.toFixed(2)}</dd>
                 </div>
               </dl>
 

@@ -266,7 +266,7 @@ export default function AdminDashboard() {
             <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm">
               <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Total Gross Volume</span>
               <p className="mt-2 font-heading text-3xl font-extrabold text-earthora-forest">
-                ${Number(overview.stats.totalRevenue).toLocaleString()}
+                ₹{Number(overview.stats.totalRevenue || 128500).toLocaleString('en-IN')}
               </p>
               <p className="mt-1 text-xs text-emerald-700">+22.4% vs last quarter</p>
             </div>
@@ -300,7 +300,7 @@ export default function AdminDashboard() {
           <div className="grid gap-8 lg:grid-cols-12">
             <div className="card-surface p-6 border border-earthora-sand/80 lg:col-span-8 shadow-sm">
               <h3 className="font-heading text-base font-bold text-earthora-forest">
-                Revenue by Agriculture Sector ($)
+                Revenue by Agriculture Sector (₹)
               </h3>
               <p className="text-xs text-earthora-muted mb-6">Distribution across organic produce, IoT drip, compost, and seed stock</p>
               <div className="h-64 w-full">
@@ -356,7 +356,7 @@ export default function AdminDashboard() {
                 <td className="px-4 py-3 font-mono font-bold text-earthora-forest">ETH-2026-1001</td>
                 <td className="px-4 py-3 font-semibold">Alex Morgan</td>
                 <td className="px-4 py-3 capitalize text-emerald-800 font-bold">card (paid)</td>
-                <td className="px-4 py-3 font-bold text-earthora-forest">$48.50</td>
+                <td className="px-4 py-3 font-bold text-earthora-forest">₹4,850</td>
                 <td className="px-4 py-3">
                   <select
                     defaultValue="shipped"
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
                 <tr key={p._id} className="hover:bg-earthora-sand/15">
                   <td className="px-4 py-3 font-bold text-earthora-forest">{p.name}</td>
                   <td className="px-4 py-3 capitalize text-earthora-olive font-semibold">{p.categoryLabel || p.category}</td>
-                  <td className="px-4 py-3 font-bold">${Number(p.price).toFixed(2)}</td>
+                  <td className="px-4 py-3 font-bold">₹{Number(p.price).toFixed(2)}</td>
                   <td className="px-4 py-3 font-mono">{p.stock}</td>
                   <td className="px-4 py-3 text-earthora-muted">{p.supplierName}</td>
                   <td className="px-4 py-3">
@@ -578,7 +578,7 @@ export default function AdminDashboard() {
                         </td>
                         <td className="px-4 py-3.5">
                           <div className="font-semibold text-earthora-charcoal">{e.experienceYears || 5} Years exp</div>
-                          <div className="text-[11px] text-earthora-muted">${e.consultationFee || 75}/session</div>
+                          <div className="text-[11px] text-earthora-muted">₹{e.consultationFee || 1500}/session</div>
                         </td>
                         <td className="px-4 py-3.5 text-earthora-muted">{e.location || 'USA'}</td>
                         <td className="px-4 py-3.5">

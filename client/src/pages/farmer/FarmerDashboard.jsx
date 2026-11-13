@@ -208,7 +208,7 @@ export default function FarmerDashboard() {
             <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
               <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Total Net Sales</span>
               <p className="mt-2 font-heading text-3xl font-extrabold text-earthora-forest">
-                ${Number(stats.totalRevenue || 15460).toFixed(2)}
+                ₹{Number(stats.totalRevenue || 128500).toLocaleString('en-IN')}
               </p>
               <p className="mt-1 text-xs text-emerald-700">82% direct farm share</p>
             </div>
@@ -378,14 +378,14 @@ export default function FarmerDashboard() {
 
               <div className="grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Price ($) *</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Price (₹) *</label>
                   <input
                     type="number"
-                    step="0.1"
+                    step="1"
                     required
                     value={newProduct.price}
                     onChange={(e) => setNewProduct({ ...newProduct, price: e.target.value })}
-                    placeholder="5.50"
+                    placeholder="450"
                     className="input-field mt-1 text-xs"
                   />
                 </div>
@@ -456,7 +456,7 @@ export default function FarmerDashboard() {
                     <td className="px-4 py-3 font-mono font-bold text-earthora-forest">ETH-2026-1001</td>
                     <td className="px-4 py-3">Alex Morgan</td>
                     <td className="px-4 py-3 text-earthora-muted">San Francisco, CA</td>
-                    <td className="px-4 py-3 font-bold text-earthora-forest">$48.50</td>
+                    <td className="px-4 py-3 font-bold text-earthora-forest">₹4,850</td>
                     <td className="px-4 py-3">
                       <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-bold text-blue-800">
                         shipped

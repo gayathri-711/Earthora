@@ -35,14 +35,14 @@ export default function SmartDashboardPage() {
     { label: 'Active Farms', value: '42', change: '+3 this month', icon: Tractor, color: 'text-emerald-700' },
     { label: 'Monitored Acreage', value: '1,420 ac', change: '100% Regenerative', icon: Sprout, color: 'text-earthora-forest' },
     { label: 'Living Soil Health', value: '92 / 100', change: 'Optimal Rhizosphere', icon: Award, color: 'text-earthora-olive' },
-    { label: 'Monthly GMV', value: '$42,850', change: '+18.4% vs last period', icon: TrendingUp, color: 'text-earthora-gold' },
+    { label: 'Monthly GMV', value: '₹34,80,000', change: '+18.4% vs last period', icon: TrendingUp, color: 'text-earthora-gold' },
   ];
 
   const salesBreakdown = [
-    { category: 'Fresh Produce Harvest', percentage: 44, value: '$18,854', color: 'bg-emerald-600' },
-    { category: 'Smart IoT Irrigation', percentage: 26, value: '$11,141', color: 'bg-blue-600' },
-    { category: 'Bio-Organic Fertilizers', percentage: 18, value: '$7,713', color: 'bg-amber-600' },
-    { category: 'Heirloom Seed Stock', percentage: 12, value: '$5,142', color: 'bg-teal-600' },
+    { category: 'Fresh Produce Harvest', percentage: 44, value: '₹15,31,200', color: 'bg-emerald-600' },
+    { category: 'Smart IoT Irrigation', percentage: 26, value: '₹9,04,800', color: 'bg-blue-600' },
+    { category: 'Bio-Organic Fertilizers', percentage: 18, value: '₹6,26,400', color: 'bg-amber-600' },
+    { category: 'Heirloom Seed Stock', percentage: 12, value: '₹4,17,600', color: 'bg-teal-600' },
   ];
 
   const recentTelemetryEvents = [
@@ -167,7 +167,7 @@ export default function SmartDashboardPage() {
                 <p className="text-xs text-earthora-muted">Trailing 30 days distribution across 5 core categories</p>
               </div>
               <span className="rounded-xl bg-earthora-sand/40 px-3 py-1 text-xs font-bold text-earthora-forest">
-                $42,850 Total
+                ₹34,80,000 Total
               </span>
             </div>
 
@@ -193,7 +193,7 @@ export default function SmartDashboardPage() {
                 <span className="font-bold text-earthora-forest">Direct Grower Revenue Share:</span>
                 <p className="text-earthora-muted">82% of all fresh produce proceeds disbursed directly to farm accounts.</p>
               </div>
-              <span className="font-heading text-xl font-extrabold text-emerald-800">$15,460</span>
+              <span className="font-heading text-xl font-extrabold text-emerald-800">₹12,55,500</span>
             </div>
           </div>
 

@@ -243,7 +243,7 @@ export default function ExpertConnectPage() {
                       onClick={() => handleOpenBooking(experts[0])}
                       className="rounded-xl bg-earthora-mint px-3.5 py-1.5 text-xs font-bold text-earthora-forest shadow-md transition-all hover:bg-white"
                     >
-                      Book (${experts[0]?.consultationFee})
+                      Book (₹{experts[0]?.consultationFee || 1800})
                     </button>
                   </div>
                 </div>
@@ -305,7 +305,7 @@ export default function ExpertConnectPage() {
                   </div>
                   <div className="text-right">
                     <span className="font-heading font-extrabold text-earthora-forest text-sm">
-                      ${expert.consultationFee}
+                      ₹{expert.consultationFee}
                     </span>
                     <span className="text-[10px] text-earthora-muted ml-1">/ 45 min session</span>
                   </div>
@@ -437,7 +437,7 @@ export default function ExpertConnectPage() {
                   Book Session with {selectedExpert.name}
                 </h3>
                 <p className="text-xs text-earthora-muted">
-                  ${selectedExpert.consultationFee} · 45-minute virtual telemetry review
+                  ₹{selectedExpert.consultationFee} · 45-minute virtual telemetry review
                 </p>
               </div>
             </div>
@@ -517,7 +517,7 @@ export default function ExpertConnectPage() {
                   Cancel
                 </button>
                 <button type="submit" className="btn-accent text-xs">
-                  Confirm Consultation (${selectedExpert.consultationFee})
+                  Confirm Consultation (₹{selectedExpert.consultationFee})
                 </button>
               </div>
             </form>

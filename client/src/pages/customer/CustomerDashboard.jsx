@@ -195,7 +195,7 @@ export default function CustomerDashboard() {
                   <div className="mt-4 flex justify-between border-t border-earthora-sand/40 pt-3 text-xs">
                     <span className="text-earthora-muted">Total Paid</span>
                     <span className="font-heading text-sm font-extrabold text-earthora-forest">
-                      ${Number(order.totalAmount).toFixed(2)}
+                      ₹{Number(order.totalAmount).toFixed(2)}
                     </span>
                   </div>
                 </div>

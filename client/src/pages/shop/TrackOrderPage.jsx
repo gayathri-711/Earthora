@@ -92,7 +92,7 @@ export default function TrackOrderPage() {
                 </p>
                 <p className="text-xs text-earthora-muted mt-0.5">
                   Placed on {new Date(order.createdAt).toLocaleDateString()} · Total{' '}
-                  <strong className="text-earthora-forest">${Number(order.totalAmount).toFixed(2)}</strong>
+                  <strong className="text-earthora-forest">₹{Number(order.totalAmount).toFixed(2)}</strong>
                 </p>
               </div>
               <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-bold uppercase text-emerald-800">
