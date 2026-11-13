@@ -37,14 +37,14 @@ const orderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       state: { type: String, required: true },
       postalCode: { type: String, required: true },
-      deliverySlot: { type: String, default: 'Morning (7am – 11am)' },
+      deliverySlot: { type: String, default: 'Standard Delivery (2-3 business days)' },
     },
-    paymentMethod: { type: String, enum: ['card', 'cod'], default: 'card' },
-    paymentStatus: { type: String, enum: ['pending', 'paid', 'refunded'], default: 'pending' },
+    paymentMethod: { type: String, enum: ['card', 'cod', 'transfer'], default: 'card' },
+    paymentStatus: { type: String, enum: ['pending', 'paid', 'refunded'], default: 'paid' },
     status: {
       type: String,
-      enum: ['pending', 'harvested', 'shipped', 'delivered', 'cancelled'],
-      default: 'pending',
+      enum: ['pending', 'harvested', 'shipped', 'delivered', 'cancelled', 'Placed', 'Processing', 'Dispatched', 'Delivered'],
+      default: 'Placed',
     },
     couponCode: { type: String, default: null },
     subtotal: { type: Number, required: true },
@@ -56,4 +56,3 @@ const orderSchema = new mongoose.Schema(
 );
 
 export default mongoose.model('Order', orderSchema);
-

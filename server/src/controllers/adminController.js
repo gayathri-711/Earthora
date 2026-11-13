@@ -1,23 +1,35 @@
-import Blog from '../models/Blog.js';
-import Category from '../models/Category.js';
+import Article from '../models/Article.js';
 import ContactMessage from '../models/ContactMessage.js';
+import Crop from '../models/Crop.js';
+import Expert from '../models/Expert.js';
 import Farmer from '../models/Farmer.js';
 import Order from '../models/Order.js';
 import Product from '../models/Product.js';
 import Review from '../models/Review.js';
+import SoilTest from '../models/SoilTest.js';
 import User from '../models/User.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const getAdminOverview = asyncHandler(async (_req, res) => {
-  const [totalOrders, totalCustomers, totalFarmers, totalProducts, orders, lowStockProducts] =
-    await Promise.all([
-      Order.countDocuments(),
-      User.countDocuments({ role: 'customer' }),
-      Farmer.countDocuments(),
-      Product.countDocuments(),
-      Order.find().sort({ createdAt: -1 }),
-      Product.find({ stock: { $lte: 15 } }).select('name stock price').limit(8),
-    ]);
+  const [
+    totalOrders,
+    totalCustomers,
+    totalFarmers,
+    totalExperts,
+    totalProducts,
+    totalCrops,
+    orders,
+    lowStockProducts,
+  ] = await Promise.all([
+    Order.countDocuments(),
+    User.countDocuments({ role: 'customer' }),
+    Farmer.countDocuments(),
+    Expert.countDocuments(),
+    Product.countDocuments(),
+    Crop.countDocuments(),
+    Order.find().sort({ createdAt: -1 }),
+    Product.find({ stock: { $lte: 15 } }).select('name stock price category').limit(8),
+  ]);
 
   const totalRevenue = orders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
 
@@ -34,16 +46,18 @@ export const getAdminOverview = asyncHandler(async (_req, res) => {
 
   sendSuccess(res, {
     stats: {
-      totalRevenue,
+      totalRevenue: Number(totalRevenue.toFixed(2)),
       totalOrders,
       totalCustomers,
       totalFarmers,
+      totalExperts,
       totalProducts,
+      totalCrops,
       lowStockCount: lowStockProducts.length,
     },
     lowStockProducts,
-    recentOrders: orders.slice(0, 6),
-    salesChart: salesChart.length ? salesChart : [{ label: 'Nov', revenue: totalRevenue }],
+    recentOrders: orders.slice(0, 8),
+    salesChart: salesChart.length ? salesChart : [{ label: 'Nov', revenue: totalRevenue || 38200 }],
   });
 });
 
@@ -78,8 +92,23 @@ export const updateFarmerVerification = asyncHandler(async (req, res) => {
     { verified: Boolean(req.body.verified) },
     { new: true }
   );
-  if (!farmer) throw new ApiError(404, 'Farmer not found');
+  if (!farmer) throw new ApiError(404, 'Farmer profile not found');
   sendSuccess(res, { farmer });
+});
+
+export const getAllExperts = asyncHandler(async (_req, res) => {
+  const experts = await Expert.find().sort({ createdAt: -1 });
+  sendSuccess(res, { experts });
+});
+
+export const updateExpertVerification = asyncHandler(async (req, res) => {
+  const expert = await Expert.findByIdAndUpdate(
+    req.params.id,
+    { verified: Boolean(req.body.verified) },
+    { new: true }
+  );
+  if (!expert) throw new ApiError(404, 'Expert profile not found');
+  sendSuccess(res, { expert });
 });
 
 export const deleteProductAdmin = asyncHandler(async (req, res) => {
@@ -88,28 +117,23 @@ export const deleteProductAdmin = asyncHandler(async (req, res) => {
   sendSuccess(res, {}, 'Product deleted');
 });
 
-export const createCategoryAdmin = asyncHandler(async (req, res) => {
-  const { name, description } = req.body;
-  const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-');
-  const category = await Category.create({ name, slug, description });
-  sendSuccess(res, { category }, 'Category created', 201);
-});
-
-export const createBlogAdmin = asyncHandler(async (req, res) => {
-  const { title, category, excerpt, content, image } = req.body;
-  const slug = `${title.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 60)}-${Date.now()
-    .toString()
-    .slice(-4)}`;
-  const blog = await Blog.create({
-    title,
+export const createProductAdmin = asyncHandler(async (req, res) => {
+  const { name, category, price, stock, unit, shortDescription, description, image, supplierName } = req.body;
+  const slug = `${name.toLowerCase().replace(/[^a-z0-9]+/g, '-').slice(0, 50)}-${Date.now().toString().slice(-4)}`;
+  const product = await Product.create({
+    name,
     slug,
-    category,
-    excerpt,
-    content,
-    author: req.user.name,
-    image: image || '/assets/img/home-4/news-1.jpg',
+    category: category || 'equipment',
+    categoryLabel: category || 'Equipment',
+    price: Number(price),
+    stock: Number(stock || 20),
+    unit: unit || '1 unit',
+    shortDescription,
+    description: description || shortDescription,
+    image: image || '/assets/img/home-4/shop-1.jpg',
+    supplierName: supplierName || 'Earthora Ecosystem Supplier',
   });
-  sendSuccess(res, { blog }, 'Blog published', 201);
+  sendSuccess(res, { product }, 'Product listed', 201);
 });
 
 export const getAllReviewsAdmin = asyncHandler(async (_req, res) => {
@@ -127,3 +151,11 @@ export const getAllMessagesAdmin = asyncHandler(async (_req, res) => {
   sendSuccess(res, { messages });
 });
 
+export const resolveMessageAdmin = asyncHandler(async (req, res) => {
+  const message = await ContactMessage.findByIdAndUpdate(
+    req.params.id,
+    { status: 'resolved' },
+    { new: true }
+  );
+  sendSuccess(res, { message }, 'Marked resolved');
+});

@@ -6,13 +6,21 @@ const userSchema = new mongoose.Schema(
     name: { type: String, required: true, trim: true },
     email: { type: String, required: true, unique: true, lowercase: true, trim: true },
     password: { type: String, required: true, minlength: 6, select: false },
-    role: { type: String, enum: ['customer', 'farmer', 'admin'], default: 'customer' },
+    role: {
+      type: String,
+      enum: ['customer', 'farmer', 'expert', 'admin'],
+      default: 'customer',
+    },
     phone: { type: String, default: '' },
+    avatar: { type: String, default: '' },
+    title: { type: String, default: '' },
+    organization: { type: String, default: '' },
     address: {
       street: { type: String, default: '' },
       city: { type: String, default: '' },
       state: { type: String, default: '' },
       postalCode: { type: String, default: '' },
+      country: { type: String, default: 'USA' },
     },
     isActive: { type: Boolean, default: true },
   },
@@ -30,4 +38,3 @@ userSchema.methods.comparePassword = function (candidate) {
 };
 
 export default mongoose.model('User', userSchema);
-

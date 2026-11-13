@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { CreditCard, Lock, Truck } from 'lucide-react';
+import { CreditCard, Lock, ShieldCheck, Truck } from 'lucide-react';
 import api from '../../api/client';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
@@ -27,11 +27,11 @@ export default function CheckoutPage() {
 
   if (items.length === 0) {
     return (
-      <div className="mx-auto max-w-xl px-4 py-20 text-center">
-        <h1 className="font-display text-3xl font-semibold text-agriva-ink">Nothing to Checkout</h1>
-        <p className="mt-2 text-sm text-agriva-muted">Add fresh produce to your cart before checking out.</p>
-        <Link to="/products" className="btn-primary mt-6">
-          Shop Produce
+      <div className="bg-earthora-ivory min-h-screen py-24 px-4 text-center">
+        <h1 className="font-heading text-3xl font-extrabold text-earthora-forest">Nothing to Checkout</h1>
+        <p className="mt-2 text-xs text-earthora-muted">Add agricultural inputs or fresh harvests to your cart first.</p>
+        <Link to="/marketplace" className="btn-accent mt-6 inline-flex text-xs">
+          Explore Marketplace
         </Link>
       </div>
     );
@@ -63,14 +63,14 @@ export default function CheckoutPage() {
       const { data } = await api.post('/orders', payload);
       const created = data.data?.order;
       await clearCart();
-      showToast('Order placed successfully!');
+      showToast('Order confirmed! Cold-chain dispatch scheduled.', 'success');
       navigate(`/order-confirmation/${created.orderNumber}`, { state: { order: created } });
     } catch (err) {
       if (!isAuthenticated) {
         showToast('Please sign in first to complete checkout.', 'error');
         navigate('/login', { state: { from: '/checkout' } });
       } else {
-        showToast(err.message || 'Unable to place order. Please verify fields.', 'error');
+        showToast(err.message || 'Unable to place order. Please verify required fields.', 'error');
       }
     } finally {
       setSubmitting(false);
@@ -78,216 +78,240 @@ export default function CheckoutPage() {
   };
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-semibold text-agriva-ink">Checkout</h1>
-      <p className="mt-1 text-sm text-agriva-muted">
-        Complete your delivery details and payment method to schedule farm harvest dispatch.
-      </p>
+    <div className="bg-earthora-ivory min-h-screen py-14">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <h1 className="font-heading text-3xl font-extrabold text-earthora-forest">Order Checkout</h1>
+        <p className="mt-1 text-xs text-earthora-muted">
+          Complete delivery destination and secure payment to schedule direct farm fulfillment.
+        </p>
 
-      {!isAuthenticated && (
-        <div className="mt-4 rounded-xl border border-agriva-gold/40 bg-amber-50 p-4 text-sm text-amber-900">
-          Please{' '}
-          <Link to="/login" state={{ from: '/checkout' }} className="font-bold underline">
-            sign in
-          </Link>{' '}
-          or{' '}
-          <Link to="/register" className="font-bold underline">
-            create an account
-          </Link>{' '}
-          to save your order history and live delivery tracking.
-        </div>
-      )}
+        {!isAuthenticated && (
+          <div className="mt-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900">
+            Please{' '}
+            <Link to="/login" state={{ from: '/checkout' }} className="font-bold underline text-earthora-forest">
+              sign in
+            </Link>{' '}
+            or{' '}
+            <Link to="/register" className="font-bold underline text-earthora-forest">
+              create an account
+            </Link>{' '}
+            to preserve your order telemetry and live shipment tracking.
+          </div>
+        )}
 
-      <form onSubmit={handlePlaceOrder} className="mt-8 grid gap-8 lg:grid-cols-12">
-        <div className="space-y-6 lg:col-span-7">
-          <div className="card-surface space-y-4 p-6">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-agriva-ink">
-              <Truck className="h-5 w-5 text-agriva-forest" />
-              Delivery Details
-            </h2>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div>
-                <label className="mb-1 block text-xs font-semibold">Full Name</label>
-                <input
-                  type="text"
-                  required
-                  value={shipping.fullName}
-                  onChange={(e) => setShipping((s) => ({ ...s, fullName: e.target.value }))}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold">Email</label>
-                <input
-                  type="email"
-                  required
-                  value={shipping.email}
-                  onChange={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold">Phone</label>
-                <input
-                  type="tel"
-                  required
-                  value={shipping.phone}
-                  onChange={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold">Preferred Delivery Window</label>
-                <select
-                  value={shipping.deliverySlot}
-                  onChange={(e) => setShipping((s) => ({ ...s, deliverySlot: e.target.value }))}
-                  className="input-field"
-                >
-                  <option>Morning (7am – 11am)</option>
-                  <option>Afternoon (12pm – 4pm)</option>
-                  <option>Evening (5pm – 8pm)</option>
-                </select>
-              </div>
-              <div className="sm:col-span-2">
-                <label className="mb-1 block text-xs font-semibold">Street Address</label>
-                <input
-                  type="text"
-                  required
-                  value={shipping.street}
-                  onChange={(e) => setShipping((s) => ({ ...s, street: e.target.value }))}
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold">City</label>
-                <input
-                  type="text"
-                  required
-                  value={shipping.city}
-                  onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
-                  className="input-field"
-                />
-              </div>
-              <div className="grid grid-cols-2 gap-3">
+        <form onSubmit={handlePlaceOrder} className="mt-8 grid gap-8 lg:grid-cols-12">
+          {/* Shipping Details */}
+          <div className="space-y-6 lg:col-span-7">
+            <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm space-y-4">
+              <h2 className="flex items-center gap-2 font-heading text-lg font-bold text-earthora-forest">
+                <Truck className="h-5 w-5 text-earthora-olive" />
+                Cold-Chain Delivery Address
+              </h2>
+
+              <div className="grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="mb-1 block text-xs font-semibold">State</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Full Name *</label>
                   <input
                     type="text"
                     required
-                    value={shipping.state}
-                    onChange={(e) => setShipping((s) => ({ ...s, state: e.target.value }))}
-                    className="input-field"
+                    value={shipping.fullName}
+                    onChange={(e) => setShipping((s) => ({ ...s, fullName: e.target.value }))}
+                    className="input-field mt-1 text-xs"
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-semibold">ZIP</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Email Address *</label>
+                  <input
+                    type="email"
+                    required
+                    value={shipping.email}
+                    onChange={(e) => setShipping((s) => ({ ...s, email: e.target.value }))}
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Contact Phone *</label>
+                  <input
+                    type="tel"
+                    required
+                    value={shipping.phone}
+                    onChange={(e) => setShipping((s) => ({ ...s, phone: e.target.value }))}
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Preferred Dispatch Window</label>
+                  <select
+                    value={shipping.deliverySlot}
+                    onChange={(e) => setShipping((s) => ({ ...s, deliverySlot: e.target.value }))}
+                    className="input-field mt-1 text-xs"
+                  >
+                    <option>Morning (7am – 11am)</option>
+                    <option>Afternoon (12pm – 4pm)</option>
+                    <option>Evening (5pm – 8pm)</option>
+                  </select>
+                </div>
+                <div className="sm:col-span-2">
+                  <label className="text-xs font-semibold text-earthora-charcoal">Street Address *</label>
                   <input
                     type="text"
                     required
-                    value={shipping.postalCode}
-                    onChange={(e) => setShipping((s) => ({ ...s, postalCode: e.target.value }))}
-                    className="input-field"
+                    value={shipping.street}
+                    onChange={(e) => setShipping((s) => ({ ...s, street: e.target.value }))}
+                    className="input-field mt-1 text-xs"
                   />
                 </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="card-surface space-y-4 p-6">
-            <h2 className="flex items-center gap-2 font-display text-xl font-semibold text-agriva-ink">
-              <CreditCard className="h-5 w-5 text-agriva-forest" />
-              Payment Method
-            </h2>
-            <div className="grid gap-3 sm:grid-cols-2">
-              <label
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
-                  paymentMethod === 'card'
-                    ? 'border-agriva-forest bg-agriva-mint/25'
-                    : 'border-agriva-line bg-white'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  checked={paymentMethod === 'card'}
-                  onChange={() => setPaymentMethod('card')}
-                  className="accent-agriva-forest"
-                />
                 <div>
-                  <p className="text-sm font-semibold text-agriva-ink">Online Card Payment</p>
-                  <p className="text-xs text-agriva-muted">Instant verified sandbox checkout</p>
+                  <label className="text-xs font-semibold text-earthora-charcoal">City *</label>
+                  <input
+                    type="text"
+                    required
+                    value={shipping.city}
+                    onChange={(e) => setShipping((s) => ({ ...s, city: e.target.value }))}
+                    className="input-field mt-1 text-xs"
+                  />
                 </div>
-              </label>
-
-              <label
-                className={`flex cursor-pointer items-center gap-3 rounded-lg border p-4 ${
-                  paymentMethod === 'cod'
-                    ? 'border-agriva-forest bg-agriva-mint/25'
-                    : 'border-agriva-line bg-white'
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  checked={paymentMethod === 'cod'}
-                  onChange={() => setPaymentMethod('cod')}
-                  className="accent-agriva-forest"
-                />
-                <div>
-                  <p className="text-sm font-semibold text-agriva-ink">Pay on Delivery</p>
-                  <p className="text-xs text-agriva-muted">Cash or contactless terminal at door</p>
-                </div>
-              </label>
-            </div>
-          </div>
-        </div>
-
-        <aside className="card-surface h-fit space-y-4 p-6 lg:col-span-5">
-          <h2 className="font-display text-xl font-semibold text-agriva-ink">Crate Summary</h2>
-          <div className="max-h-64 space-y-3 overflow-y-auto pr-1">
-            {items.map(({ product, quantity }) => (
-              <div key={product._id} className="flex items-center justify-between gap-3 text-sm">
-                <div className="flex items-center gap-3">
-                  <img src={product.image} alt={product.name} className="h-12 w-12 rounded-lg object-cover" />
+                <div className="grid grid-cols-2 gap-2">
                   <div>
-                    <p className="font-medium text-agriva-ink">{product.name}</p>
-                    <p className="text-xs text-agriva-muted">Qty {quantity}</p>
+                    <label className="text-xs font-semibold text-earthora-charcoal">State *</label>
+                    <input
+                      type="text"
+                      required
+                      value={shipping.state}
+                      onChange={(e) => setShipping((s) => ({ ...s, state: e.target.value }))}
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal">ZIP Code *</label>
+                    <input
+                      type="text"
+                      required
+                      value={shipping.postalCode}
+                      onChange={(e) => setShipping((s) => ({ ...s, postalCode: e.target.value }))}
+                      className="input-field mt-1 text-xs"
+                    />
                   </div>
                 </div>
-                <span className="font-semibold text-agriva-ink">
-                  ${(product.price * quantity).toFixed(2)}
-                </span>
               </div>
-            ))}
+            </div>
+
+            {/* Payment Method */}
+            <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm space-y-4">
+              <h2 className="flex items-center gap-2 font-heading text-lg font-bold text-earthora-forest">
+                <CreditCard className="h-5 w-5 text-earthora-olive" />
+                Payment Method
+              </h2>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <label
+                  className={`flex items-center gap-3 rounded-2xl border p-4 cursor-pointer transition-all ${
+                    paymentMethod === 'card'
+                      ? 'border-earthora-forest bg-earthora-forest/5'
+                      : 'border-earthora-sand bg-white'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="card"
+                    checked={paymentMethod === 'card'}
+                    onChange={() => setPaymentMethod('card')}
+                    className="accent-earthora-forest"
+                  />
+                  <div>
+                    <p className="text-xs font-bold text-earthora-forest">Credit / Debit Card</p>
+                    <p className="text-[10px] text-earthora-muted">Encrypted via Stripe / SSL</p>
+                  </div>
+                </label>
+
+                <label
+                  className={`flex items-center gap-3 rounded-2xl border p-4 cursor-pointer transition-all ${
+                    paymentMethod === 'cod'
+                      ? 'border-earthora-forest bg-earthora-forest/5'
+                      : 'border-earthora-sand bg-white'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="payment"
+                    value="cod"
+                    checked={paymentMethod === 'cod'}
+                    onChange={() => setPaymentMethod('cod')}
+                    className="accent-earthora-forest"
+                  />
+                  <div>
+                    <p className="text-xs font-bold text-earthora-forest">Pay on Delivery</p>
+                    <p className="text-[10px] text-earthora-muted">Cash / Card on arrival</p>
+                  </div>
+                </label>
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-2 border-t border-agriva-line pt-4 text-sm">
-            <div className="flex justify-between text-agriva-muted">
-              <span>Subtotal</span>
-              <span>${summary.subtotal.toFixed(2)}</span>
-            </div>
-            {summary.discount > 0 && (
-              <div className="flex justify-between text-agriva-pine">
-                <span>Coupon Discount</span>
-                <span>-${summary.discount.toFixed(2)}</span>
+          {/* Cart Review Column */}
+          <div className="space-y-6 lg:col-span-5">
+            <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm">
+              <h2 className="font-heading text-lg font-bold text-earthora-forest">Items in Order</h2>
+
+              <div className="mt-4 max-h-60 space-y-3 overflow-y-auto divide-y divide-earthora-sand/40">
+                {items.map(({ product, quantity }) => (
+                  <div key={product._id} className="flex items-center justify-between pt-3 text-xs">
+                    <div className="flex items-center gap-3">
+                      <img src={product.image} alt={product.name} className="h-10 w-12 rounded-lg object-cover" />
+                      <div>
+                        <p className="font-bold text-earthora-forest line-clamp-1">{product.name}</p>
+                        <p className="text-[10px] text-earthora-muted">Qty: {quantity} × ${product.price.toFixed(2)}</p>
+                      </div>
+                    </div>
+                    <span className="font-bold text-earthora-forest">
+                      ${(product.price * quantity).toFixed(2)}
+                    </span>
+                  </div>
+                ))}
               </div>
-            )}
-            <div className="flex justify-between text-agriva-muted">
-              <span>Delivery</span>
-              <span>{summary.shipping === 0 ? 'Free' : `$${summary.shipping.toFixed(2)}`}</span>
-            </div>
-            <div className="flex justify-between border-t border-agriva-line pt-3 text-base font-bold text-agriva-ink">
-              <span>Total Due</span>
-              <span className="text-agriva-forest">${summary.total.toFixed(2)}</span>
+
+              <dl className="mt-6 space-y-2 border-t border-earthora-sand/60 pt-4 text-xs text-earthora-charcoal">
+                <div className="flex justify-between">
+                  <dt className="text-earthora-muted">Subtotal</dt>
+                  <dd className="font-semibold">${summary.subtotal.toFixed(2)}</dd>
+                </div>
+                {coupon && (
+                  <div className="flex justify-between text-emerald-700">
+                    <dt>Discount ({coupon.code})</dt>
+                    <dd className="font-semibold">-${summary.discount.toFixed(2)}</dd>
+                  </div>
+                )}
+                <div className="flex justify-between">
+                  <dt className="text-earthora-muted">Cold-Chain Shipping</dt>
+                  <dd className="font-semibold">${summary.shipping.toFixed(2)}</dd>
+                </div>
+                <div className="flex justify-between">
+                  <dt className="text-earthora-muted">Estimated Tax</dt>
+                  <dd className="font-semibold">${summary.tax.toFixed(2)}</dd>
+                </div>
+                <div className="border-t border-earthora-sand pt-3 flex justify-between font-heading text-base font-extrabold text-earthora-forest">
+                  <dt>Total Amount</dt>
+                  <dd>${summary.total.toFixed(2)}</dd>
+                </div>
+              </dl>
+
+              <button
+                type="submit"
+                disabled={submitting}
+                className="btn-accent mt-6 w-full py-3 text-xs font-bold shadow-md shadow-earthora-mint/20"
+              >
+                {submitting ? 'Confirming Dispatch...' : 'Place Agricultural Order'}
+              </button>
+
+              <div className="mt-4 flex items-center justify-center gap-2 text-[11px] text-earthora-muted">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                <span>256-bit encrypted checkout &amp; Earthora Verified Guarantee</span>
+              </div>
             </div>
           </div>
-
-          <button type="submit" disabled={submitting} className="btn-primary w-full py-3">
-            <Lock className="h-4 w-4" />
-            {submitting ? 'Processing Order...' : `Confirm Order · $${summary.total.toFixed(2)}`}
-          </button>
-        </aside>
-      </form>
+        </form>
+      </div>
     </div>
   );
 }

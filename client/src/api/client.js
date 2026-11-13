@@ -8,7 +8,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('agriva_token');
+  const token = localStorage.getItem('earthora_token') || localStorage.getItem('agriva_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }

@@ -4,11 +4,11 @@ import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
 const CartContext = createContext(null);
-const STORAGE_KEY = 'agriva_cart';
+const STORAGE_KEY = 'earthora_cart';
 
 function readLocalCart() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('agriva_cart');
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

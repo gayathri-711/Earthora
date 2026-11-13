@@ -28,8 +28,8 @@ export function ToastProvider({ children }) {
             toast.type === 'error'
               ? 'border-red-200 bg-red-50 text-red-900'
               : toast.type === 'info'
-                ? 'border-agriva-line bg-white text-agriva-ink'
-                : 'border-agriva-forest/20 bg-agriva-forest text-white';
+                ? 'border-earthora-sand bg-white text-earthora-charcoal'
+                : 'border-earthora-mint/40 bg-earthora-forest text-white';
 
           const Icon = toast.type === 'error' ? AlertCircle : toast.type === 'info' ? Info : CheckCircle2;
 

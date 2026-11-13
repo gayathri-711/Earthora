@@ -1,8 +1,8 @@
 {
-  "name": "agriva-organic-platform",
+  "name": "earthora-platform",
   "version": "2.0.0",
   "private": true,
-  "description": "AGRIVA – From Farm to Home – Naturally Organic. Full-stack organic agriculture platform.",
+  "description": "EARTHORA – Smart Agriculture & Sustainable Farming Ecosystem. Rooted in Nature. Driven by Innovation.",
   "scripts": {
     "install:all": "npm --prefix client install && npm --prefix server install",
     "dev:client": "npm --prefix client run dev",
@@ -13,4 +13,3 @@
     "test:server": "npm --prefix server test"
   }
 }
-

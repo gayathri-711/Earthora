@@ -14,8 +14,14 @@ import authRoutes from './routes/authRoutes.js';
 import cartWishlistRoutes from './routes/cartWishlistRoutes.js';
 import catalogRoutes from './routes/catalogRoutes.js';
 import contentRoutes from './routes/contentRoutes.js';
+import cropRoutes from './routes/cropRoutes.js';
+import expertRoutes from './routes/expertRoutes.js';
 import farmerRoutes from './routes/farmerRoutes.js';
+import knowledgeRoutes from './routes/knowledgeRoutes.js';
 import orderRoutes from './routes/orderRoutes.js';
+import soilRoutes from './routes/soilRoutes.js';
+import weatherRoutes from './routes/weatherRoutes.js';
+import { getSmartDashboard } from './controllers/dashboardController.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const clientDistDir = path.resolve(__dirname, '../../client/dist');
@@ -34,25 +40,36 @@ app.use(
     credentials: true,
   })
 );
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({ limit: '4mb' }));
 app.use(morgan('dev'));
 app.use('/uploads', express.static(uploadsDir));
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 300,
+  max: 500,
   standardHeaders: true,
   legacyHeaders: false,
 });
 
 app.get('/api/health', (_req, res) => {
-  res.json({ success: true, service: 'AGRIVA API', status: 'healthy' });
+  res.json({
+    success: true,
+    platform: 'EARTHORA',
+    tagline: 'Rooted in Nature. Driven by Innovation.',
+    status: 'healthy',
+  });
 });
 
 app.use('/api/v1', apiLimiter);
+app.get('/api/v1/dashboard/smart', getSmartDashboard);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1', catalogRoutes);
 app.use('/api/v1', cartWishlistRoutes);
+app.use('/api/v1/crops', cropRoutes);
+app.use('/api/v1/soil', soilRoutes);
+app.use('/api/v1/weather', weatherRoutes);
+app.use('/api/v1/experts', expertRoutes);
+app.use('/api/v1/knowledge', knowledgeRoutes);
 app.use('/api/v1/orders', orderRoutes);
 app.use('/api/v1/farmer', farmerRoutes);
 app.use('/api/v1/admin', adminRoutes);

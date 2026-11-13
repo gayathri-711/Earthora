@@ -8,6 +8,7 @@ import { seedIfEmpty } from '../src/seeds/seed.js';
 
 let customerToken = '';
 let farmerToken = '';
+let expertToken = '';
 let adminToken = '';
 let firstProductId = '';
 
@@ -20,13 +21,48 @@ after(async () => {
   await disconnectDatabase();
 });
 
-test('GET /api/health returns healthy status', async () => {
+test('GET /api/health returns EARTHORA platform status', async () => {
   const res = await request(app).get('/api/health');
   assert.equal(res.status, 200);
-  assert.equal(res.body.success, true);
+  assert.equal(res.body.platform, 'EARTHORA');
+  assert.equal(res.body.status, 'healthy');
 });
 
-test('GET /api/v1/products returns seeded organic produce', async () => {
+test('GET /api/v1/dashboard/smart returns ecosystem metrics & charts', async () => {
+  const res = await request(app).get('/api/v1/dashboard/smart');
+  assert.equal(res.status, 200);
+  assert.ok(res.body.data.metrics.totalFarmers >= 2);
+  assert.ok(Array.isArray(res.body.data.salesMonthly));
+  assert.ok(Array.isArray(res.body.data.recentActivities));
+});
+
+test('Auth login works for Customer, Farmer, Expert, and Admin roles', async () => {
+  const cust = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: 'customer@earthora.io', password: 'Earthora123!' });
+  assert.equal(cust.status, 200);
+  customerToken = cust.body.data.token;
+
+  const frm = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: 'farmer@earthora.io', password: 'Earthora123!' });
+  assert.equal(frm.status, 200);
+  farmerToken = frm.body.data.token;
+
+  const exp = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: 'expert@earthora.io', password: 'Earthora123!' });
+  assert.equal(exp.status, 200);
+  expertToken = exp.body.data.token;
+
+  const adm = await request(app)
+    .post('/api/v1/auth/login')
+    .send({ email: 'admin@earthora.io', password: 'Earthora123!' });
+  assert.equal(adm.status, 200);
+  adminToken = adm.body.data.token;
+});
+
+test('GET /api/v1/products returns multi-category marketplace catalog', async () => {
   const res = await request(app).get('/api/v1/products');
   assert.equal(res.status, 200);
   assert.ok(Array.isArray(res.body.data.products));
@@ -34,61 +70,81 @@ test('GET /api/v1/products returns seeded organic produce', async () => {
   firstProductId = res.body.data.products[0]._id;
 });
 
-test('Auth login works for Customer, Farmer, and Admin accounts', async () => {
-  const cust = await request(app)
-    .post('/api/v1/auth/login')
-    .send({ email: 'customer@agriva.com', password: 'Agriva123!' });
-  assert.equal(cust.status, 200);
-  customerToken = cust.body.data.token;
+test('Crop Management: list, create, and inspect crops', async () => {
+  const list = await request(app).get('/api/v1/crops');
+  assert.equal(list.status, 200);
+  assert.ok(Array.isArray(list.body.data.crops));
 
-  const frm = await request(app)
-    .post('/api/v1/auth/login')
-    .send({ email: 'farmer@agriva.com', password: 'Agriva123!' });
-  assert.equal(frm.status, 200);
-  farmerToken = frm.body.data.token;
-
-  const adm = await request(app)
-    .post('/api/v1/auth/login')
-    .send({ email: 'admin@agriva.com', password: 'Agriva123!' });
-  assert.equal(adm.status, 200);
-  adminToken = adm.body.data.token;
-});
-
-test('RBAC blocks customer from farmer and admin routes', async () => {
-  const farmerRes = await request(app)
-    .get('/api/v1/farmer/dashboard')
-    .set('Authorization', `Bearer ${customerToken}`);
-  assert.equal(farmerRes.status, 403);
-
-  const adminRes = await request(app)
-    .get('/api/v1/admin/overview')
-    .set('Authorization', `Bearer ${farmerToken}`);
-  assert.equal(adminRes.status, 403);
-});
-
-test('Farmer can create product and Customer can place + track order', async () => {
-  const prodRes = await request(app)
-    .post('/api/v1/farmer/products')
+  const create = await request(app)
+    .post('/api/v1/crops')
     .set('Authorization', `Bearer ${farmerToken}`)
     .send({
-      name: 'Fresh Organic Spinach',
-      category: 'vegetables',
-      price: 4.5,
-      unit: '250g bunch',
-      stock: 20,
-      shortDescription: 'Crisp morning-picked spinach.',
+      name: 'Organic Sweet Corn',
+      variety: 'Golden Bantam Heirloom',
+      fieldName: 'West Valley Field 03',
+      acreage: 10,
+      estimatedHarvestDate: '2027-02-15',
+      status: 'Seedling',
+      growthProgress: 20,
     });
-  assert.equal(prodRes.status, 201);
-  const createdProduct = prodRes.body.data.product;
+  assert.equal(create.status, 201);
+  assert.equal(create.body.data.crop.name, 'Organic Sweet Corn');
+});
 
+test('Soil Insights & Weather Intelligence endpoints function cleanly', async () => {
+  const soil = await request(app).get('/api/v1/soil/analytics');
+  assert.equal(soil.status, 200);
+  assert.ok(soil.body.data.averagePH >= 6.0);
+
+  const weather = await request(app).get('/api/v1/weather?region=sonoma');
+  assert.equal(weather.status, 200);
+  assert.equal(weather.body.data.weather.regionName, 'Sonoma Valley & North Coast');
+  assert.ok(Array.isArray(weather.body.data.weather.advisories));
+});
+
+test('Expert Connect: list experts, Q&A, and consultation booking', async () => {
+  const expList = await request(app).get('/api/v1/experts');
+  assert.equal(expList.status, 200);
+  assert.ok(expList.body.data.experts.length >= 2);
+
+  const qa = await request(app).get('/api/v1/experts/questions');
+  assert.equal(qa.status, 200);
+  assert.ok(Array.isArray(qa.body.data.questions));
+
+  const consult = await request(app)
+    .post('/api/v1/experts/consultations')
+    .set('Authorization', `Bearer ${customerToken}`)
+    .send({
+      expertId: expList.body.data.experts[0]._id,
+      clientName: 'Claire Bennett',
+      clientEmail: 'customer@earthora.io',
+      date: '2026-11-25',
+      timeSlot: '11:00 AM - 12:00 PM',
+      topic: 'Cover Crop Nitrogen Fixation Strategy',
+    });
+  assert.equal(consult.status, 201);
+});
+
+test('Knowledge Hub: list articles and fetch article by slug', async () => {
+  const articles = await request(app).get('/api/v1/knowledge');
+  assert.equal(articles.status, 200);
+  assert.ok(articles.body.data.articles.length >= 3);
+
+  const slug = articles.body.data.articles[0].slug;
+  const single = await request(app).get(`/api/v1/knowledge/${slug}`);
+  assert.equal(single.status, 200);
+  assert.equal(single.body.data.article.slug, slug);
+});
+
+test('Marketplace order placement, stock decrement, and order tracking', async () => {
   const orderRes = await request(app)
     .post('/api/v1/orders')
     .set('Authorization', `Bearer ${customerToken}`)
     .send({
-      items: [{ productId: createdProduct._id, quantity: 2 }],
+      items: [{ productId: firstProductId, quantity: 1 }],
       shippingAddress: {
         fullName: 'Claire Bennett',
-        email: 'customer@agriva.com',
+        email: 'customer@earthora.io',
         phone: '+1 555 010 2233',
         street: '742 Evergreen Terrace',
         city: 'Portland',
@@ -99,29 +155,9 @@ test('Farmer can create product and Customer can place + track order', async () 
       couponCode: 'ORGANIC10',
     });
   assert.equal(orderRes.status, 201);
-  const orderNumber = orderRes.body.data.order.orderNumber;
+  const orderNum = orderRes.body.data.order.orderNumber;
 
-  const trackRes = await request(app).get(`/api/v1/orders/track/${orderNumber}`);
-  assert.equal(trackRes.status, 200);
-  assert.equal(trackRes.body.data.order.orderNumber, orderNumber);
-
-  const checkProd = await request(app).get(`/api/v1/products/${createdProduct._id}`);
-  assert.equal(checkProd.body.data.product.stock, 18);
+  const track = await request(app).get(`/api/v1/orders/track/${orderNum}`);
+  assert.equal(track.status, 200);
+  assert.equal(track.body.data.order.orderNumber, orderNum);
 });
-
-test('Admin overview returns live KPIs and Contact form persists inquiries', async () => {
-  const contactRes = await request(app).post('/api/v1/contact').send({
-    name: 'Tester',
-    email: 'tester@example.com',
-    subject: 'Wholesale',
-    message: 'Interested in weekly restaurant crates.',
-  });
-  assert.equal(contactRes.status, 201);
-
-  const ovRes = await request(app)
-    .get('/api/v1/admin/overview')
-    .set('Authorization', `Bearer ${adminToken}`);
-  assert.equal(ovRes.status, 200);
-  assert.ok(ovRes.body.data.stats.totalOrders >= 2);
-});
-

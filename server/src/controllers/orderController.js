@@ -66,7 +66,7 @@ export const createOrder = asyncHandler(async (req, res) => {
   const shippingFee = subtotal >= 50 ? 0 : 4.95;
   const totalAmount = Number(Math.max(0, subtotal - discount + shippingFee).toFixed(2));
 
-  const orderNumber = `AGR-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+  const orderNumber = `ETH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
   const paymentStatus = paymentMethod === 'card' ? 'paid' : 'pending';
 
   const order = await Order.create({

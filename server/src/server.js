@@ -11,13 +11,13 @@ async function start() {
 
   app.listen(PORT, '127.0.0.1', () => {
     console.log(
-      `AGRIVA API running at http://127.0.0.1:${PORT} (${usingMemory ? 'embedded MongoDB' : 'external MongoDB'})`
+      `EARTHORA Platform running at http://127.0.0.1:${PORT} (${usingMemory ? 'embedded MongoDB' : 'external MongoDB'})`
     );
   });
 }
 
 start().catch((err) => {
-  console.error('Failed to start AGRIVA server:', err);
+  console.error('Failed to start EARTHORA platform server:', err);
   process.exit(1);
 });
 

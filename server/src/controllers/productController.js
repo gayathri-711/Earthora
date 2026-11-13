@@ -6,15 +6,18 @@ import Review from '../models/Review.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const listProducts = asyncHandler(async (req, res) => {
-  const { category, search, featured, minPrice, maxPrice, sort, limit = 50 } = req.query;
+  const { category, search, featured, minPrice, maxPrice, sort, limit = 100 } = req.query;
   const query = {};
 
-  if (category && category !== 'all') query.category = category;
+  if (category && category !== 'all' && category !== 'All') {
+    query.category = category.toLowerCase();
+  }
   if (featured === 'true') query.featured = true;
   if (search) {
     query.$or = [
       { name: { $regex: search, $options: 'i' } },
       { shortDescription: { $regex: search, $options: 'i' } },
+      { supplierName: { $regex: search, $options: 'i' } },
     ];
   }
   if (minPrice || maxPrice) {
@@ -47,7 +50,7 @@ export const getProductDetails = asyncHandler(async (req, res) => {
   );
 
   if (!product) {
-    throw new ApiError(404, 'Product not found');
+    throw new ApiError(404, 'Marketplace item not found');
   }
 
   const reviews = await Review.find({ product: product._id }).sort({ createdAt: -1 });
@@ -70,7 +73,7 @@ export const addProductReview = asyncHandler(async (req, res) => {
   const review = await Review.create({
     product: product._id,
     user: req.user?._id || null,
-    userName: req.user?.name || req.body.userName || 'Verified Shopper',
+    userName: req.user?.name || req.body.userName || 'Verified Grower',
     rating: Math.min(5, Math.max(1, Number(rating))),
     comment,
   });
@@ -90,7 +93,14 @@ export const addProductReview = asyncHandler(async (req, res) => {
 });
 
 export const listCategories = asyncHandler(async (_req, res) => {
-  const categories = await Category.find().sort({ name: 1 });
+  const categories = [
+    { id: 'all', name: 'All Products', slug: 'all', icon: 'Layers' },
+    { id: 'seeds', name: 'Seeds & Seedlings', slug: 'seeds', icon: 'Sprout' },
+    { id: 'fertilizers', name: 'Organic Fertilizers', slug: 'fertilizers', icon: 'Sparkles' },
+    { id: 'equipment', name: 'Farming Equipment', slug: 'equipment', icon: 'Tractor' },
+    { id: 'irrigation', name: 'Smart Irrigation', slug: 'irrigation', icon: 'Droplets' },
+    { id: 'produce', name: 'Fresh Farm Produce', slug: 'produce', icon: 'Apple' },
+  ];
   sendSuccess(res, { categories });
 });
 
@@ -98,4 +108,3 @@ export const listFarmers = asyncHandler(async (_req, res) => {
   const farmers = await Farmer.find({ verified: true }).sort({ createdAt: -1 });
   sendSuccess(res, { farmers });
 });
-

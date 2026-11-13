@@ -8,7 +8,7 @@ export default function ProtectedRoute({ children, roles }) {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <div className="h-8 w-8 animate-spin rounded-full border-2 border-agriva-forest border-t-transparent" />
+        <div className="h-8 w-8 animate-spin rounded-full border-2 border-earthora-forest border-t-transparent" />
       </div>
     );
   }
@@ -18,10 +18,16 @@ export default function ProtectedRoute({ children, roles }) {
   }
 
   if (roles && !roles.includes(user.role)) {
-    const fallback = user.role === 'admin' ? '/admin' : user.role === 'farmer' ? '/farmer' : '/customer';
+    const fallback =
+      user.role === 'admin'
+        ? '/dashboard/admin'
+        : user.role === 'farmer'
+        ? '/dashboard/farmer'
+        : user.role === 'expert'
+        ? '/dashboard/expert'
+        : '/dashboard/customer';
     return <Navigate to={fallback} replace />;
   }
 
   return children;
 }
-

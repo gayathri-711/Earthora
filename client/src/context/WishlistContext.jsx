@@ -4,14 +4,14 @@ import { useAuth } from './AuthContext';
 import { useToast } from './ToastContext';
 
 const WishlistContext = createContext(null);
-const STORAGE_KEY = 'agriva_wishlist';
+const STORAGE_KEY = 'earthora_wishlist';
 
 export function WishlistProvider({ children }) {
   const { isAuthenticated } = useAuth();
   const { showToast } = useToast();
   const [items, setItems] = useState(() => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('agriva_wishlist');
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];

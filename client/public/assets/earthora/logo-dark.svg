@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" fill="none">
+  <!-- Icon Mark -->
+  <defs>
+    <linearGradient id="e-grad" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="60%" stop-color="#3E5C3B" />
+      <stop offset="100%" stop-color="#0D2B1D" />
+    </linearGradient>
+  </defs>
+  <rect x="4" y="4" width="40" height="40" rx="10" fill="url(#e-grad)" />
+  <path d="M24 10L35 16.5V29.5L24 36L13 29.5V16.5L24 10Z" stroke="#7E9F83" stroke-width="1.2" stroke-dasharray="1.5 1.5" fill="none" opacity="0.7"/>
+  <path d="M24 13C24 13 30 17.5 30 23.5C30 27 27.5 29.5 24 29.5C20.5 29.5 18 27 18 23.5C18 17.5 24 13 24 13Z" fill="#A7F3D0" />
+  <path d="M24 18V28.5" stroke="#0D2B1D" stroke-width="2" stroke-linecap="round" />
+  <circle cx="24" cy="14" r="1.8" fill="#FAF8F2" />
+
+  <!-- Typography -->
+  <text x="56" y="27" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="20" font-weight="800" letter-spacing="0.1em" fill="#0D2B1D">
+    EARTHORA
+  </text>
+  <text x="57" y="38" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-size="7.5" font-weight="600" letter-spacing="0.18em" fill="#3E5C3B">
+    SMART AGRI-ECOSYSTEM
+  </text>
+</svg>

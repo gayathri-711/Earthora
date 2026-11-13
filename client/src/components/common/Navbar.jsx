@@ -1,29 +1,37 @@
 import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import {
+  CloudSun,
+  Cpu,
   Heart,
-  Menu,
-  Search,
-  ShoppingBasket,
-  Sprout,
-  User,
-  X,
   LayoutDashboard,
   LogOut,
+  Menu,
   Package,
+  Search,
+  ShoppingBag,
+  Sparkles,
+  Sprout,
+  User,
+  Users,
+  Wheat,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
-const navLinks = [
+const mainNav = [
   { to: '/', label: 'Home' },
-  { to: '/products', label: 'Shop Produce' },
-  { to: '/farmers', label: 'Farmers' },
   { to: '/about', label: 'About' },
-  { to: '/services', label: 'Services' },
-  { to: '/gallery', label: 'Gallery' },
-  { to: '/blog', label: 'Journal' },
+  { to: '/smart-agriculture', label: 'Smart Agri' },
+  { to: '/farmer-hub', label: 'Farmer Hub' },
+  { to: '/crop-management', label: 'Crops' },
+  { to: '/marketplace', label: 'Marketplace' },
+  { to: '/weather-intelligence', label: 'Weather' },
+  { to: '/soil-insights', label: 'Soil' },
+  { to: '/expert-connect', label: 'Experts' },
+  { to: '/knowledge-hub', label: 'Knowledge' },
   { to: '/contact', label: 'Contact' },
 ];
 
@@ -38,45 +46,69 @@ export default function Navbar() {
 
   const dashboardPath =
     user?.role === 'admin'
-      ? '/admin'
+      ? '/dashboard/admin'
       : user?.role === 'farmer'
-        ? '/farmer'
-        : '/customer';
+        ? '/dashboard/farmer'
+        : user?.role === 'expert'
+          ? '/dashboard/expert'
+          : '/dashboard/customer';
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     const q = searchQuery.trim();
     setSearchOpen(false);
     setMobileOpen(false);
-    navigate(q ? `/products?search=${encodeURIComponent(q)}` : '/products');
+    navigate(q ? `/marketplace?search=${encodeURIComponent(q)}` : '/marketplace');
   };
 
   return (
-    <header className="sticky top-0 z-40 border-b border-agriva-line/80 bg-agriva-cream/95 backdrop-blur-md">
-      <div className="bg-agriva-forest px-4 py-1.5 text-center text-xs font-medium text-agriva-mint">
-        <span className="inline-flex items-center gap-2">
-          <Sprout className="h-3.5 w-3.5" />
-          From Farm to Home – Naturally Organic · Free chilled delivery on orders over $50 · Use{' '}
-          <strong className="text-white">ORGANIC10</strong> for 10% off
-        </span>
+    <header className="sticky top-0 z-40 border-b border-earthora-sand/70 bg-earthora-ivory/95 backdrop-blur-md">
+      {/* Top Banner */}
+      <div className="bg-earthora-forest px-4 py-1.5 text-center text-xs font-medium text-emerald-200">
+        <div className="mx-auto flex max-w-7xl items-center justify-between">
+          <span className="hidden sm:inline-flex items-center gap-2">
+            <span className="flex h-2 w-2 rounded-full bg-earthora-mint animate-pulse" />
+            <strong className="text-white">EARTHORA 2.0:</strong> Smart Agriculture &amp; Sustainable Farming Ecosystem
+          </span>
+          <span className="mx-auto sm:mx-0 text-white/90">
+            Rooted in Nature. Driven by Innovation. · Code <strong className="text-earthora-mint font-bold">ORGANIC10</strong> for 10% off
+          </span>
+          <Link
+            to="/smart-agriculture"
+            className="hidden lg:inline-flex items-center gap-1 text-xs font-semibold text-emerald-300 hover:text-white"
+          >
+            Explore IoT Suite →
+          </Link>
+        </div>
       </div>
 
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3.5 sm:px-6 lg:px-8">
+      {/* Main Navbar */}
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
+        {/* Brand Logo */}
         <Link to="/" className="flex items-center gap-2.5">
-          <img src="/assets/img/logo/black-logo.svg" alt="AGRIVA" className="h-8 w-auto" />
+          <img src="/assets/earthora/logo-icon.svg" alt="EARTHORA" className="h-9 w-9" />
+          <div className="flex flex-col">
+            <span className="font-heading text-xl font-extrabold tracking-wider text-earthora-forest">
+              EARTHORA
+            </span>
+            <span className="text-[9px] font-bold tracking-[0.18em] text-earthora-olive uppercase">
+              Smart Agri Ecosystem
+            </span>
+          </div>
         </Link>
 
-        <nav className="hidden items-center gap-6 lg:flex" aria-label="Main navigation">
-          {navLinks.map((link) => (
+        {/* Desktop Nav */}
+        <nav className="hidden items-center gap-5 xl:flex" aria-label="Main navigation">
+          {mainNav.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.to === '/'}
               className={({ isActive }) =>
-                `text-sm font-medium transition-colors ${
+                `text-xs font-semibold transition-colors ${
                   isActive
-                    ? 'text-agriva-forest underline decoration-agriva-leaf decoration-2 underline-offset-8'
-                    : 'text-agriva-muted hover:text-agriva-forest'
+                    ? 'text-earthora-forest underline decoration-earthora-mint decoration-2 underline-offset-8'
+                    : 'text-earthora-muted hover:text-earthora-forest'
                 }`
               }
             >
@@ -85,33 +117,25 @@ export default function Navbar() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2 sm:gap-3">
+        {/* Actions */}
+        <div className="flex items-center gap-2 sm:gap-2.5">
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
-            className="rounded-lg border border-transparent p-2 text-agriva-ink transition-colors hover:border-agriva-line hover:bg-white"
-            aria-label="Search organic products"
+            className="rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
+            aria-label="Search agricultural marketplace"
           >
-            <Search className="h-5 w-5" />
+            <Search className="h-4.5 w-4.5" />
           </button>
 
           <Link
-            to="/track-order"
-            className="hidden rounded-lg border border-transparent p-2 text-agriva-ink transition-colors hover:border-agriva-line hover:bg-white sm:inline-flex"
-            title="Track Order"
-            aria-label="Track order"
-          >
-            <Package className="h-5 w-5" />
-          </Link>
-
-          <Link
             to="/wishlist"
-            className="relative rounded-lg border border-transparent p-2 text-agriva-ink transition-colors hover:border-agriva-line hover:bg-white"
+            className="relative rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
             aria-label="Wishlist"
           >
-            <Heart className="h-5 w-5" />
+            <Heart className="h-4.5 w-4.5" />
             {wishlistItems.length > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-agriva-earth px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-earthora-olive px-1 text-[10px] font-bold text-white">
                 {wishlistItems.length}
               </span>
             )}
@@ -119,12 +143,12 @@ export default function Navbar() {
 
           <Link
             to="/cart"
-            className="relative rounded-lg border border-transparent p-2 text-agriva-ink transition-colors hover:border-agriva-line hover:bg-white"
-            aria-label="Shopping cart"
+            className="relative rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
+            aria-label="Shopping Cart"
           >
-            <ShoppingBasket className="h-5 w-5" />
+            <ShoppingBag className="h-4.5 w-4.5" />
             {summary.count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-agriva-forest px-1 text-[10px] font-bold text-white">
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-earthora-forest px-1 text-[10px] font-bold text-white">
                 {summary.count}
               </span>
             )}
@@ -134,51 +158,60 @@ export default function Navbar() {
             <div className="hidden items-center gap-2 sm:flex">
               <Link
                 to={dashboardPath}
-                className="inline-flex items-center gap-1.5 rounded-lg border border-agriva-line bg-white px-3 py-1.5 text-xs font-semibold text-agriva-forest transition-colors hover:bg-agriva-oat"
+                className="inline-flex items-center gap-1.5 rounded-xl border border-earthora-forest/20 bg-earthora-forest px-3.5 py-2 text-xs font-semibold text-white transition-colors hover:bg-earthora-deep"
               >
-                <LayoutDashboard className="h-3.5 w-3.5" />
-                {user.role === 'admin'
-                  ? 'Admin'
-                  : user.role === 'farmer'
-                    ? 'Farmer Portal'
-                    : user.name.split(' ')[0]}
+                <LayoutDashboard className="h-3.5 w-3.5 text-earthora-mint" />
+                <span>
+                  {user.role === 'admin'
+                    ? 'Admin'
+                    : user.role === 'farmer'
+                      ? 'Farmer Hub'
+                      : user.role === 'expert'
+                        ? 'Expert Suite'
+                        : 'My Portal'}
+                </span>
               </Link>
               <button
                 type="button"
                 onClick={logout}
-                className="rounded-lg p-2 text-agriva-muted hover:bg-white hover:text-red-700"
-                aria-label="Sign out"
+                className="rounded-xl p-2 text-earthora-muted hover:bg-white hover:text-red-700"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
           ) : (
-            <Link to="/login" className="btn-primary hidden py-2 text-xs sm:inline-flex">
-              <User className="h-3.5 w-3.5" />
-              Sign In
-            </Link>
+            <div className="hidden sm:flex items-center gap-2">
+              <Link to="/login" className="btn-secondary py-2 text-xs">
+                <User className="h-3.5 w-3.5" />
+                Sign In
+              </Link>
+              <Link to="/register" className="btn-primary py-2 text-xs">
+                Join Earthora
+              </Link>
+            </div>
           )}
 
           <button
             type="button"
             onClick={() => setMobileOpen((v) => !v)}
-            className="rounded-lg border border-agriva-line bg-white p-2 text-agriva-ink lg:hidden"
-            aria-label="Toggle menu"
+            className="rounded-xl border border-earthora-sand bg-white p-2 text-earthora-charcoal xl:hidden"
+            aria-label="Toggle navigation menu"
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
+      {/* Live Search Drawer */}
       {searchOpen && (
-        <div className="border-t border-agriva-line bg-white px-4 py-3">
+        <div className="border-t border-earthora-sand bg-white px-4 py-3">
           <form onSubmit={handleSearchSubmit} className="mx-auto flex max-w-2xl gap-2">
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search tomatoes, honey, heritage grains, apples..."
+              placeholder="Search seeds, fertilizers, smart irrigation, equipment, produce..."
               className="input-field"
               autoFocus
             />
@@ -189,66 +222,62 @@ export default function Navbar() {
         </div>
       )}
 
+      {/* Mobile Drawer */}
       {mobileOpen && (
-        <div className="border-t border-agriva-line bg-white px-4 py-4 lg:hidden">
-          <nav className="flex flex-col gap-2">
-            {navLinks.map((link) => (
+        <div className="border-t border-earthora-sand bg-white px-4 py-4 xl:hidden shadow-elevated">
+          <nav className="grid grid-cols-2 gap-2 text-xs">
+            {mainNav.map((link) => (
               <NavLink
                 key={link.to}
                 to={link.to}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
-                  `rounded-lg px-3 py-2 text-sm font-medium ${
-                    isActive ? 'bg-agriva-mint/40 text-agriva-forest' : 'text-agriva-ink hover:bg-agriva-oat'
+                  `rounded-lg p-2.5 font-medium transition-colors ${
+                    isActive
+                      ? 'bg-earthora-forest text-white'
+                      : 'text-earthora-charcoal hover:bg-earthora-beige'
                   }`
                 }
               >
                 {link.label}
               </NavLink>
             ))}
-            <Link
-              to="/track-order"
-              onClick={() => setMobileOpen(false)}
-              className="rounded-lg px-3 py-2 text-sm font-medium text-agriva-ink hover:bg-agriva-oat"
-            >
-              Track Order
-            </Link>
-            <div className="mt-2 border-t border-agriva-line pt-3">
-              {isAuthenticated ? (
-                <div className="flex items-center justify-between gap-2">
-                  <Link
-                    to={dashboardPath}
-                    onClick={() => setMobileOpen(false)}
-                    className="btn-primary flex-1"
-                  >
-                    Open Dashboard
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      setMobileOpen(false);
-                    }}
-                    className="btn-secondary"
-                  >
-                    Sign Out
-                  </button>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link to="/login" onClick={() => setMobileOpen(false)} className="btn-secondary">
-                    Sign In
-                  </Link>
-                  <Link to="/register" onClick={() => setMobileOpen(false)} className="btn-primary">
-                    Register
-                  </Link>
-                </div>
-              )}
-            </div>
           </nav>
+          <div className="mt-4 border-t border-earthora-sand pt-3">
+            {isAuthenticated ? (
+              <div className="flex items-center justify-between gap-2">
+                <Link
+                  to={dashboardPath}
+                  onClick={() => setMobileOpen(false)}
+                  className="btn-primary flex-1"
+                >
+                  <LayoutDashboard className="h-4 w-4" />
+                  Open Dashboard
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => {
+                    logout();
+                    setMobileOpen(false);
+                  }}
+                  className="btn-secondary"
+                >
+                  Sign Out
+                </button>
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 gap-2">
+                <Link to="/login" onClick={() => setMobileOpen(false)} className="btn-secondary">
+                  Sign In
+                </Link>
+                <Link to="/register" onClick={() => setMobileOpen(false)} className="btn-primary">
+                  Get Started
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </header>
   );
 }
-
