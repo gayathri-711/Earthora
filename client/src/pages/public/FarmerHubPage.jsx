@@ -83,7 +83,7 @@ export default function FarmerHubPage() {
       experience: '5+ Years',
       certifications: [applyForm.certifications, 'Earthora Partner Pending'],
       image: '/assets/img/home-3/team/01.jpg',
-      coverImage: '/assets/img/home-1/hero/slider-1.jpg',
+      coverImage: '/assets/img/hero/farmer-hero.jpg',
       bio: `Applying to join the Earthora Regenerative Farming Ecosystem from ${applyForm.location || 'our regional hub'}.`,
     };
 
@@ -106,9 +106,9 @@ export default function FarmerHubPage() {
     <div className="bg-earthora-ivory min-h-screen">
       {/* Hero Section */}
       <section className="relative overflow-hidden bg-earthora-forest py-20 text-white lg:py-28">
-        <div className="absolute inset-0 opacity-15">
+        <div className="absolute inset-0 opacity-20">
           <img
-            src="/assets/img/home-1/hero/slider-1.jpg"
+            src="/assets/img/hero/farmer-hero.jpg"
             alt="Farming"
             className="h-full w-full object-cover"
           />

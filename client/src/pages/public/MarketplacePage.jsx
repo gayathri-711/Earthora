@@ -111,9 +111,9 @@ export default function MarketplacePage() {
     <div className="bg-earthora-ivory min-h-screen">
       {/* Hero Banner */}
       <section className="relative overflow-hidden bg-earthora-forest py-16 text-white sm:py-20">
-        <div className="absolute inset-0 opacity-15">
+        <div className="absolute inset-0 opacity-20">
           <img
-            src="/assets/img/home-1/hero/slider-3.jpg"
+            src="/assets/img/hero/marketplace-hero.jpg"
             alt="Marketplace"
             className="h-full w-full object-cover"
           />

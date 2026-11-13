@@ -24,10 +24,14 @@ export default function ProductCard({ product }) {
       <div className="relative aspect-[4/3] overflow-hidden bg-earthora-beige/60">
         <Link to={`/marketplace/${product.slug || product._id}`} className="block h-full w-full">
           <img
-            src={product.image}
+            src={product.image || '/assets/img/products/heirloom-tomatoes.jpg'}
             alt={product.name}
             className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
             loading="lazy"
+            onError={(e) => {
+              e.currentTarget.onerror = null;
+              e.currentTarget.src = '/assets/img/products/heirloom-tomatoes.jpg';
+            }}
           />
         </Link>
 

@@ -20,7 +20,7 @@ const farmerSchema = new mongoose.Schema(
     certifications: { type: [String], default: ['USDA Organic', 'Regenerative Verified'] },
     bio: { type: String, default: '' },
     image: { type: String, default: '/assets/img/home-3/team/01.jpg' },
-    coverImage: { type: String, default: '/assets/img/home-1/hero/slider-1.jpg' },
+    coverImage: { type: String, default: '/assets/img/hero/farmer-hero.jpg' },
     verified: { type: Boolean, default: true },
   },
   { timestamps: true }

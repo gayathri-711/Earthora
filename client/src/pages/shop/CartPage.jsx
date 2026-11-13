@@ -74,7 +74,7 @@ export default function CartPage() {
               const price = Number(product.price) || 0;
               const quantity = Number(item.quantity) || 1;
               const lineTotal = (price * quantity).toFixed(2);
-              const image = product.image || '/assets/img/home-4/shop-1.jpg';
+              const image = product.image || '/assets/img/products/heirloom-tomatoes.jpg';
               const name = product.name || 'Organic Agricultural Produce';
 
               return (
@@ -88,7 +88,7 @@ export default function CartPage() {
                       alt={name}
                       className="h-20 w-24 rounded-2xl object-cover border border-earthora-sand/50 shadow-sm"
                       onError={(e) => {
-                        e.target.src = '/assets/img/home-4/shop-1.jpg';
+                        e.target.src = '/assets/img/products/heirloom-tomatoes.jpg';
                       }}
                     />
                     <div>

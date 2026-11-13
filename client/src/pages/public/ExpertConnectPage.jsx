@@ -156,9 +156,9 @@ export default function ExpertConnectPage() {
     <div className="bg-earthora-ivory min-h-screen">
       {/* Hero Header */}
       <section className="relative overflow-hidden bg-earthora-forest py-20 text-white lg:py-24">
-        <div className="absolute inset-0 opacity-15">
+        <div className="absolute inset-0 opacity-20">
           <img
-            src="/assets/img/home-1/hero/slider-2.jpg"
+            src="/assets/img/hero/expert-hero.jpg"
             alt="Agronomy Experts"
             className="h-full w-full object-cover"
           />

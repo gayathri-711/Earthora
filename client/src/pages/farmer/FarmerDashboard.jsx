@@ -42,7 +42,7 @@ const emptyProduct = {
   harvestDate: new Date().toISOString().slice(0, 10),
   certifications: 'USDA Organic, Earthora Verified',
   shortDescription: '',
-  image: '/assets/img/home-4/shop-1.jpg',
+  image: '/assets/img/products/heirloom-tomatoes.jpg',
 };
 
 export default function FarmerDashboard() {

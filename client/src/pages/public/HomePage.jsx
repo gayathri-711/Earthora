@@ -189,7 +189,7 @@ export default function HomePage() {
             <div className="lg:col-span-5">
               <div className="card-surface relative overflow-hidden border-2 border-earthora-forest/10 p-3 shadow-elevated">
                 <img
-                  src="/assets/img/home-1/hero/slider-1.jpg"
+                  src="/assets/img/hero/smart-agri-hero.jpg"
                   alt="Earthora Smart Farm"
                   className="aspect-[4/3] w-full rounded-xl object-cover"
                 />

@@ -121,9 +121,13 @@ export default function ProductDetailsPage() {
           <div className="space-y-4 lg:col-span-6">
             <div className="overflow-hidden rounded-3xl border border-earthora-sand/80 bg-white shadow-md">
               <img
-                src={activeImage || product.image}
+                src={activeImage || product.image || '/assets/img/products/heirloom-tomatoes.jpg'}
                 alt={product.name}
                 className="aspect-[4/3] w-full object-cover"
+                onError={(e) => {
+                  e.currentTarget.onerror = null;
+                  e.currentTarget.src = '/assets/img/products/heirloom-tomatoes.jpg';
+                }}
               />
             </div>
             {gallery.length > 1 && (

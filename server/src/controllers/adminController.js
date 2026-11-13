@@ -196,7 +196,7 @@ export const createProductAdmin = asyncHandler(async (req, res) => {
     unit: unit || '1 unit',
     shortDescription,
     description: description || shortDescription,
-    image: image || '/assets/img/home-4/shop-1.jpg',
+    image: image || '/assets/img/products/heirloom-tomatoes.jpg',
     supplierName: supplierName || 'Earthora Ecosystem Supplier',
   });
   sendSuccess(res, { product }, 'Product listed', 201);

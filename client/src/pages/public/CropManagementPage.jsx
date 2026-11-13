@@ -87,6 +87,7 @@ export default function CropManagementPage() {
     const createdCrop = {
       _id: `crop-${Date.now()}`,
       ...newCropForm,
+      image: newCropForm.image || '/assets/img/crops/crop-tomatoes.jpg',
       acreage: Number(newCropForm.acreage),
       expectedYieldKg: Number(newCropForm.expectedYieldKg),
       soilHealthScore: Number(newCropForm.soilHealthScore),
@@ -164,9 +165,9 @@ export default function CropManagementPage() {
     <div className="bg-earthora-ivory min-h-screen">
       {/* Header */}
       <section className="relative overflow-hidden bg-earthora-forest py-20 text-white lg:py-24">
-        <div className="absolute inset-0 opacity-15">
+        <div className="absolute inset-0 opacity-20">
           <img
-            src="/assets/img/home-1/hero/slider-2.jpg"
+            src="/assets/img/hero/crops-hero.jpg"
             alt="Crops"
             className="h-full w-full object-cover"
           />
@@ -174,8 +175,9 @@ export default function CropManagementPage() {
         <div className="absolute inset-0 bg-gradient-to-r from-earthora-forest via-earthora-forest/90 to-transparent" />
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
-            <div className="max-w-2xl">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center">
+            {/* Left Content */}
+            <div className="lg:col-span-7">
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-mint/15 px-4 py-1.5 text-xs sm:text-sm font-black tracking-[0.2em] text-earthora-mint uppercase shadow-xs">
                 <Leaf className="h-4.5 w-4.5" />
                 EARTHORA CROP PHENOLOGY ENGINE
@@ -187,47 +189,90 @@ export default function CropManagementPage() {
                 Track biological growth stages, root-zone irrigation logs, organic fertility inputs, and yield
                 projections across monitored acreage in real time.
               </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                <button
+                  onClick={() => setShowAddModal(true)}
+                  className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
+                >
+                  <Plus className="h-5 w-5" />
+                  Add New Crop Cycle
+                </button>
+                <Link
+                  to="/soil-insights"
+                  className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
+                >
+                  <Sprout className="h-5 w-5 text-earthora-mint" />
+                  Soil Health Analytics
+                </Link>
+              </div>
+
+              {/* Quick Metrics */}
+              <div className="mt-10 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-white/5 p-5 backdrop-blur-md sm:grid-cols-4">
+                <div>
+                  <div className="font-heading text-2xl sm:text-3xl font-extrabold text-white">{crops.length}</div>
+                  <div className="text-xs text-earthora-sand/75">Active Monitored Plots</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl sm:text-3xl font-extrabold text-earthora-mint">
+                    {crops.reduce((acc, c) => acc + (c.acreage || 0), 0)} Acres
+                  </div>
+                  <div className="text-xs text-earthora-sand/75">Bio-Intensive Acreage</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl sm:text-3xl font-extrabold text-earthora-gold">91/100</div>
+                  <div className="text-xs text-earthora-sand/75">Avg Soil Vigor Score</div>
+                </div>
+                <div>
+                  <div className="font-heading text-2xl sm:text-3xl font-extrabold text-white">
+                    {(crops.reduce((acc, c) => acc + (c.expectedYieldKg || 0), 0) / 1000).toFixed(1)}t
+                  </div>
+                  <div className="text-xs text-earthora-sand/75">Projected Harvest Yield</div>
+                </div>
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-3">
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
-              >
-                <Plus className="h-5 w-5" />
-                Add New Crop Cycle
-              </button>
-              <Link
-                to="/soil-insights"
-                className="inline-flex items-center gap-2 rounded-xl border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-sm transition-all hover:bg-white/20"
-              >
-                <Sprout className="h-5 w-5 text-earthora-mint" />
-                Soil Health Analytics
-              </Link>
-            </div>
-          </div>
+            {/* Right Crop Spotlight Card */}
+            <div className="lg:col-span-5">
+              <div className="card-surface overflow-hidden rounded-3xl border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-md text-white">
+                <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+                  <img
+                    src="/assets/img/crops/crop-tomatoes.jpg"
+                    alt="Active Crop Canopy"
+                    className="h-full w-full object-cover transition-transform duration-700 hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-950/70 px-3 py-1 text-xs font-bold text-emerald-300 backdrop-blur-md">
+                    <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Live Phenology Sensor Feed
+                  </div>
+                  <div className="absolute bottom-3 left-3 right-3 flex items-end justify-between">
+                    <div>
+                      <p className="text-xs font-medium text-emerald-200">Featured Active Plot</p>
+                      <h4 className="font-heading text-lg font-bold text-white">Heirloom Vine Tomatoes</h4>
+                      <p className="text-[11px] text-white/80">North Plot 02 · 88% Maturity (Maturing)</p>
+                    </div>
+                    <span className="rounded-xl border border-white/20 bg-white/10 px-3 py-1 text-xs font-bold text-earthora-mint backdrop-blur-md">
+                      Yield: 4,200 kg
+                    </span>
+                  </div>
+                </div>
 
-          {/* Quick Metrics */}
-          <div className="mt-12 grid grid-cols-2 gap-4 rounded-2xl border border-white/10 bg-white/5 p-6 backdrop-blur-md sm:grid-cols-4">
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-white">{crops.length}</div>
-              <div className="text-xs text-earthora-sand/75">Active Monitored Plots</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-earthora-mint">
-                {crops.reduce((acc, c) => acc + (c.acreage || 0), 0)} Acres
+                <div className="mt-3 grid grid-cols-3 gap-2 text-center text-xs">
+                  <div className="rounded-xl bg-white/5 p-2.5">
+                    <span className="text-[10px] text-earthora-sand/75 block">Moisture</span>
+                    <strong className="text-white text-sm">28% (Opt)</strong>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-2.5">
+                    <span className="text-[10px] text-earthora-sand/75 block">Soil Health</span>
+                    <strong className="text-earthora-mint text-sm">92 / 100</strong>
+                  </div>
+                  <div className="rounded-xl bg-white/5 p-2.5">
+                    <span className="text-[10px] text-earthora-sand/75 block">Est. Harvest</span>
+                    <strong className="text-earthora-gold text-sm">Nov 20</strong>
+                  </div>
+                </div>
               </div>
-              <div className="text-xs text-earthora-sand/75">Bio-Intensive Acreage</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-earthora-gold">91/100</div>
-              <div className="text-xs text-earthora-sand/75">Avg Soil Vigor Score</div>
-            </div>
-            <div>
-              <div className="font-heading text-3xl font-extrabold text-white">
-                {(crops.reduce((acc, c) => acc + (c.expectedYieldKg || 0), 0) / 1000).toFixed(1)}t
-              </div>
-              <div className="text-xs text-earthora-sand/75">Projected Harvest Yield</div>
             </div>
           </div>
         </div>
@@ -273,8 +318,16 @@ export default function CropManagementPage() {
                 <div className="p-6">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex items-start gap-4">
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-earthora-sand/40 text-earthora-forest">
-                        <Sprout className="h-6 w-6 text-earthora-olive" />
+                      <div className="relative h-14 w-14 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-2xl border border-earthora-sand/80 bg-earthora-sand/30 shadow-xs">
+                        <img
+                          src={crop.image || '/assets/img/crops/crop-tomatoes.jpg'}
+                          alt={crop.name}
+                          className="h-full w-full object-cover transition-transform duration-300 hover:scale-110"
+                          onError={(e) => {
+                            e.currentTarget.onerror = null;
+                            e.currentTarget.src = '/assets/img/crops/crop-tomatoes.jpg';
+                          }}
+                        />
                       </div>
                       <div>
                         <div className="flex flex-wrap items-center gap-2">

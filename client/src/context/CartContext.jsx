@@ -27,7 +27,7 @@ function normalizeItem(rawItem) {
       compareAtPrice: product.compareAtPrice ? Number(product.compareAtPrice) : null,
       unit: product.unit || '1 unit',
       stock: Number(product.stock) || 99,
-      image: product.image || '/assets/img/home-4/shop-1.jpg',
+      image: product.image || '/assets/img/products/heirloom-tomatoes.jpg',
       supplierName: product.supplierName || 'Earthora Verified Partner',
       category: product.category || 'produce',
       categoryLabel: product.categoryLabel || 'Produce',

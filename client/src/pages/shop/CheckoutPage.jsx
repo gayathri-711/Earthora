@@ -273,7 +273,7 @@ export default function CheckoutPage() {
                   const price = Number(product.price) || 0;
                   const qty = Number(item.quantity) || 1;
                   const line = (price * qty).toFixed(2);
-                  const image = product.image || '/assets/img/home-4/shop-1.jpg';
+                  const image = product.image || '/assets/img/products/heirloom-tomatoes.jpg';
                   const name = product.name || 'Organic Produce';
 
                   return (

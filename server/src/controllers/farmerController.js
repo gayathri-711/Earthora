@@ -102,8 +102,8 @@ export const createFarmerProduct = asyncHandler(async (req, res) => {
     harvestDate: harvestDate ? new Date(harvestDate) : new Date(),
     certifications: Array.isArray(certifications) ? certifications : ['USDA Organic'],
     originCode: `AGR-${Date.now().toString().slice(-5)}`,
-    image: image || '/assets/img/home-4/shop-1.jpg',
-    gallery: [image || '/assets/img/home-4/shop-1.jpg'],
+    image: image || '/assets/img/products/heirloom-tomatoes.jpg',
+    gallery: [image || '/assets/img/products/heirloom-tomatoes.jpg'],
     shortDescription,
     description: description || shortDescription,
   });

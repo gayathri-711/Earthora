@@ -21,7 +21,7 @@ const productSchema = new mongoose.Schema(
     season: { type: String, default: 'Year-Round' },
     certifications: { type: [String], default: ['USDA Organic', 'Earthora Verified'] },
     originCode: { type: String, default: '' },
-    image: { type: String, default: '/assets/img/home-4/shop-1.jpg' },
+    image: { type: String, default: '/assets/img/products/heirloom-tomatoes.jpg' },
     gallery: { type: [String], default: [] },
     shortDescription: { type: String, required: true },
     description: { type: String, default: '' },

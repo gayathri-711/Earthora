@@ -19,6 +19,7 @@ const cropSchema = new mongoose.Schema(
     growthProgress: { type: Number, min: 0, max: 100, default: 35 },
     expectedYieldKg: { type: Number, default: 2400 },
     soilHealthScore: { type: Number, min: 0, max: 100, default: 88 },
+    image: { type: String, default: '/assets/img/crops/crop-tomatoes.jpg' },
     irrigationLogs: [
       {
         date: { type: Date, default: Date.now },

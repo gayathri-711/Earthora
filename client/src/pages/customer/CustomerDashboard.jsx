@@ -71,13 +71,13 @@ export default function CustomerDashboard() {
                 name: 'Heirloom Vine-Ripened Organic Tomatoes',
                 price: 6.8,
                 quantity: 3,
-                image: '/assets/img/home-4/shop-1.jpg',
+                image: '/assets/img/products/heirloom-tomatoes.jpg',
               },
               {
                 name: 'Certified Organic Heirloom Tomato Seeds',
                 price: 6.5,
                 quantity: 2,
-                image: '/assets/img/home-1/hero/slider-2.jpg',
+                image: '/assets/img/products/tomato-seeds.jpg',
               },
             ],
             shippingAddress: {
