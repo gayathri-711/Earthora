@@ -1,5 +1,7 @@
 node_modules/
-dist/
+# Allow client/dist for production cloud deployment
+!client/dist/
+!client/dist/**
 server/uploads/*
 !server/uploads/.gitkeep
 .env

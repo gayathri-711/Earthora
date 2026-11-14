@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <defs>
+    <linearGradient id="earthora-grad" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#10B981" />
+      <stop offset="50%" stop-color="#3E5C3B" />
+      <stop offset="100%" stop-color="#0D2B1D" />
+    </linearGradient>
+    <linearGradient id="leaf-glow" x1="12" y1="8" x2="28" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#A7F3D0" />
+      <stop offset="100%" stop-color="#10B981" />
+    </linearGradient>
+  </defs>
+  <rect width="40" height="40" rx="10" fill="url(#earthora-grad)" />
+  <!-- Hexagonal Tech Node -->
+  <path d="M20 6L32 13V27L20 34L8 27V13L20 6Z" stroke="#7E9F83" stroke-width="1.5" stroke-dasharray="2 2" fill="none" opacity="0.6"/>
+  <!-- Central Sprout / Earth Node -->
+  <path d="M20 10C20 10 27 15 27 22C27 26 23.8 29 20 29C16.2 29 13 26 13 22C13 15 20 10 20 10Z" fill="url(#leaf-glow)" />
+  <!-- Circuit Stem & Pulse -->
+  <path d="M20 16V28" stroke="#0D2B1D" stroke-width="2" stroke-linecap="round" />
+  <path d="M20 22C22.5 20.5 24.5 21 24.5 21" stroke="#0D2B1D" stroke-width="1.5" stroke-linecap="round" />
+  <circle cx="20" cy="12" r="2" fill="#FAF8F2" />
+  <circle cx="13" cy="22" r="1.5" fill="#FAF8F2" />
+  <circle cx="27" cy="22" r="1.5" fill="#FAF8F2" />
+</svg>
+

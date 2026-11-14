@@ -6,6 +6,7 @@ import {
   Cpu,
   Heart,
   HelpCircle,
+  Layers,
   LayoutDashboard,
   Leaf,
   LogOut,
@@ -340,6 +341,43 @@ export default function Navbar() {
           >
             {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
+        </div>
+      </div>
+
+      {/* Mobile & Tablet Visible Module Navigation Scroller (Guarantees all modules are seen on mobile) */}
+      <div className="lg:hidden border-t border-earthora-sand/70 bg-white/95 px-3 py-2 overflow-x-auto scrollbar-none shadow-xs">
+        <div className="flex items-center gap-1.5 min-w-max">
+          <span className="text-[10px] font-black uppercase tracking-wider text-earthora-olive pl-1 pr-1 shrink-0 flex items-center gap-1">
+            <Sparkles className="h-3 w-3 text-earthora-mint" />
+            Modules:
+          </span>
+          {[
+            { to: '/crop-management', label: 'Crops', icon: Leaf },
+            { to: '/marketplace', label: 'Marketplace', icon: ShoppingBag },
+            { to: '/soil-insights', label: 'Soil Health', icon: Layers },
+            { to: '/weather-intelligence', label: 'Weather Radar', icon: CloudSun },
+            { to: '/expert-connect', label: 'Experts', icon: Users },
+            { to: '/smart-agriculture', label: 'Smart Agri', icon: Cpu },
+            { to: '/farmer-hub', label: 'Farmer Hub', icon: Wheat },
+            { to: '/knowledge-hub', label: 'Knowledge', icon: Sparkles },
+          ].map((item) => {
+            const Icon = item.icon;
+            const active = location.pathname === item.to;
+            return (
+              <NavLink
+                key={item.to}
+                to={item.to}
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
+                  active
+                    ? 'bg-earthora-forest text-white shadow-xs'
+                    : 'border border-earthora-sand/80 bg-earthora-ivory/80 text-earthora-charcoal hover:bg-earthora-sand/50 hover:text-earthora-forest'
+                }`}
+              >
+                <Icon className={`h-3.5 w-3.5 ${active ? 'text-earthora-mint' : 'text-earthora-olive'}`} />
+                <span>{item.label}</span>
+              </NavLink>
+            );
+          })}
         </div>
       </div>
 

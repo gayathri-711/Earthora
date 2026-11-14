@@ -260,8 +260,8 @@ Here is how you can resolve common platform questions:
 
   return (
     <>
-      {/* Floating Chatbot Trigger Button (Bottom Right) */}
-      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-2">
+      {/* Floating Chatbot Trigger Button (Bottom Right - positioned above mobile bottom bar) */}
+      <div className="fixed bottom-20 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-2">
         {!isOpen && (
           <div className="hidden sm:flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-forest px-3.5 py-1.5 text-xs font-bold text-white shadow-xl animate-bounce">
             <Sparkles className="h-3.5 w-3.5 text-earthora-mint animate-pulse" />

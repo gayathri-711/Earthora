@@ -13,6 +13,7 @@ import {
   Leaf,
   MapPin,
   ShieldCheck,
+  ShoppingBag,
   Sparkles,
   Sprout,
   Star,
@@ -31,30 +32,70 @@ import {
   EARTHORA_PRODUCTS,
 } from '../../data/catalogData';
 
-const CORE_PILLARS = [
-  {
-    icon: Cpu,
-    title: 'Smart Precision Agriculture',
-    description: 'IoT telemetry, LoRaWAN soil moisture probes, and satellite NDVI indices providing micro-climate field intelligence.',
-    link: '/smart-agriculture',
-  },
+const ECOSYSTEM_MODULES = [
   {
     icon: Sprout,
     title: 'Crop Lifecycle Tracking',
-    description: 'From seedling to bin picking, log irrigation schedules, organic inputs, and stage-by-stage growth progress.',
+    badge: 'Biological Phenology',
+    description: 'Track growth progress, root-zone irrigation logs, and harvest projections across monitored acreage.',
     link: '/crop-management',
+    btnText: 'Open Crop Suite',
+  },
+  {
+    icon: ShoppingBag,
+    title: 'Agricultural Marketplace',
+    badge: 'Verified Organic · ₹ INR',
+    description: 'Direct-trade certified seeds, biochar compost, automated irrigation hardware, and fresh harvest produce.',
+    link: '/marketplace',
+    btnText: 'Shop Marketplace',
   },
   {
     icon: Layers,
     title: 'Soil Insights & NPK Telemetry',
-    description: 'Real-time laboratory & sensor analysis tracking pH, Nitrogen, Phosphorus, Potassium, and active mycorrhizal carbon.',
+    badge: 'Lab & Probe Analytics',
+    description: 'Real-time laboratory & sensor telemetry tracking pH balance, Nitrogen, Phosphorus, Potassium, and carbon.',
     link: '/soil-insights',
+    btnText: 'Inspect Soil Health',
   },
   {
     icon: CloudSun,
     title: 'Agro-Weather Intelligence',
-    description: 'Hyperlocal evapotranspiration forecasts, frost warnings, and spraying suitability windows to protect harvests.',
+    badge: 'Microclimate Radar',
+    description: 'Hyperlocal evapotranspiration forecasts, frost warnings, and spraying suitability windows to protect crops.',
     link: '/weather-intelligence',
+    btnText: 'View Weather Radar',
+  },
+  {
+    icon: Users,
+    title: 'Expert Connect & Advisory',
+    badge: '1-on-1 Agronomy',
+    description: 'Book 45-minute virtual telemetry consultations with accredited agronomists and soil microbiologists.',
+    link: '/expert-connect',
+    btnText: 'Connect with Experts',
+  },
+  {
+    icon: Cpu,
+    title: 'Smart Precision Agriculture',
+    badge: 'IoT & LoRaWAN Sensors',
+    description: 'Autonomous soil moisture telemetry, smart valve actuation, and drone NDVI vegetative indices.',
+    link: '/smart-agriculture',
+    btnText: 'Explore IoT Suite',
+  },
+  {
+    icon: Tractor,
+    title: 'Farmer Hub & Acreage',
+    badge: 'Partner Growers',
+    description: 'Verified regional farm directory, land profile audits, acreage metrics, and grower onboarding.',
+    link: '/farmer-hub',
+    btnText: 'Visit Farmer Hub',
+  },
+  {
+    icon: Sparkles,
+    title: 'Knowledge Hub & Research',
+    badge: 'Scientific Whitepapers',
+    description: 'Peer-reviewed field guides, regenerative organic research, and weekly agro-intelligence dispatches.',
+    link: '/knowledge-hub',
+    btnText: 'Read Field Guides',
   },
 ];
 
@@ -230,32 +271,45 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. Core Ecosystem Pillars */}
+      {/* 2. All Ecosystem Modules (Directly visible on Mobile & Desktop) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <SectionHeading
           align="center"
           eyebrow="Ecosystem Architecture"
-          title="Integrated Technology for Modern Agriculture"
-          subtitle="Four interconnected pillars uniting hardware sensors, agronomic data science, and direct marketplace trade."
+          title="All Platform Modules & Agronomy Suites"
+          subtitle="Direct one-tap access to all 8 operational suites uniting field IoT telemetry, living soil analytics, and direct-trade agricultural commerce."
         />
 
-        <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {CORE_PILLARS.map((pillar) => {
-            const Icon = pillar.icon;
+        <div className="mt-8 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {ECOSYSTEM_MODULES.map((mod) => {
+            const Icon = mod.icon;
             return (
-              <div key={pillar.title} className="card-surface flex flex-col justify-between p-6 hover:border-earthora-forest/40">
+              <div
+                key={mod.title}
+                className="card-surface group flex flex-col justify-between p-4 sm:p-6 transition-all duration-200 hover:-translate-y-1 hover:border-earthora-mint hover:shadow-elevated"
+              >
                 <div>
-                  <div className="mb-4 inline-flex rounded-xl bg-earthora-mint/20 p-3 text-earthora-forest">
-                    <Icon className="h-6 w-6 text-earthora-forest" />
+                  <div className="flex items-center justify-between mb-3 sm:mb-4">
+                    <div className="inline-flex rounded-xl bg-earthora-mint/20 p-2.5 sm:p-3 text-earthora-forest group-hover:bg-earthora-forest group-hover:text-earthora-mint transition-colors">
+                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                    </div>
+                    <span className="hidden sm:inline-block rounded-full bg-earthora-ivory px-2 py-0.5 text-[10px] font-bold text-earthora-olive uppercase">
+                      {mod.badge}
+                    </span>
                   </div>
-                  <h3 className="font-heading text-xl font-bold text-earthora-forest">{pillar.title}</h3>
-                  <p className="mt-2 text-xs leading-relaxed text-earthora-muted">{pillar.description}</p>
+                  <h3 className="font-heading text-sm sm:text-lg font-bold text-earthora-forest group-hover:text-emerald-800 leading-snug">
+                    {mod.title}
+                  </h3>
+                  <p className="mt-1.5 text-[11px] sm:text-xs leading-relaxed text-earthora-muted line-clamp-2 sm:line-clamp-3">
+                    {mod.description}
+                  </p>
                 </div>
                 <Link
-                  to={pillar.link}
-                  className="mt-6 inline-flex items-center gap-1 text-xs font-bold text-earthora-forest hover:text-earthora-mint"
+                  to={mod.link}
+                  className="mt-4 sm:mt-6 inline-flex items-center justify-between rounded-xl bg-earthora-ivory px-3 py-2 text-xs font-bold text-earthora-forest group-hover:bg-earthora-forest group-hover:text-white transition-all shadow-xs"
                 >
-                  Explore Module <ArrowRight className="h-3.5 w-3.5" />
+                  <span className="truncate">{mod.btnText}</span>
+                  <ArrowRight className="h-3.5 w-3.5 shrink-0 ml-1 text-earthora-mint group-hover:text-earthora-mint" />
                 </Link>
               </div>
             );
