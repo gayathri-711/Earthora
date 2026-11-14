@@ -8,6 +8,8 @@
     font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
     color: #18201b;
     background-color: #e4f2e7;
+    overflow-x: hidden;
+    width: 100%;
   }
 
   h1, h2, h3, h4 {
@@ -18,6 +20,16 @@
   .font-editorial {
     font-family: 'Fraunces', Georgia, serif;
     letter-spacing: -0.015em;
+  }
+}
+
+@layer utilities {
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

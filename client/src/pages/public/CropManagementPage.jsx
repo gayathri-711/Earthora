@@ -190,7 +190,7 @@ export default function CropManagementPage() {
                 projections across monitored acreage in real time.
               </p>
 
-              <div className="mt-8 flex flex-wrap gap-3">
+              <div className="mt-8 flex flex-col sm:flex-row flex-wrap gap-3">
                 <button
                   onClick={() => setShowAddModal(true)}
                   className="btn-accent flex items-center gap-2 shadow-lg shadow-earthora-mint/20"
@@ -368,7 +368,7 @@ export default function CropManagementPage() {
                     </div>
 
                     {/* Metrics & Actions */}
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-end gap-3 sm:gap-4 border-t sm:border-t-0 border-earthora-sand/60 pt-3 sm:pt-0">
                       <div className="text-right">
                         <div className="text-xs text-earthora-muted">Expected Yield</div>
                         <div className="font-heading text-lg font-bold text-earthora-forest">

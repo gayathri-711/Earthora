@@ -129,7 +129,7 @@ export default function RegisterPage() {
         </p>
 
         {/* Role Picker (3 user-facing roles) */}
-        <div className="mt-6 grid grid-cols-3 gap-2">
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => setRole('customer')}

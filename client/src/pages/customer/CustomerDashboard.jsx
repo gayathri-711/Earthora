@@ -327,7 +327,7 @@ export default function CustomerDashboard() {
               />
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div>
                 <label className="text-xs font-semibold text-earthora-charcoal">City</label>
                 <input

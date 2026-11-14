@@ -151,21 +151,21 @@ export default function HomePage() {
                 audit soil health, and trade certified agricultural inputs and produce.
               </p>
 
-              <div className="flex flex-wrap items-center gap-3 pt-2">
-                <Link to="/smart-agriculture" className="btn-primary px-6 py-3">
+              <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 pt-2">
+                <Link to="/smart-agriculture" className="btn-primary px-6 py-3 justify-center">
                   Explore Smart Agri Suite
                   <ArrowRight className="h-4 w-4" />
                 </Link>
-                <Link to="/marketplace" className="btn-secondary px-6 py-3">
+                <Link to="/marketplace" className="btn-secondary px-6 py-3 justify-center">
                   Agricultural Marketplace
                 </Link>
-                <Link to="/register?role=farmer" className="btn-accent px-6 py-3">
+                <Link to="/register?role=farmer" className="btn-accent px-6 py-3 justify-center">
                   Join as Farmer
                 </Link>
               </div>
 
               {/* Verified Metrics Counter */}
-              <div className="grid grid-cols-4 gap-4 border-t border-earthora-sand/80 pt-6">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 border-t border-earthora-sand/80 pt-6">
                 <div>
                   <p className="font-heading text-2xl font-black text-earthora-forest">{dashboardMetrics.totalFarmers || 48}+</p>
                   <p className="text-[11px] font-semibold text-earthora-muted uppercase">Verified Farms</p>

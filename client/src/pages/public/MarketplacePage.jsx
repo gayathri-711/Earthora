@@ -192,60 +192,63 @@ export default function MarketplacePage() {
               />
             </div>
 
-            {/* Price Slider */}
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-semibold text-earthora-charcoal whitespace-nowrap">
-                Max Price: <strong className="text-earthora-forest">₹{maxPrice.toLocaleString('en-IN')}</strong>
-              </span>
-              <input
-                type="range"
-                min="100"
-                max="10000"
-                step="100"
-                value={maxPrice}
-                onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-32 accent-earthora-forest"
-              />
+            {/* Filter Controls Row */}
+            <div className="flex flex-wrap items-center justify-between gap-3 sm:gap-4 lg:justify-end">
+              {/* Price Slider */}
+              <div className="flex items-center gap-2.5">
+                <span className="text-xs font-semibold text-earthora-charcoal whitespace-nowrap">
+                  Max: <strong className="text-earthora-forest">₹{maxPrice.toLocaleString('en-IN')}</strong>
+                </span>
+                <input
+                  type="range"
+                  min="100"
+                  max="10000"
+                  step="100"
+                  value={maxPrice}
+                  onChange={(e) => setMaxPrice(Number(e.target.value))}
+                  className="w-24 sm:w-32 accent-earthora-forest"
+                />
+              </div>
+
+              {/* Certified Only Toggle */}
+              <label className="flex items-center gap-2 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={certifiedOnly}
+                  onChange={(e) => setCertifiedOnly(e.target.checked)}
+                  className="h-4 w-4 rounded border-earthora-sand text-earthora-forest focus:ring-earthora-forest"
+                />
+                <span className="text-xs font-semibold text-earthora-charcoal whitespace-nowrap">
+                  Organic Only
+                </span>
+              </label>
+
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-earthora-muted">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="rounded-xl border border-earthora-sand bg-white px-2.5 py-1.5 text-xs font-semibold text-earthora-charcoal focus:border-earthora-forest focus:outline-none"
+                >
+                  <option value="featured">Featured First</option>
+                  <option value="price-low">Price: Low to High</option>
+                  <option value="price-high">Price: High to Low</option>
+                  <option value="rating">Highest Rated</option>
+                </select>
+              </div>
+
+              {/* Reset Button */}
+              {(selectedCategory !== 'all' || searchQuery || maxPrice < 250 || certifiedOnly) && (
+                <button
+                  onClick={resetFilters}
+                  className="flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700"
+                >
+                  <RotateCcw className="h-3.5 w-3.5" />
+                  Reset
+                </button>
+              )}
             </div>
-
-            {/* Certified Only Toggle */}
-            <label className="flex items-center gap-2 cursor-pointer select-none">
-              <input
-                type="checkbox"
-                checked={certifiedOnly}
-                onChange={(e) => setCertifiedOnly(e.target.checked)}
-                className="h-4 w-4 rounded border-earthora-sand text-earthora-forest focus:ring-earthora-forest"
-              />
-              <span className="text-xs font-semibold text-earthora-charcoal">
-                Organic Certified Only
-              </span>
-            </label>
-
-            {/* Sort Dropdown */}
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-earthora-muted">Sort:</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="rounded-xl border border-earthora-sand bg-white px-3 py-2 text-xs font-semibold text-earthora-charcoal focus:border-earthora-forest focus:outline-none"
-              >
-                <option value="featured">Featured First</option>
-                <option value="price-low">Price: Low to High</option>
-                <option value="price-high">Price: High to Low</option>
-                <option value="rating">Highest Rated</option>
-              </select>
-            </div>
-
-            {/* Reset Button */}
-            {(selectedCategory !== 'all' || searchQuery || maxPrice < 250 || certifiedOnly) && (
-              <button
-                onClick={resetFilters}
-                className="flex items-center gap-1 text-xs font-bold text-red-600 hover:text-red-700"
-              >
-                <RotateCcw className="h-3.5 w-3.5" />
-                Reset
-              </button>
-            )}
           </div>
         </div>
 

@@ -534,7 +534,7 @@ export default function SoilInsightsPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Nitrogen (N)</label>
                   <input
