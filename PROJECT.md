@@ -23,8 +23,8 @@ The platform eliminates synthetic chemical dependencies through living soil anal
   - Single-process production deployment capability (`client/dist` static serving).
   - Security suite: Helmet, CORS, Rate Limiting, bcryptjs password hashing, JWT role authorization.
 
-- **Legacy Archive (`client/`)**:
-  - Original static template preserved untouched for archival integrity.
+- **Production Serving**:
+  - Single-process full-stack delivery with Vite production bundle mounted directly at `/` and client-side SPA routing.
 
 ---
 
