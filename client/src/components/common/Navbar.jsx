@@ -1,51 +1,21 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
-  ChevronDown,
-  CloudSun,
-  Cpu,
   Heart,
-  HelpCircle,
-  Layers,
   LayoutDashboard,
-  Leaf,
   LogOut,
   Menu,
   Package,
   Search,
   ShoppingBag,
-  Sparkles,
-  Sprout,
   User,
-  Users,
-  Wheat,
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
-// Primary hubs shown directly on laptops & desktops
-const primaryNav = [
-  { to: '/', label: 'Home' },
-  { to: '/crop-management', label: 'Crops' },
-  { to: '/marketplace', label: 'Marketplace' },
-  { to: '/weather-intelligence', label: 'Weather' },
-  { to: '/soil-insights', label: 'Soil' },
-  { to: '/expert-connect', label: 'Experts' },
-  { to: '/knowledge-hub', label: 'Knowledge' },
-];
-
-// Secondary items accessible in "More" dropdown on laptops (1024px-1440px)
-const secondaryNav = [
-  { to: '/smart-agriculture', label: 'Smart Agri Suite', icon: Cpu, desc: 'IoT sensors & NDVI imagery' },
-  { to: '/farmer-hub', label: 'Farmer Hub', icon: Wheat, desc: 'Verified regional growers' },
-  { to: '/track-order', label: 'Order Tracking', icon: Package, desc: 'Live dispatch & cold-chain' },
-  { to: '/about', label: 'About Us', icon: Sprout, desc: 'Our regenerative mission' },
-  { to: '/contact', label: 'Contact', icon: HelpCircle, desc: 'Talk with agronomists' },
-];
-
-// All main nav links for ultra-wide displays (2xl: 1440px+)
+// All navigation links matching the desktop navigation bar
 const allNavLinks = [
   { to: '/', label: 'Home' },
   { to: '/about', label: 'About' },
@@ -65,17 +35,14 @@ export default function Navbar() {
   const { summary } = useCart();
   const { items: wishlistItems } = useWishlist();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [moreDropdownOpen, setMoreDropdownOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const moreRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
   // Close menus on route change
   useEffect(() => {
     setMobileOpen(false);
-    setMoreDropdownOpen(false);
     setSearchOpen(false);
   }, [location.pathname]);
 
@@ -90,17 +57,6 @@ export default function Navbar() {
       document.body.style.overflow = 'auto';
     };
   }, [mobileOpen]);
-
-  // Close "More" dropdown on outside click
-  useEffect(() => {
-    function handleClickOutside(e) {
-      if (moreRef.current && !moreRef.current.contains(e.target)) {
-        setMoreDropdownOpen(false);
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
 
   const dashboardPath =
     user?.role === 'admin'
@@ -160,15 +116,14 @@ export default function Navbar() {
         </Link>
 
         {/* Desktop Navigation Links */}
-        {/* 1. Large Screen Navigation (2xl: 1440px+): All 11 links */}
-        <nav className="hidden 2xl:flex items-center gap-1 xl:gap-1.5 flex-1 justify-end ml-4" aria-label="Desktop wide navigation">
+        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 flex-1 justify-end ml-2 xl:ml-4" aria-label="Desktop wide navigation">
           {allNavLinks.map((link) => (
             <NavLink
               key={link.to}
               to={link.to}
               end={link.to === '/'}
               className={({ isActive }) =>
-                `px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+                `px-2.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
                   isActive
                     ? 'bg-earthora-forest text-white shadow-xs'
                     : 'text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-earthora-sand/40'
@@ -178,72 +133,6 @@ export default function Navbar() {
               {link.label}
             </NavLink>
           ))}
-        </nav>
-
-        {/* 2. Laptop / Medium Screen Navigation (lg to 2xl: 1024px - 1439px): Core 7 hubs + "More" dropdown */}
-        <nav className="hidden lg:flex 2xl:hidden items-center gap-1 flex-1 justify-end ml-2" aria-label="Desktop adaptive navigation">
-          {primaryNav.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) =>
-                `px-2 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive
-                    ? 'bg-earthora-forest text-white shadow-xs'
-                    : 'text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-earthora-sand/40'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-
-          {/* More Hubs Dropdown */}
-          <div className="relative" ref={moreRef}>
-            <button
-              type="button"
-              onClick={() => setMoreDropdownOpen((v) => !v)}
-              className={`inline-flex items-center gap-1 px-2 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
-                moreDropdownOpen || secondaryNav.some((s) => location.pathname === s.to)
-                  ? 'bg-earthora-forest text-white'
-                  : 'text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-earthora-sand/40'
-              }`}
-            >
-              <span>More</span>
-              <ChevronDown className={`h-3.5 w-3.5 transition-transform duration-200 ${moreDropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
-
-            {moreDropdownOpen && (
-              <div className="absolute right-0 mt-2 w-64 rounded-2xl border border-earthora-sand/80 bg-white p-2 shadow-xl ring-1 ring-black/5 animate-in fade-in slide-in-from-top-2 duration-150 z-50">
-                <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-wider text-earthora-olive border-b border-earthora-sand/50 mb-1">
-                  Additional Hubs &amp; Services
-                </div>
-                {secondaryNav.map((link) => {
-                  const Icon = link.icon;
-                  const active = location.pathname === link.to;
-                  return (
-                    <Link
-                      key={link.to}
-                      to={link.to}
-                      onClick={() => setMoreDropdownOpen(false)}
-                      className={`flex items-start gap-3 rounded-xl p-2.5 transition-colors ${
-                        active ? 'bg-earthora-forest text-white' : 'hover:bg-earthora-sand/30 text-earthora-charcoal'
-                      }`}
-                    >
-                      <Icon className={`h-4 w-4 mt-0.5 shrink-0 ${active ? 'text-earthora-mint' : 'text-earthora-forest'}`} />
-                      <div>
-                        <div className="text-xs font-bold leading-none">{link.label}</div>
-                        <div className={`text-[10px] mt-1 ${active ? 'text-emerald-100' : 'text-earthora-muted'}`}>
-                          {link.desc}
-                        </div>
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            )}
-          </div>
         </nav>
 
         {/* Divider on desktop */}
@@ -292,43 +181,41 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* Dashboard / Auth Status (Visible on sm+ screens) */}
+          {/* Sign In / Auth Status (Always visible on mobile & desktop) */}
           {isAuthenticated ? (
-            <div className="hidden sm:flex items-center gap-1.5">
+            <div className="flex items-center gap-1 sm:gap-1.5">
               <Link
                 to={dashboardPath}
-                className="inline-flex items-center gap-1.5 rounded-xl border border-earthora-forest/20 bg-earthora-forest px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-earthora-deep shadow-xs"
+                className="inline-flex items-center gap-1 rounded-full border border-earthora-forest/20 bg-earthora-forest px-2.5 sm:px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-earthora-deep shadow-xs"
               >
                 <LayoutDashboard className="h-3.5 w-3.5 text-earthora-mint" />
-                <span>
+                <span className="hidden xs:inline">
                   {user.role === 'admin'
                     ? 'Admin'
                     : user.role === 'farmer'
-                      ? 'Farmer Hub'
+                      ? 'Farmer'
                       : user.role === 'expert'
-                        ? 'Expert Suite'
-                        : 'My Portal'}
+                        ? 'Expert'
+                        : 'Portal'}
                 </span>
               </Link>
               <button
                 type="button"
                 onClick={logout}
-                className="rounded-xl p-2 text-earthora-muted hover:bg-white hover:text-red-700 transition-colors"
+                className="hidden sm:inline-flex rounded-xl p-2 text-earthora-muted hover:bg-white hover:text-red-700 transition-colors"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
               </button>
             </div>
           ) : (
-            <div className="hidden sm:flex items-center gap-1.5">
-              <Link to="/login" className="btn-secondary py-1.5 px-3 text-xs font-bold">
-                <User className="h-3.5 w-3.5" />
-                Sign In
-              </Link>
-              <Link to="/register" className="btn-primary py-1.5 px-3 text-xs font-bold">
-                Join
-              </Link>
-            </div>
+            <Link
+              to="/login"
+              className="inline-flex items-center gap-1.5 rounded-full border border-earthora-sand bg-white px-2.5 sm:px-3 py-1.5 text-xs font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-xs whitespace-nowrap"
+            >
+              <User className="h-3.5 w-3.5" />
+              <span>Sign In</span>
+            </Link>
           )}
 
           {/* Mobile Hamburger Toggle (Visible on < lg screens) */}
@@ -344,42 +231,30 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Mobile & Tablet Visible Module Navigation Scroller (Guarantees all modules are seen on mobile) */}
-      <div className="lg:hidden border-t border-earthora-sand/70 bg-white/95 px-3 py-2 overflow-x-auto scrollbar-none shadow-xs">
-        <div className="flex items-center gap-1.5 min-w-max">
-          <span className="text-[10px] font-black uppercase tracking-wider text-earthora-olive pl-1 pr-1 shrink-0 flex items-center gap-1">
-            <Sparkles className="h-3 w-3 text-earthora-mint" />
-            Modules:
-          </span>
-          {[
-            { to: '/crop-management', label: 'Crops', icon: Leaf },
-            { to: '/marketplace', label: 'Marketplace', icon: ShoppingBag },
-            { to: '/soil-insights', label: 'Soil Health', icon: Layers },
-            { to: '/weather-intelligence', label: 'Weather Radar', icon: CloudSun },
-            { to: '/expert-connect', label: 'Experts', icon: Users },
-            { to: '/smart-agriculture', label: 'Smart Agri', icon: Cpu },
-            { to: '/farmer-hub', label: 'Farmer Hub', icon: Wheat },
-            { to: '/knowledge-hub', label: 'Knowledge', icon: Sparkles },
-          ].map((item) => {
-            const Icon = item.icon;
-            const active = location.pathname === item.to;
-            return (
-              <NavLink
-                key={item.to}
-                to={item.to}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-extrabold whitespace-nowrap transition-all ${
-                  active
-                    ? 'bg-earthora-forest text-white shadow-xs'
-                    : 'border border-earthora-sand/80 bg-earthora-ivory/80 text-earthora-charcoal hover:bg-earthora-sand/50 hover:text-earthora-forest'
-                }`}
-              >
-                <Icon className={`h-3.5 w-3.5 ${active ? 'text-earthora-mint' : 'text-earthora-olive'}`} />
-                <span>{item.label}</span>
-              </NavLink>
-            );
-          })}
+      {/* Mobile Sticky Options Ribbon (Guarantees every option from the desktop bar is directly accessible on mobile) */}
+      <nav
+        className="lg:hidden border-t border-earthora-sand/70 bg-earthora-ivory/95 backdrop-blur-md px-2.5 py-1.5 overflow-x-auto scrollbar-none shadow-xs"
+        aria-label="Mobile navigation options"
+      >
+        <div className="flex items-center gap-1 min-w-max px-0.5">
+          {allNavLinks.map((link) => (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              end={link.to === '/'}
+              className={({ isActive }) =>
+                `px-3 py-1 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
+                  isActive
+                    ? 'bg-earthora-forest text-white shadow-xs font-black'
+                    : 'bg-white/80 border border-earthora-sand/80 text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-white'
+                }`
+              }
+            >
+              {link.label}
+            </NavLink>
+          ))}
         </div>
-      </div>
+      </nav>
 
       {/* Live Search Drawer Overlay */}
       {searchOpen && (
@@ -499,103 +374,64 @@ export default function Navbar() {
             </div>
 
             {/* Drawer Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-5">
-              {/* 1. Core Agri Hubs */}
+            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
+              {/* 1. All Navigation Options (Matching Desktop Navbar & Screenshot) */}
               <div>
                 <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  Agro-Intelligence Modules
+                  All Navigation Options
                 </div>
-                <div className="space-y-1">
-                  {[
-                    { to: '/smart-agriculture', label: 'Smart Agri Suite', icon: Cpu },
-                    { to: '/crop-management', label: 'Crop Lifecycle Tracking', icon: Leaf },
-                    { to: '/weather-intelligence', label: 'Weather Intelligence Radar', icon: CloudSun },
-                    { to: '/soil-insights', label: 'Soil Insights & NPK Telemetry', icon: Sprout },
-                    { to: '/expert-connect', label: 'Expert Connect Advisory', icon: Users },
-                    { to: '/knowledge-hub', label: 'Knowledge Hub & Research', icon: Sparkles },
-                  ].map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <NavLink
-                        key={item.to}
-                        to={item.to}
-                        onClick={() => setMobileOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-colors ${
-                            isActive
-                              ? 'bg-earthora-forest text-white shadow-xs'
-                              : 'text-earthora-charcoal hover:bg-earthora-sand/40 hover:text-earthora-forest'
-                          }`
-                        }
-                      >
-                        <Icon className="h-4 w-4 shrink-0 text-earthora-mint" />
-                        <span>{item.label}</span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 2. Commerce & Community */}
-              <div>
-                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  Marketplace &amp; Portals
-                </div>
-                <div className="space-y-1">
-                  {[
-                    { to: '/marketplace', label: 'Agricultural Marketplace', icon: ShoppingBag },
-                    { to: '/farmer-hub', label: 'Farmer Hub & Acreage', icon: Wheat },
-                    { to: '/track-order', label: 'Live Order Tracking', icon: Package },
-                  ].map((item) => {
-                    const Icon = item.icon;
-                    return (
-                      <NavLink
-                        key={item.to}
-                        to={item.to}
-                        onClick={() => setMobileOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 rounded-xl px-3 py-2.5 text-xs font-bold transition-colors ${
-                            isActive
-                              ? 'bg-earthora-forest text-white shadow-xs'
-                              : 'text-earthora-charcoal hover:bg-earthora-sand/40 hover:text-earthora-forest'
-                          }`
-                        }
-                      >
-                        <Icon className="h-4 w-4 shrink-0 text-earthora-forest" />
-                        <span>{item.label}</span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* 3. Company & Overview */}
-              <div>
-                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  Ecosystem Overview
-                </div>
-                <div className="grid grid-cols-3 gap-2">
-                  {[
-                    { to: '/', label: 'Home' },
-                    { to: '/about', label: 'About' },
-                    { to: '/contact', label: 'Contact' },
-                  ].map((item) => (
+                <div className="grid grid-cols-1 gap-1">
+                  {allNavLinks.map((link) => (
                     <NavLink
-                      key={item.to}
-                      to={item.to}
-                      end={item.to === '/'}
+                      key={link.to}
+                      to={link.to}
+                      end={link.to === '/'}
                       onClick={() => setMobileOpen(false)}
                       className={({ isActive }) =>
-                        `rounded-xl p-2.5 text-center text-xs font-bold transition-colors ${
+                        `flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition-colors ${
                           isActive
-                            ? 'bg-earthora-forest text-white'
-                            : 'border border-earthora-sand bg-white text-earthora-charcoal hover:bg-earthora-sand/30'
+                            ? 'bg-earthora-forest text-white shadow-xs font-black'
+                            : 'text-earthora-charcoal hover:bg-earthora-sand/40 hover:text-earthora-forest'
                         }`
                       }
                     >
-                      {item.label}
+                      <span>{link.label}</span>
+                      <span className="text-[11px] opacity-70">→</span>
                     </NavLink>
                   ))}
+                </div>
+              </div>
+
+              {/* 2. Commerce & Quick Links */}
+              <div>
+                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
+                  Commerce &amp; Tracking
+                </div>
+                <div className="grid grid-cols-2 gap-2">
+                  <Link
+                    to="/cart"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
+                  >
+                    <ShoppingBag className="h-4 w-4 text-earthora-forest" />
+                    <span>Cart ({summary.count})</span>
+                  </Link>
+                  <Link
+                    to="/wishlist"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
+                  >
+                    <Heart className="h-4 w-4 text-earthora-olive" />
+                    <span>Wishlist ({wishlistItems.length})</span>
+                  </Link>
+                  <Link
+                    to="/track-order"
+                    onClick={() => setMobileOpen(false)}
+                    className="col-span-2 flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
+                  >
+                    <Package className="h-4 w-4 text-earthora-muted" />
+                    <span>Live Order Tracking</span>
+                  </Link>
                 </div>
               </div>
             </div>
