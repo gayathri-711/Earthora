@@ -5,16 +5,18 @@ import { ensureFixedAdmin } from './config/fixedAdmin.js';
 import { seedIfEmpty } from './seeds/seed.js';
 
 const PORT = Number(process.env.PORT || 5000);
+const HOST = process.env.HOST || '0.0.0.0';
 
 async function start() {
   const { usingMemory } = await connectDatabase(process.env.MONGO_URI);
   await seedIfEmpty();
   await ensureFixedAdmin();
 
-  app.listen(PORT, '127.0.0.1', () => {
+  app.listen(PORT, HOST, () => {
     console.log(
-      `EARTHORA Platform running at http://127.0.0.1:${PORT} (${usingMemory ? 'embedded MongoDB' : 'external MongoDB'})`
+      `EARTHORA Platform running at http://${HOST === '0.0.0.0' ? '127.0.0.1' : HOST}:${PORT} (${usingMemory ? 'embedded MongoDB' : 'external MongoDB'})`
     );
+    console.log(`Mobile phone access: Connect to the same Wi-Fi and open http://<YOUR_IP>:${PORT} in any mobile browser.`);
   });
 }
 

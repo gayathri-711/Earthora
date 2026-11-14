@@ -484,8 +484,8 @@ export default function CropManagementPage() {
 
       {/* Add Crop Modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+          <div className="relative max-h-[92vh] w-full max-w-xl overflow-y-auto rounded-3xl bg-white p-4 sm:p-6 md:p-8 shadow-2xl">
             <button
               onClick={() => setShowAddModal(false)}
               className="absolute right-4 top-4 rounded-full p-2 text-earthora-muted hover:bg-earthora-ivory"
@@ -495,14 +495,14 @@ export default function CropManagementPage() {
 
             <div className="flex items-center gap-2 text-earthora-forest">
               <Sprout className="h-6 w-6 text-earthora-mint" />
-              <h3 className="font-heading text-xl font-bold">Register New Crop Cycle</h3>
+              <h3 className="font-heading text-lg sm:text-xl font-bold">Register New Crop Cycle</h3>
             </div>
             <p className="mt-1 text-xs text-earthora-muted">
               Add plot telemetry, variety data, and growth tracking to the Earthora agro-cloud.
             </p>
 
             <form onSubmit={handleAddCropSubmit} className="mt-6 space-y-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Crop Name *</label>
                   <input
@@ -527,7 +527,7 @@ export default function CropManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Plot / Field Name</label>
                   <input
@@ -551,7 +551,7 @@ export default function CropManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Planting Date</label>
                   <input
@@ -572,7 +572,7 @@ export default function CropManagementPage() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Initial Growth Stage</label>
                   <select
@@ -627,8 +627,8 @@ export default function CropManagementPage() {
 
       {/* Log Event Modal */}
       {showLogModal && targetCrop && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+          <div className="relative max-h-[92vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-4 sm:p-6 md:p-8 shadow-2xl">
             <button
               onClick={() => setShowLogModal(false)}
               className="absolute right-4 top-4 rounded-full p-2 text-earthora-muted hover:bg-earthora-ivory"

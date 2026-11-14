@@ -261,7 +261,7 @@ Here is how you can resolve common platform questions:
   return (
     <>
       {/* Floating Chatbot Trigger Button (Bottom Right) */}
-      <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-2">
+      <div className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 flex flex-col items-end gap-2">
         {!isOpen && (
           <div className="hidden sm:flex items-center gap-2 rounded-full border border-earthora-mint/40 bg-earthora-forest px-3.5 py-1.5 text-xs font-bold text-white shadow-xl animate-bounce">
             <Sparkles className="h-3.5 w-3.5 text-earthora-mint animate-pulse" />
@@ -272,21 +272,21 @@ Here is how you can resolve common platform questions:
         <button
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle Earthora AI Chatbot"
-          className={`group relative flex h-14 w-14 items-center justify-center rounded-2xl shadow-2xl transition-all duration-300 ${
+          className={`group relative flex h-12 w-12 sm:h-14 sm:w-14 items-center justify-center rounded-2xl shadow-2xl transition-all duration-300 ${
             isOpen
               ? 'bg-earthora-forest text-white rotate-90 scale-95'
               : 'bg-gradient-to-tr from-earthora-forest via-emerald-800 to-earthora-olive text-white hover:scale-105 hover:shadow-earthora-mint/30'
           }`}
         >
           {isOpen ? (
-            <X className="h-6 w-6 transition-transform" />
+            <X className="h-5 w-5 sm:h-6 sm:w-6 transition-transform" />
           ) : (
             <>
               <div className="relative">
-                <Bot className="h-7 w-7 text-white" />
-                <span className="absolute -top-1 -right-1 flex h-3 w-3">
+                <Bot className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
+                <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5 sm:h-3 sm:w-3">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-earthora-mint opacity-75" />
-                  <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400" />
+                  <span className="relative inline-flex h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-full bg-emerald-400" />
                 </span>
               </div>
             </>
@@ -296,7 +296,7 @@ Here is how you can resolve common platform questions:
 
       {/* Floating AI Chat Window Drawer */}
       {isOpen && (
-        <div className="fixed bottom-24 right-4 sm:right-6 z-50 w-[94vw] sm:w-[440px] max-w-[440px] h-[78vh] max-h-[640px] flex flex-col overflow-hidden rounded-3xl border border-emerald-800/20 bg-white shadow-2xl shadow-earthora-forest/25 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-5 duration-300">
+        <div className="fixed inset-x-2 bottom-16 sm:inset-x-auto sm:bottom-24 sm:right-6 z-50 w-auto sm:w-[440px] max-w-[440px] h-[calc(100dvh-75px)] sm:h-[78vh] max-h-[640px] flex flex-col overflow-hidden rounded-3xl border border-emerald-800/20 bg-white shadow-2xl shadow-earthora-forest/25 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-5 duration-300">
           {/* Header */}
           <div className="relative overflow-hidden bg-earthora-forest px-5 py-4 text-white shrink-0">
             <div className="absolute top-0 right-0 -mr-6 -mt-6 h-28 w-28 rounded-full bg-earthora-mint/10 blur-xl pointer-events-none" />
@@ -484,7 +484,7 @@ Here is how you can resolve common platform questions:
                 onKeyDown={handleKeyDown}
                 placeholder="Ask any doubt about EARTHORA or farming..."
                 disabled={isLoading}
-                className="w-full rounded-2xl border border-earthora-sand/90 bg-earthora-ivory/50 py-3 pl-4 pr-12 text-xs sm:text-sm text-earthora-charcoal placeholder-earthora-muted/60 focus:border-earthora-forest focus:bg-white focus:outline-none focus:ring-2 focus:ring-earthora-forest/20 disabled:opacity-60 transition-all"
+                className="w-full rounded-2xl border border-earthora-sand/90 bg-earthora-ivory/50 py-3 pl-4 pr-12 text-base sm:text-sm text-earthora-charcoal placeholder-earthora-muted/60 focus:border-earthora-forest focus:bg-white focus:outline-none focus:ring-2 focus:ring-earthora-forest/20 disabled:opacity-60 transition-all"
               />
               <button
                 onClick={() => handleSendMessage()}

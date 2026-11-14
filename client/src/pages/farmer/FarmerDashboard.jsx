@@ -598,8 +598,8 @@ export default function FarmerDashboard() {
 
       {/* New Crop Modal */}
       {newCropModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="relative max-h-[90vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-6 shadow-2xl sm:p-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-3 sm:p-4 backdrop-blur-sm">
+          <div className="relative max-h-[92vh] w-full max-w-md overflow-y-auto rounded-3xl bg-white p-4 sm:p-6 md:p-8 shadow-2xl">
             <h3 className="font-heading text-lg font-bold text-earthora-forest">Register Field Crop Cycle</h3>
             <form onSubmit={handleAddCropSubmit} className="mt-4 space-y-3">
               <div>
@@ -622,7 +622,7 @@ export default function FarmerDashboard() {
                   className="input-field mt-1 text-xs"
                 />
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Plot Identifier</label>
                   <input
