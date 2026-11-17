@@ -155,7 +155,6 @@ const ALL_DRAWER_MODULES = [
 
 export default function HomePage() {
   const { showToast } = useToast();
-  const [modulesDrawerOpen, setModulesDrawerOpen] = useState(false);
   const [featuredProducts, setFeaturedProducts] = useState(EARTHORA_PRODUCTS.slice(0, 4));
   const [articles, setArticles] = useState(EARTHORA_ARTICLES);
   const [newsletterEmail, setNewsletterEmail] = useState('');
@@ -230,24 +229,12 @@ export default function HomePage() {
           <div className="grid items-center gap-12 lg:grid-cols-12">
             {/* Left Content */}
             <div className="space-y-6 lg:col-span-7">
-              {/* Badge + 3 Lines / 3 Dots Feature Module Quick Launcher */}
+              {/* Ecosystem Badge */}
               <div className="flex flex-wrap items-center gap-2.5">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-900/60 px-3.5 py-1 text-xs font-black text-earthora-mint backdrop-blur-md uppercase tracking-[0.2em]">
                   <Sparkles className="h-3.5 w-3.5" />
                   <span>EARTHORA · CLIMATE &amp; AGRI ECOSYSTEM</span>
                 </div>
-
-                {/* The 3 Lines / 3 Dots Button for Feature Modules */}
-                <button
-                  type="button"
-                  onClick={() => setModulesDrawerOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-bold text-white hover:bg-white hover:text-earthora-forest backdrop-blur-md transition-all shadow-sm group"
-                  title="Open all feature modules in three lines or three dots"
-                >
-                  <Menu className="h-3.5 w-3.5 text-earthora-mint group-hover:rotate-90 transition-transform" />
-                  <span>All Feature Modules</span>
-                  <MoreHorizontal className="h-3.5 w-3.5 text-earthora-mint" />
-                </button>
               </div>
 
               {/* Varaha-Inspired Mission Headline */}
@@ -434,80 +421,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Interactive All Feature Modules Modal / Drawer (Triggered by 3 Lines / 3 Dots) */}
-      {modulesDrawerOpen && (
-        <>
-          <div
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity"
-            onClick={() => setModulesDrawerOpen(false)}
-            aria-hidden="true"
-          />
-          <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col bg-white shadow-2xl transition-transform border-l border-earthora-sand/80 animate-in slide-in-from-right duration-200"
-            aria-label="All feature modules drawer"
-          >
-            <div className="flex items-center justify-between border-b border-earthora-sand/80 bg-earthora-forest p-4 text-white">
-              <div className="flex items-center gap-2">
-                <Menu className="h-5 w-5 text-earthora-mint" />
-                <h3 className="font-heading text-base sm:text-lg font-bold">
-                  All Feature Modules &amp; Suites
-                </h3>
-                <MoreVertical className="h-4 w-4 text-earthora-mint" />
-              </div>
-              <button
-                type="button"
-                onClick={() => setModulesDrawerOpen(false)}
-                className="rounded-xl border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
-                aria-label="Close drawer"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
-              <p className="text-xs text-earthora-muted px-1">
-                Direct 1-tap jump to all 8 operational suites. Short, sweet, and actionable.
-              </p>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                {ALL_DRAWER_MODULES.map((mod) => {
-                  const Icon = mod.icon;
-                  return (
-                    <Link
-                      key={mod.id}
-                      to={mod.link}
-                      onClick={() => setModulesDrawerOpen(false)}
-                      className="group flex flex-col justify-between rounded-xl border border-earthora-sand/80 bg-earthora-ivory/40 p-3.5 hover:bg-white hover:border-earthora-forest/40 hover:shadow-md transition-all"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between mb-2">
-                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-earthora-forest text-earthora-mint">
-                            <Icon className="h-4 w-4" />
-                          </span>
-                          <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-olive">
-                            {mod.badge}
-                          </span>
-                        </div>
-                        <h4 className="font-heading text-sm font-bold text-earthora-forest group-hover:text-emerald-700">
-                          {mod.title}
-                        </h4>
-                        <p className="mt-1 text-[11px] text-earthora-muted line-clamp-2">
-                          {mod.description}
-                        </p>
-                      </div>
-                      <div className="mt-3 flex items-center text-xs font-bold text-earthora-forest group-hover:text-emerald-700">
-                        <span>{mod.btnText}</span>
-                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
-                      </div>
-                    </Link>
-                  );
-                })}
-              </div>
-            </div>
-          </aside>
-        </>
-      )}
-
-      {/* 5. Agricultural Marketplace (4 PRODUCT CARDS - Product Name + View Details Button + Price in ₹ + Add to Cart) */}
+      {/* 4. Agricultural Marketplace (4 PRODUCT CARDS - Product Name + View Details Button + Price in ₹ + Add to Cart) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
           <div>

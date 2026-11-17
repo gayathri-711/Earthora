@@ -11,6 +11,7 @@ import {
   LogOut,
   Mail,
   Menu,
+  MoreHorizontal,
   Package,
   Search,
   ShoppingBag,
@@ -228,16 +229,23 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* THREE DASHES (☰) IN RIGHT CORNER NEAR CART, FAVOURITE & SIGN IN */}
+          {/* All Feature Modules Pill Button (Near Sign In Option - Three Dashes & Three Dots) */}
           <button
             type="button"
             onClick={() => setMenuDrawerOpen((v) => !v)}
-            className="rounded-xl border border-earthora-sand/90 bg-white p-2 text-earthora-forest shadow-xs hover:bg-earthora-forest hover:text-earthora-mint hover:border-earthora-forest transition-all flex items-center justify-center shrink-0 ml-0.5 sm:ml-1"
-            aria-label="Open all module options"
+            className="inline-flex items-center gap-1.5 rounded-full border border-earthora-forest/20 bg-earthora-forest px-3 sm:px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-earthora-deep hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0 ml-1 sm:ml-1.5 group"
+            aria-label="Open all feature modules"
             aria-expanded={menuDrawerOpen}
-            title="Open all module options"
+            title="Open all feature modules"
           >
-            {menuDrawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {menuDrawerOpen ? (
+              <X className="h-3.5 w-3.5 text-earthora-mint" />
+            ) : (
+              <Menu className="h-3.5 w-3.5 text-earthora-mint group-hover:rotate-90 transition-transform" />
+            )}
+            <span className="hidden sm:inline">All Feature Modules</span>
+            <span className="sm:hidden">Modules</span>
+            <MoreHorizontal className="h-3.5 w-3.5 text-earthora-mint" />
           </button>
         </div>
       </div>
