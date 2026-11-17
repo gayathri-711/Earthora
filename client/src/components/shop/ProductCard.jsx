@@ -20,7 +20,7 @@ export default function ProductCard({ product }) {
   const badgeClass = categoryColorMap[product.category] || 'bg-earthora-beige text-earthora-forest border-earthora-sand';
 
   return (
-    <article className="card-surface group flex flex-col overflow-hidden hover:shadow-elevated">
+    <article className="card-surface group flex flex-col overflow-hidden hover:shadow-elevated transition-all">
       <div className="relative aspect-[4/3] overflow-hidden bg-earthora-beige/60">
         <Link to={`/marketplace/${product.slug || product._id}`} className="block h-full w-full">
           <img
@@ -67,36 +67,27 @@ export default function ProductCard({ product }) {
         </Link>
 
         {/* View Details Option to Learn About the Product */}
-        <div className="mt-2.5">
+        <div className="mt-3">
           <Link
             to={`/marketplace/${product.slug || product._id}`}
-            className="inline-flex items-center gap-1 text-xs font-bold text-earthora-olive hover:text-earthora-forest transition-colors"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-earthora-sand/80 bg-earthora-ivory/80 px-2.5 py-1 text-xs font-bold text-earthora-forest hover:bg-earthora-forest hover:text-earthora-mint hover:border-earthora-forest transition-all"
           >
             <span>View Details</span>
-            <ArrowRight className="h-3 w-3" />
+            <ArrowRight className="h-3 w-3 text-earthora-mint" />
           </Link>
         </div>
 
+        {/* Price and Add to Cart */}
         <div className="mt-auto flex items-center justify-between gap-3 border-t border-earthora-sand/70 pt-4 mt-4">
-          <div>
-            <div className="flex items-baseline gap-1.5">
-              <span className="text-lg font-black text-earthora-forest">
-                ₹{Number(product.price).toFixed(2)}
-              </span>
-              {product.compareAtPrice && (
-                <span className="text-xs text-earthora-muted line-through">
-                  ₹{Number(product.compareAtPrice).toFixed(2)}
-                </span>
-              )}
-            </div>
-            <span className="text-[11px] text-earthora-muted">{product.unit || '1 unit'}</span>
-          </div>
+          <span className="text-lg font-black text-earthora-forest">
+            ₹{Number(product.price).toFixed(2)}
+          </span>
 
           <button
             type="button"
             disabled={outOfStock}
             onClick={() => addToCart(product, 1)}
-            className="btn-primary px-3.5 py-2 text-xs"
+            className="btn-primary px-3.5 py-2 text-xs font-bold"
           >
             <ShoppingBag className="h-3.5 w-3.5" />
             {outOfStock ? 'Out of Stock' : 'Add to Cart'}
