@@ -508,67 +508,6 @@ export default function HomePage() {
         </>
       )}
 
-      {/* 4. Smart Precision Agriculture Showcase (Short and Sweet) */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-earthora-forest p-7 sm:p-10 lg:p-14 text-white shadow-elevated">
-          <div className="grid items-center gap-8 lg:grid-cols-12">
-            <div className="space-y-4 lg:col-span-7">
-              <span className="badge-tag border border-emerald-400/30 bg-emerald-950/60 text-xs font-bold uppercase tracking-wider text-earthora-mint">
-                Smart Precision IoT
-              </span>
-              <h2 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">
-                Eliminate Guesswork with Live Field Telemetry
-              </h2>
-              <p className="text-sm leading-relaxed text-emerald-100/85">
-                Automated solar drip actuators, multispectral drone NDVI imaging, and in-situ NPK probes deliver real-time field insights that cut water waste and boost yields by up to 28%.
-              </p>
-              <div className="grid gap-2 sm:grid-cols-2 pt-1 text-xs text-emerald-100">
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Automated Irrigation Windows</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Instant NPK &amp; Soil Alerts</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Hyperlocal Frost Risk Advisories</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> 1-on-1 Agronomist Support</span>
-              </div>
-              <div className="pt-3 flex flex-wrap gap-3">
-                <Link to="/smart-agriculture" className="btn-accent px-6 py-2.5 text-xs font-bold">
-                  View IoT Suite
-                </Link>
-                <Link to="/crop-management" className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 px-6 py-2.5 text-xs font-bold">
-                  Crop Management
-                </Link>
-              </div>
-            </div>
-
-            <div className="lg:col-span-5">
-              <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
-                <p className="text-[11px] font-bold uppercase tracking-wider text-earthora-mint">Live Field Sensor</p>
-                <h3 className="mt-0.5 font-heading text-base font-bold text-white">Plot #02 — Heirloom Tomatoes</h3>
-                <div className="mt-3 space-y-2.5">
-                  <div>
-                    <div className="flex justify-between text-xs text-emerald-200">
-                      <span>Growth Stage: Maturing</span>
-                      <span className="font-bold">88%</span>
-                    </div>
-                    <div className="mt-1 h-2 w-full rounded-full bg-white/10">
-                      <div className="h-2 rounded-full bg-earthora-mint" style={{ width: '88%' }} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs">
-                    <div className="rounded-lg bg-white/10 p-2.5">
-                      <p className="text-emerald-300">Soil pH</p>
-                      <p className="font-heading text-base font-bold text-white">6.8</p>
-                    </div>
-                    <div className="rounded-lg bg-white/10 p-2.5">
-                      <p className="text-emerald-300">Moisture</p>
-                      <p className="font-heading text-base font-bold text-white">29%</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* 5. Agricultural Marketplace Highlights */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
