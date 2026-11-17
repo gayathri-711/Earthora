@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   BookOpen,
@@ -168,17 +169,29 @@ export default function Navbar() {
     setSearchOpen(false);
   }, [location.pathname]);
 
-  // Lock body scroll when drawer is open
+  // Lock body scroll and handle Escape key when drawer is open
   useEffect(() => {
     if (menuDrawerOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
     }
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setMenuDrawerOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    if (menuDrawerOpen || searchOpen) {
+      window.addEventListener('keydown', handleKeyDown);
+    }
+
     return () => {
       document.body.style.overflow = 'auto';
+      window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [menuDrawerOpen]);
+  }, [menuDrawerOpen, searchOpen]);
 
   const dashboardPath =
     user?.role === 'admin'
@@ -415,142 +428,148 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* SLIDE-OVER DRAWER STYLED EXACTLY LIKE SECOND PHOTO */}
-      {menuDrawerOpen && (
-        <>
-          {/* Backdrop */}
-          <div
-            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs transition-opacity duration-300"
-            onClick={() => setMenuDrawerOpen(false)}
-            aria-hidden="true"
-          />
+      {/* SLIDE-OVER DRAWER STYLED EXACTLY LIKE SECOND PHOTO - MOUNTED DIRECTLY VIA PORTAL FOR FULL TOP-TO-BOTTOM VIEWPORT HEIGHT */}
+      {menuDrawerOpen &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div className="fixed inset-0 z-[99999] overflow-hidden" role="dialog" aria-modal="true">
+            {/* Full Screen Backdrop */}
+            <div
+              className="fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-300"
+              onClick={() => setMenuDrawerOpen(false)}
+              aria-hidden="true"
+            />
 
-          {/* Slide-over Panel (Exact match to second uploaded photo) */}
-          <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[320px] sm:max-w-[350px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-gray-100 overflow-y-auto"
-            aria-label="Category Navigation Drawer"
-          >
-            {/* Header: Exact "Category" with divider line & close button */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-              <h2 className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight font-heading">
-                Category
-              </h2>
-              <button
-                type="button"
-                onClick={() => setMenuDrawerOpen(false)}
-                className="p-1 text-gray-400 hover:text-gray-800 transition-colors rounded-lg hover:bg-gray-100"
-                aria-label="Close menu"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {/* Menu Items List (Vertical list with chevron right and expandable green active state) */}
-            <div className="flex-1 overflow-y-auto py-2">
-              {DRAWER_CATEGORIES.map((cat) => {
-                const isOpen = openCategory === cat.id;
-                const hasSubs = cat.subItems && cat.subItems.length > 0;
-
-                return (
-                  <div key={cat.id} className="border-b border-gray-100/70 last:border-b-0">
-                    {hasSubs ? (
-                      <div>
-                        {/* Parent Row with Chevron Toggle */}
-                        <button
-                          type="button"
-                          onClick={() => setOpenCategory(isOpen ? null : cat.id)}
-                          className={`w-full flex items-center justify-between px-6 py-3.5 text-left transition-colors group ${
-                            isOpen ? 'text-emerald-600 font-bold' : 'text-gray-900 hover:text-emerald-600 font-semibold'
-                          }`}
-                        >
-                          <span className="text-sm sm:text-base leading-snug">{cat.label}</span>
-                          {isOpen ? (
-                            <ChevronDown className="h-4 w-4 text-emerald-600 shrink-0" />
-                          ) : (
-                            <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
-                          )}
-                        </button>
-
-                        {/* Indented Sub-Items with Left Green Border Line (Exact match to second photo) */}
-                        {isOpen && (
-                          <div className="ml-6 border-l-2 border-emerald-500 pl-4 py-1.5 space-y-2 mb-2">
-                            {cat.subItems.map((sub, idx) => (
-                              <Link
-                                key={idx}
-                                to={sub.to}
-                                onClick={() => setMenuDrawerOpen(false)}
-                                className="block text-xs sm:text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors py-0.5"
-                              >
-                                {sub.label}
-                              </Link>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      /* Direct Link Item */
-                      <Link
-                        to={cat.to}
-                        onClick={() => setMenuDrawerOpen(false)}
-                        className="flex items-center justify-between px-6 py-3.5 text-sm sm:text-base font-semibold text-gray-900 hover:text-emerald-600 transition-colors group"
-                      >
-                        <span>{cat.label}</span>
-                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
-                      </Link>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-
-            {/* Quick Links at the bottom */}
-            <div className="border-t border-gray-100 bg-gray-50/70 p-4 space-y-2.5">
-              <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
-                <Link
-                  to="/cart"
+            {/* Slide-over Panel: Full viewport height from absolute top to bottom of screen */}
+            <aside
+              className="fixed top-0 bottom-0 right-0 z-[100000] flex h-screen h-[100dvh] w-full max-w-[340px] sm:max-w-[380px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-gray-200"
+              aria-label="Category Navigation Drawer"
+            >
+              {/* Header: Exact match to user photo - Category with X close button */}
+              <div className="flex items-center justify-between px-6 py-4.5 border-b border-gray-200 bg-white shrink-0">
+                <h2 className="text-xl font-extrabold text-gray-900 tracking-tight font-heading">
+                  Category
+                </h2>
+                <button
+                  type="button"
                   onClick={() => setMenuDrawerOpen(false)}
-                  className="hover:text-emerald-600 flex items-center gap-1.5"
+                  className="p-1.5 text-gray-400 hover:text-gray-900 transition-colors rounded-lg hover:bg-gray-100"
+                  aria-label="Close menu"
                 >
-                  <ShoppingBag className="h-4 w-4" />
-                  <span>Cart ({summary.count})</span>
-                </Link>
-                <Link
-                  to="/wishlist"
-                  onClick={() => setMenuDrawerOpen(false)}
-                  className="hover:text-emerald-600 flex items-center gap-1.5"
-                >
-                  <Heart className="h-4 w-4" />
-                  <span>Wishlist ({wishlistItems.length})</span>
-                </Link>
+                  <X className="h-5 w-5" />
+                </button>
               </div>
 
-              {isAuthenticated ? (
-                <div className="flex items-center justify-between pt-1 border-t border-gray-200/60">
-                  <span className="text-xs font-bold text-gray-800 truncate">{user?.name}</span>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      logout();
-                      setMenuDrawerOpen(false);
-                    }}
-                    className="text-xs text-red-600 font-bold hover:underline"
+              {/* Menu Items List (Vertical list with chevron right and expandable green active state) */}
+              <div className="flex-1 overflow-y-auto py-2">
+                {DRAWER_CATEGORIES.map((cat) => {
+                  const isOpen = openCategory === cat.id;
+                  const hasSubs = cat.subItems && cat.subItems.length > 0;
+
+                  return (
+                    <div key={cat.id} className="border-b border-gray-100/80 last:border-b-0">
+                      {hasSubs ? (
+                        <div>
+                          {/* Parent Row with Chevron Toggle */}
+                          <button
+                            type="button"
+                            onClick={() => setOpenCategory(isOpen ? null : cat.id)}
+                            className={`w-full flex items-center justify-between px-6 py-3.5 text-left transition-colors group ${
+                              isOpen ? 'text-emerald-600 font-bold' : 'text-gray-900 hover:text-emerald-600 font-semibold'
+                            }`}
+                          >
+                            <span className="text-sm sm:text-base leading-snug">{cat.label}</span>
+                            {isOpen ? (
+                              <ChevronDown className="h-4 w-4 text-emerald-600 shrink-0" />
+                            ) : (
+                              <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
+                            )}
+                          </button>
+
+                          {/* Indented Sub-Items with Left Green Border Line (Exact match to second photo) */}
+                          {isOpen && (
+                            <div className="ml-6 border-l-2 border-emerald-500 pl-4 py-1.5 space-y-2 mb-2">
+                              {cat.subItems.map((sub, idx) => (
+                                <Link
+                                  key={idx}
+                                  to={sub.to}
+                                  onClick={() => setMenuDrawerOpen(false)}
+                                  className="block text-xs sm:text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors py-0.5"
+                                >
+                                  {sub.label}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        /* Direct Link Item */
+                        <Link
+                          to={cat.to}
+                          onClick={() => setMenuDrawerOpen(false)}
+                          className="flex items-center justify-between px-6 py-3.5 text-sm sm:text-base font-semibold text-gray-900 hover:text-emerald-600 transition-colors group"
+                        >
+                          <span>{cat.label}</span>
+                          <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
+                        </Link>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Quick Links at the bottom */}
+              <div className="border-t border-gray-100 bg-gray-50/90 p-4 space-y-2.5 shrink-0">
+                <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
+                  <Link
+                    to="/cart"
+                    onClick={() => setMenuDrawerOpen(false)}
+                    className="hover:text-emerald-600 flex items-center gap-1.5 transition-colors"
                   >
-                    Sign Out
-                  </button>
+                    <ShoppingBag className="h-4 w-4 text-emerald-600" />
+                    <span>Cart ({summary.count})</span>
+                  </Link>
+                  <Link
+                    to="/wishlist"
+                    onClick={() => setMenuDrawerOpen(false)}
+                    className="hover:text-emerald-600 flex items-center gap-1.5 transition-colors"
+                  >
+                    <Heart className="h-4 w-4 text-emerald-600" />
+                    <span>Wishlist ({wishlistItems.length})</span>
+                  </Link>
                 </div>
-              ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setMenuDrawerOpen(false)}
-                  className="block w-full text-center py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
-                >
-                  Sign In / Register
-                </Link>
-              )}
-            </div>
-          </aside>
-        </>
-      )}
+
+                {isAuthenticated ? (
+                  <div className="flex items-center justify-between pt-1.5 border-t border-gray-200/60">
+                    <div className="flex items-center gap-1.5 truncate">
+                      <User className="h-3.5 w-3.5 text-gray-500 shrink-0" />
+                      <span className="text-xs font-bold text-gray-800 truncate">{user?.name}</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        logout();
+                        setMenuDrawerOpen(false);
+                      }}
+                      className="text-xs text-red-600 font-bold hover:underline shrink-0"
+                    >
+                      Sign Out
+                    </button>
+                  </div>
+                ) : (
+                  <Link
+                    to="/login"
+                    onClick={() => setMenuDrawerOpen(false)}
+                    className="block w-full text-center py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
+                  >
+                    Sign In / Register
+                  </Link>
+                )}
+              </div>
+            </aside>
+          </div>,
+          document.body
+        )}
     </header>
   );
 }
