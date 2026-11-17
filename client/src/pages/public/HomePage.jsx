@@ -3,26 +3,33 @@ import { Link } from 'react-router-dom';
 import {
   Activity,
   ArrowRight,
+  Award,
+  BarChart3,
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
   CloudSun,
   Cpu,
   Droplets,
+  Flame,
+  Globe2,
   Layers,
+  Leaf,
   Menu,
   MoreHorizontal,
   MoreVertical,
+  Radio,
+  Satellite,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Sprout,
   Tractor,
+  Trees,
   Users,
   X,
 } from 'lucide-react';
 import api from '../../api/client';
-import SectionHeading from '../../components/common/SectionHeading';
 import ProductCard from '../../components/shop/ProductCard';
 import { useToast } from '../../context/ToastContext';
 import {
@@ -48,15 +55,15 @@ const ECOSYSTEM_MODULES = [
     icon: ShoppingBag,
     title: 'Marketplace',
     badge: 'Fair Trade · ₹ INR',
-    color: 'amber',
-    description: 'Direct-trade heirloom seeds, biochar compost, equipment, and fresh harvest.',
+    color: 'emerald',
+    description: 'Heirloom seeds, organic fertilizers, and no-till smart tools at direct prices.',
     link: '/marketplace',
-    btnText: 'Shop Market',
+    btnText: 'Shop Catalog',
   },
   {
     id: 'soil',
     icon: Layers,
-    title: 'Soil Health & NPK',
+    title: 'Soil Insights',
     badge: 'Live Telemetry',
     color: 'lime',
     description: 'Instant Nitrogen, Phosphorus, Potassium, moisture, and pH sensor readings.',
@@ -113,6 +120,96 @@ const ECOSYSTEM_MODULES = [
     link: '/knowledge-hub',
     btnText: 'Read Guides',
   },
+];
+
+// Varaha-Style 4 Core Nature-Based Solutions
+const NATURE_SOLUTIONS = [
+  {
+    id: 'regen-ag',
+    title: 'Regenerative Agriculture',
+    category: 'Soil Biodiversity',
+    icon: Leaf,
+    image: '/assets/img/knowledge/living-soil-mycorrhizae.jpg',
+    description:
+      'We partner with smallholders to replace synthetic inputs with zero-tillage, living cover crops, bio-diverse rotations, and organic mycorrhizae that revive natural soil biology.',
+    metrics: ['+24% Crop Resilience', '35% Input Cost Savings', 'Restored Mycorrhizal Network'],
+    link: '/crop-management',
+    linkText: 'Explore Crop Cycles',
+  },
+  {
+    id: 'biochar',
+    title: 'Biochar & Soil Carbon Permanence',
+    category: 'Century-Scale Sinks',
+    icon: Flame,
+    image: '/assets/img/knowledge/biochar-composting.jpg',
+    description:
+      'Transforming post-harvest agricultural crop residues into stable, porous biochar carbon sinks that lock carbon away for 100+ years while radically boosting water retention.',
+    metrics: ['4x Cation Exchange Capacity', 'High Drought Resistance', '100+ Year Carbon Stability'],
+    link: '/soil-insights',
+    linkText: 'Inspect Soil Telemetry',
+  },
+  {
+    id: 'agroforestry',
+    title: 'Afforestation & Agroforestry (ARR)',
+    category: 'Canopy Restoration',
+    icon: Trees,
+    image: '/assets/img/about/agtech-field-trial.jpg',
+    description:
+      'Planting native multi-strata timber and fruit trees along farm boundaries to generate microclimate windbreaks, support local biodiversity corridors, and diversify rural income.',
+    metrics: ['Natural Windbreak Buffers', 'Pollinator Corridors', 'Alternative Farmer Yields'],
+    link: '/farmer-hub',
+    linkText: 'View Partner Farms',
+  },
+  {
+    id: 'dmrv',
+    title: 'Digital MRV & Precision Telemetry',
+    category: 'Institutional Rigor',
+    icon: Satellite,
+    image: '/assets/img/smart-agri/drone-remote-sensing.jpg',
+    description:
+      'Combining high-resolution Sentinel satellite imagery, multispectral drone NDVI imaging, and in-situ soil NPK sensors for audit-grade scientific verification.',
+    metrics: ['Satellite & GIS Mapping', 'Drone NDVI Biomass Audits', 'Tamper-Proof In-Situ Data'],
+    link: '/smart-agriculture',
+    linkText: 'Discover IoT Architecture',
+  },
+];
+
+// Varaha-Style 4-Step Technology & MRV Process
+const DMRV_PROCESS_STEPS = [
+  {
+    step: '01',
+    title: 'GPS Field Mapping & FPO Onboarding',
+    desc: 'Local farmer producer organizations (FPOs) and field agents map exact farm parcel boundaries with sub-meter GPS accuracy.',
+    badge: 'Onboarding & Registry',
+  },
+  {
+    step: '02',
+    title: 'Satellite Remote Sensing & Drone NDVI',
+    desc: 'Constellation satellites and multispectral drones monitor crop vegetative vigor, canopy cover, and tillage practices year-round.',
+    badge: 'Spectral Tracking',
+  },
+  {
+    step: '03',
+    title: 'Biogeochemical & Living Soil Modeling',
+    desc: 'Calibrated biogeochemical algorithms quantify topsoil organic carbon sequestration, rhizosphere moisture, and NPK macronutrient balances.',
+    badge: 'Scientific Quantification',
+  },
+  {
+    step: '04',
+    title: 'Fair Direct-Trade & Transparent Dividends',
+    desc: 'Verified harvest and biological inputs flow through our marketplace with transparent ₹ INR payouts direct to smallholder grower accounts.',
+    badge: 'Direct Value Return',
+  },
+];
+
+// Institutional Quality & Trust Standards
+const TRUST_STANDARDS = [
+  { title: 'Verra Carbon Standard', label: 'Methodology Aligned' },
+  { title: 'Gold Standard Criteria', label: 'Co-Benefit Verified' },
+  { title: 'FAO Agroecology Framework', label: '10 Pillars of Nature' },
+  { title: 'ISO 14064 Compliance', label: 'GHG Accounting Protocol' },
+  { title: 'Soil Association Organic', label: 'Biological Input Audited' },
+  { title: 'Open Ag Data Alliance', label: 'Decentralized Farmer Data' },
 ];
 
 export default function HomePage() {
@@ -197,8 +294,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-16 sm:space-y-20 pb-20">
-      {/* 1. Stunning Hero Section with Immersive Nature / Smart Agro Background */}
+    <div className="space-y-16 sm:space-y-24 pb-20">
+      {/* 1. Stunning Varaha-Style Hero Section */}
       <section className="relative overflow-hidden bg-earthora-deep text-white border-b border-earthora-sand/70">
         {/* Full-Bleed High-Impact Photographic Background */}
         <div
@@ -209,7 +306,7 @@ export default function HomePage() {
           aria-hidden="true"
         />
 
-        {/* Sophisticated Cinematic Overlay with Radiant Emerald Glow */}
+        {/* Sophisticated Cinematic Overlay with Radiant Emerald Mesh Glow */}
         <div
           className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-earthora-deep/90 to-emerald-950/85 backdrop-blur-[2px]"
           aria-hidden="true"
@@ -231,7 +328,7 @@ export default function HomePage() {
               <div className="flex flex-wrap items-center gap-2.5">
                 <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-900/60 px-3.5 py-1 text-xs font-black text-earthora-mint backdrop-blur-md shadow-subtle uppercase tracking-[0.2em]">
                   <Sparkles className="h-3.5 w-3.5" />
-                  <span>EARTHORA · SMART AGRI ECOSYSTEM</span>
+                  <span>EARTHORA · FULL-STACK CLIMATE &amp; AGRI PLATFORM</span>
                 </div>
 
                 {/* The 3 Lines / 3 Dots Button for Feature Modules */}
@@ -247,13 +344,13 @@ export default function HomePage() {
                 </button>
               </div>
 
+              {/* Varaha-Inspired Mission Headline */}
               <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight drop-shadow-md text-white">
-                Rooted in Nature. <br />
-                <span className="text-earthora-mint">Driven by Innovation.</span>
+                Empowering Smallholder Farmers to <span className="text-earthora-mint">Regenerate Land</span> &amp; Fight Climate Change.
               </h1>
 
               <p className="max-w-xl text-base leading-relaxed text-emerald-100/90 sm:text-lg">
-                The smart agriculture platform uniting sustainable growers, agronomy experts, and consumers with IoT field telemetry, living soil analytics, and fair-trade organic commerce.
+                A full-stack climate and agronomy ecosystem uniting regenerative agriculture, biochar soil carbon permanence, precision IoT telemetry, and direct-trade fair prices for smallholder growers worldwide.
               </p>
 
               {/* The EXACT TWO Hero CTA Buttons: Join as Farmer & Marketplace */}
@@ -275,23 +372,23 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Verified Metrics Counter (Short and Sweet) */}
+              {/* Verified Metrics Counter (Varaha-style highlight row) */}
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 border-t border-white/15 pt-6">
                 <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
-                  <p className="font-heading text-2xl font-black text-earthora-mint">{dashboardMetrics.totalFarmers || 48}+</p>
-                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Verified Farms</p>
+                  <p className="font-heading text-2xl font-black text-earthora-mint">200k+</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Smallholder Farmers</p>
                 </div>
                 <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
-                  <p className="font-heading text-2xl font-black text-earthora-mint">{dashboardMetrics.totalCropAcreage || 1840} ac</p>
-                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Precision Land</p>
+                  <p className="font-heading text-2xl font-black text-earthora-mint">1.1M ac</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Regenerative Land</p>
                 </div>
                 <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
-                  <p className="font-heading text-2xl font-black text-earthora-mint">42%</p>
-                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Water Saved</p>
+                  <p className="font-heading text-2xl font-black text-earthora-mint">2.0M t</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">CO₂e Sequestered</p>
                 </div>
                 <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
-                  <p className="font-heading text-2xl font-black text-earthora-mint">99.4%</p>
-                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Soil Accuracy</p>
+                  <p className="font-heading text-2xl font-black text-earthora-mint">2.4M L</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Water Conserved</p>
                 </div>
               </div>
             </div>
@@ -341,7 +438,196 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. All Platform Modules & Agronomy Suites (Horizontal Left-to-Right Flow with 3 Lines / 3 Dots) */}
+      {/* 2. Signature Varaha Impact Metrics Ribbon */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl border border-earthora-sand/80 bg-white p-6 sm:p-8 md:p-10 shadow-elevated">
+          <div className="text-center max-w-2xl mx-auto mb-8">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-earthora-forest border border-emerald-200">
+              <Globe2 className="h-3.5 w-3.5 text-earthora-mint" />
+              Verified Field Scale
+            </span>
+            <h2 className="mt-2.5 font-heading text-2xl sm:text-3xl font-extrabold text-earthora-forest">
+              Real Impact Across Agricultural Landscapes
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm text-earthora-muted">
+              Measuring carbon permanence, soil health renewal, and direct farmer prosperity across smallholder communities.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center divide-y md:divide-y-0 md:divide-x divide-earthora-sand/70">
+            <div className="pt-4 md:pt-0">
+              <div className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-earthora-forest">
+                200,000+
+              </div>
+              <div className="mt-1.5 text-xs font-bold text-earthora-forest uppercase tracking-wider">
+                Smallholder Farmers
+              </div>
+              <p className="mt-1 text-[11px] text-earthora-muted">Enrolled in regenerative practices</p>
+            </div>
+
+            <div className="pt-4 md:pt-0 md:pl-6">
+              <div className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-earthora-forest">
+                1.1M+
+              </div>
+              <div className="mt-1.5 text-xs font-bold text-earthora-forest uppercase tracking-wider">
+                Acres Stewarded
+              </div>
+              <p className="mt-1 text-[11px] text-earthora-muted">Under verified biological management</p>
+            </div>
+
+            <div className="pt-4 md:pt-0 md:pl-6">
+              <div className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-earthora-forest">
+                2.0M+
+              </div>
+              <div className="mt-1.5 text-xs font-bold text-earthora-forest uppercase tracking-wider">
+                Tonnes CO₂e Sequestered
+              </div>
+              <p className="mt-1 text-[11px] text-earthora-muted">Durable soil &amp; biomass carbon sinks</p>
+            </div>
+
+            <div className="pt-4 md:pt-0 md:pl-6">
+              <div className="font-heading text-3xl sm:text-4xl lg:text-5xl font-black text-earthora-forest">
+                2.4M+
+              </div>
+              <div className="mt-1.5 text-xs font-bold text-earthora-forest uppercase tracking-wider">
+                Litres Water Conserved
+              </div>
+              <p className="mt-1 text-[11px] text-earthora-muted">Through precision drip &amp; no-till cover</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. Varaha-Style 4 Core Nature-Based Solutions */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center max-w-3xl mx-auto mb-10">
+          <div className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 px-3.5 py-1 text-xs font-black uppercase tracking-wider text-earthora-forest border border-emerald-200">
+            <Sprout className="h-3.5 w-3.5 text-earthora-mint" />
+            <span>Nature-Based Interventions</span>
+          </div>
+          <h2 className="mt-3 font-heading text-2xl sm:text-4xl font-extrabold text-earthora-forest">
+            High-Integrity Carbon Removal &amp; Regenerative Agriculture
+          </h2>
+          <p className="mt-2 text-xs sm:text-sm text-earthora-muted leading-relaxed">
+            We partner with smallholder farmers to implement durable carbon removal and regenerative practices that restore ecosystems, improve yields, and generate fair income.
+          </p>
+        </div>
+
+        <div className="grid gap-6 md:grid-cols-2">
+          {NATURE_SOLUTIONS.map((sol) => {
+            const Icon = sol.icon;
+            return (
+              <div
+                key={sol.id}
+                className="card-surface group flex flex-col justify-between overflow-hidden p-6 sm:p-7 border border-earthora-sand/80 hover:border-earthora-mint hover:shadow-elevated transition-all"
+              >
+                <div>
+                  <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl bg-earthora-beige/60 mb-5">
+                    <img
+                      src={sol.image}
+                      alt={sol.title}
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      loading="lazy"
+                    />
+                    <div className="absolute left-3 top-3">
+                      <span className="inline-flex items-center gap-1 rounded-lg border border-white/40 bg-earthora-forest/85 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-earthora-mint backdrop-blur-md">
+                        <Icon className="h-3 w-3" />
+                        {sol.category}
+                      </span>
+                    </div>
+                  </div>
+
+                  <h3 className="font-heading text-xl sm:text-2xl font-bold text-earthora-forest group-hover:text-emerald-800 transition-colors">
+                    {sol.title}
+                  </h3>
+
+                  <p className="mt-2.5 text-xs sm:text-sm text-earthora-muted leading-relaxed">
+                    {sol.description}
+                  </p>
+
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {sol.metrics.map((m, idx) => (
+                      <span
+                        key={idx}
+                        className="inline-flex items-center gap-1 rounded-lg border border-earthora-sand/90 bg-earthora-ivory/80 px-2.5 py-1 text-[11px] font-semibold text-earthora-forest"
+                      >
+                        <CheckCircle2 className="h-3 w-3 text-earthora-mint shrink-0" />
+                        {m}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="mt-6 pt-4 border-t border-earthora-sand/70">
+                  <Link
+                    to={sol.link}
+                    className="inline-flex items-center gap-1.5 text-xs font-bold text-earthora-forest hover:text-earthora-mint transition-colors group-hover:translate-x-0.5 transform duration-200"
+                  >
+                    <span>{sol.linkText}</span>
+                    <ArrowRight className="h-3.5 w-3.5 text-earthora-mint" />
+                  </Link>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* 4. The Technology Architecture: Varaha-Style Digital MRV Flow */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="rounded-3xl bg-earthora-forest p-7 sm:p-10 lg:p-12 text-white shadow-elevated">
+          <div className="text-center max-w-3xl mx-auto mb-10">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-950/70 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-earthora-mint">
+              <Satellite className="h-3.5 w-3.5" />
+              dMRV Technology Pipeline
+            </span>
+            <h2 className="mt-3 font-heading text-2xl sm:text-4xl font-extrabold text-white">
+              Science, Remote Sensing &amp; Biogeochemistry at Scale
+            </h2>
+            <p className="mt-2 text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+              Our end-to-end digital MRV pipeline turns on-field farmer practices into audit-ready ecological data and transparent economic returns.
+            </p>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {DMRV_PROCESS_STEPS.map((step) => (
+              <div
+                key={step.step}
+                className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-sm flex flex-col justify-between hover:bg-white/10 transition-colors"
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="font-heading text-2xl font-black text-earthora-mint">
+                      {step.step}
+                    </span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-300 bg-white/10 px-2 py-0.5 rounded-full">
+                      {step.badge}
+                    </span>
+                  </div>
+                  <h3 className="font-heading text-base font-bold text-white leading-snug">
+                    {step.title}
+                  </h3>
+                  <p className="mt-2 text-xs leading-relaxed text-emerald-100/75">
+                    {step.desc}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 pt-6 border-t border-white/10 flex flex-wrap items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-xs text-emerald-200">
+              <ShieldCheck className="h-4 w-4 text-earthora-mint shrink-0" />
+              <span>Full compliance with international carbon registry methodologies and open spatial standards.</span>
+            </div>
+            <Link to="/smart-agriculture" className="btn-accent px-5 py-2 text-xs font-bold">
+              Explore dMRV Architecture →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. All Platform Modules & Agronomy Suites (Horizontal Left-to-Right Flow with 3 Lines / 3 Dots) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
           <div>
@@ -424,7 +710,7 @@ export default function HomePage() {
 
                 <Link
                   to={mod.link}
-                  className="mt-5 inline-flex items-center justify-between rounded-xl bg-earthora-ivory px-3.5 py-2 text-xs font-bold text-earthora-forest group-hover:bg-earthora-forest group-hover:text-white transition-all shadow-xs"
+                  className="mt-4 flex items-center text-xs font-bold text-earthora-forest group-hover:text-emerald-800 transition-colors"
                 >
                   <span>{mod.btnText}</span>
                   <ArrowRight className="h-3.5 w-3.5 text-earthora-mint ml-1" />
@@ -435,7 +721,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Interactive All Feature Modules Modal / Drawer (Triggered by 3 Lines / 3 Dots) */}
+      {/* 6. Interactive All Feature Modules Modal / Drawer (Triggered by 3 Lines / 3 Dots) */}
       {modulesDrawerOpen && (
         <>
           <div
@@ -508,7 +794,7 @@ export default function HomePage() {
         </>
       )}
 
-      {/* 5. Agricultural Marketplace Highlights */}
+      {/* 7. Agricultural Marketplace Highlights */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
           <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest">
@@ -526,7 +812,59 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. Farmer Hub & Expert Connect (Short and Sweet) */}
+      {/* 8. Knowledge Hub & Field Trials (Left-to-Right Single Row, Limited, Article Name + Read Article Only) */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest">
+            Knowledge Hub &amp; Field Trials
+          </h2>
+          <Link to="/knowledge-hub" className="btn-secondary shrink-0 text-xs font-bold self-start sm:self-auto">
+            View All Articles <ArrowRight className="h-3.5 w-3.5 ml-1" />
+          </Link>
+        </div>
+
+        {/* Single Row from Left to Right */}
+        <div className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto scrollbar-none pb-3 snap-x snap-mandatory">
+          {articles.slice(0, 3).map((art) => (
+            <article
+              key={art._id}
+              className="w-[280px] sm:w-[320px] md:w-[350px] shrink-0 snap-start card-surface flex flex-col justify-between p-4 overflow-hidden hover:shadow-elevated transition-all"
+            >
+              <div>
+                <Link to={`/knowledge-hub/${art.slug}`}>
+                  <img
+                    src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
+                    alt={art.title}
+                    className="aspect-[16/10] w-full object-cover rounded-xl transition-transform duration-300 hover:scale-102"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
+                    }}
+                  />
+                </Link>
+                <Link
+                  to={`/knowledge-hub/${art.slug}`}
+                  className="mt-3 block font-heading text-base font-bold text-earthora-forest hover:text-earthora-mint leading-snug line-clamp-2"
+                >
+                  {art.title}
+                </Link>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-earthora-sand/70">
+                <Link
+                  to={`/knowledge-hub/${art.slug}`}
+                  className="inline-flex items-center text-xs font-bold text-earthora-forest hover:text-earthora-mint transition-colors"
+                >
+                  <span>Read Article</span>
+                  <ArrowRight className="h-3.5 w-3.5 ml-1 text-earthora-mint" />
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* 9. Farmer Hub & Expert Connect */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Farmer Hub */}
@@ -588,11 +926,11 @@ export default function HomePage() {
               </p>
 
               <div className="mt-4 space-y-2.5">
-                {EARTHORA_EXPERTS.slice(0, 2).map((exp) => (
-                  <div key={exp._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-2.5 bg-white/50">
+                {EARTHORA_EXPERTS.slice(0, 2).map((expert) => (
+                  <div key={expert._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-2.5 bg-white/50">
                     <img
-                      src={exp.image}
-                      alt={exp.name}
+                      src={expert.image}
+                      alt={expert.name}
                       className="h-11 w-11 rounded-xl object-cover border border-earthora-sand/80 shrink-0"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
@@ -600,8 +938,8 @@ export default function HomePage() {
                       }}
                     />
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-heading text-xs font-bold text-earthora-forest truncate">{exp.name}</h4>
-                      <p className="text-[11px] text-earthora-muted truncate">{exp.title} · {exp.rating} ★</p>
+                      <h4 className="font-heading text-xs font-bold text-earthora-forest truncate">{expert.name}</h4>
+                      <p className="text-[11px] text-earthora-muted truncate">{expert.title} · {expert.experience}</p>
                     </div>
                   </div>
                 ))}
@@ -615,63 +953,65 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. Knowledge Hub & Field Trials (Left-to-Right Single Row, Limited, Article Name + Read Article Only) */}
+      {/* 10. Varaha-Style Trust & Institutional Standards Bar */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
-          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest">
-            Knowledge Hub &amp; Field Trials
-          </h2>
-          <Link to="/knowledge-hub" className="btn-secondary shrink-0 text-xs font-bold self-start sm:self-auto">
-            View All Articles <ArrowRight className="h-3.5 w-3.5 ml-1" />
-          </Link>
-        </div>
-
-        {/* Single Row from Left to Right */}
-        <div className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto scrollbar-none pb-3 snap-x snap-mandatory">
-          {articles.slice(0, 3).map((art) => (
-            <article
-              key={art._id}
-              className="w-[280px] sm:w-[320px] md:w-[350px] shrink-0 snap-start card-surface flex flex-col justify-between p-4 overflow-hidden hover:shadow-elevated transition-all"
-            >
-              <div>
-                <Link to={`/knowledge-hub/${art.slug}`}>
-                  <img
-                    src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
-                    alt={art.title}
-                    className="aspect-[16/10] w-full object-cover rounded-xl transition-transform duration-300 hover:scale-102"
-                    onError={(e) => {
-                      e.currentTarget.onerror = null;
-                      e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
-                    }}
-                  />
-                </Link>
-                <Link
-                  to={`/knowledge-hub/${art.slug}`}
-                  className="mt-3 block font-heading text-base font-bold text-earthora-forest hover:text-earthora-mint leading-snug line-clamp-2"
-                >
-                  {art.title}
-                </Link>
+        <div className="rounded-3xl border border-earthora-sand/80 bg-earthora-ivory/40 p-6 sm:p-8 text-center">
+          <p className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-4">
+            Audited Against Global Scientific Standards
+          </p>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {TRUST_STANDARDS.map((std, i) => (
+              <div
+                key={i}
+                className="rounded-xl border border-earthora-sand/70 bg-white p-3 shadow-2xs hover:border-earthora-forest/40 transition-colors"
+              >
+                <Award className="h-4 w-4 text-earthora-forest mx-auto mb-1.5" />
+                <div className="font-heading text-xs font-bold text-earthora-forest leading-tight">
+                  {std.title}
+                </div>
+                <div className="text-[10px] text-earthora-muted mt-0.5">{std.label}</div>
               </div>
-
-              <div className="mt-4 pt-3 border-t border-earthora-sand/70">
-                <Link
-                  to={`/knowledge-hub/${art.slug}`}
-                  className="inline-flex items-center text-xs font-bold text-earthora-forest hover:text-earthora-mint transition-colors"
-                >
-                  <span>Read Article</span>
-                  <ArrowRight className="h-3.5 w-3.5 ml-1 text-earthora-mint" />
-                </Link>
-              </div>
-            </article>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* 8. Weekly Dispatch & Quick Contact Form */}
+      {/* 11. Varaha-Style High-Impact Closing Call to Action */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="relative overflow-hidden rounded-3xl bg-earthora-forest px-6 py-12 sm:px-12 sm:py-16 text-center text-white shadow-elevated">
+          <div
+            className="absolute inset-0 bg-cover bg-center opacity-15"
+            style={{ backgroundImage: "url('/assets/img/about/earthora-farm-aerial.jpg')" }}
+            aria-hidden="true"
+          />
+          <div className="relative z-10 max-w-3xl mx-auto space-y-4">
+            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-950/70 px-3.5 py-1 text-xs font-bold uppercase tracking-wider text-earthora-mint">
+              <Sparkles className="h-3.5 w-3.5" />
+              Join the Movement
+            </span>
+            <h2 className="font-heading text-3xl sm:text-5xl font-black leading-tight">
+              Ready to Accelerate Planetary Regeneration?
+            </h2>
+            <p className="text-xs sm:text-sm text-emerald-100/85 leading-relaxed max-w-2xl mx-auto">
+              Whether you are a smallholder grower seeking regenerative bio-inputs and fair prices or a conscious buyer sourcing certified harvest, Earthora provides the full-stack platform.
+            </p>
+            <div className="pt-3 flex flex-wrap justify-center gap-3">
+              <Link to="/register?role=farmer" className="btn-accent px-7 py-3 text-xs sm:text-sm font-bold">
+                Join as Farmer
+              </Link>
+              <Link to="/marketplace" className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 px-7 py-3 text-xs sm:text-sm font-bold">
+                Explore Marketplace
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 12. Weekly Dispatch & Quick Contact Form */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-6 lg:grid-cols-12">
           {/* Dispatch Box */}
-          <div className="rounded-3xl bg-earthora-forest p-7 sm:p-8 text-white lg:col-span-5 flex flex-col justify-between shadow-elevated">
+          <div className="rounded-3xl bg-earthora-deep p-7 sm:p-8 text-white lg:col-span-5 flex flex-col justify-between shadow-elevated border border-white/10">
             <div>
               <span className="badge-tag border border-emerald-400/30 bg-emerald-950/70 text-xs font-bold uppercase tracking-wider text-earthora-mint">
                 Weekly Intelligence
