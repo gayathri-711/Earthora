@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   BookOpen,
   ChevronDown,
@@ -28,21 +28,6 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
-
-// Desktop & Ribbon links
-const allNavLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
-  { to: '/smart-agriculture', label: 'Smart Agri' },
-  { to: '/farmer-hub', label: 'Farmer Hub' },
-  { to: '/crop-management', label: 'Crops' },
-  { to: '/marketplace', label: 'Marketplace' },
-  { to: '/weather-intelligence', label: 'Weather' },
-  { to: '/soil-insights', label: 'Soil' },
-  { to: '/expert-connect', label: 'Experts' },
-  { to: '/knowledge-hub', label: 'Knowledge' },
-  { to: '/contact', label: 'Contact' },
-];
 
 // Clean vertical category & module items styled exactly like user's second photo
 const DRAWER_CATEGORIES = [
@@ -250,29 +235,6 @@ export default function Navbar() {
           </div>
         </Link>
 
-        {/* Desktop Navigation Links */}
-        <nav className="hidden lg:flex items-center gap-1 xl:gap-2 flex-1 justify-end ml-2 xl:ml-4" aria-label="Desktop wide navigation">
-          {allNavLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) =>
-                `px-2.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive
-                    ? 'bg-earthora-forest text-white shadow-xs'
-                    : 'text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-earthora-sand/40'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </nav>
-
-        {/* Divider on desktop */}
-        <div className="h-5 w-px bg-earthora-sand/80 hidden lg:block mx-1 shrink-0" />
-
         {/* Action Features (Search, Wishlist, Cart, Sign In, All Feature Modules Pill Button) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Quick Search Button */}
@@ -373,31 +335,6 @@ export default function Navbar() {
           </button>
         </div>
       </div>
-
-      {/* Mobile Horizontal Ribbon */}
-      <nav
-        className="lg:hidden border-t border-earthora-sand/70 bg-earthora-ivory/95 backdrop-blur-md px-2.5 py-1.5 overflow-x-auto scrollbar-none shadow-xs"
-        aria-label="Mobile navigation ribbon"
-      >
-        <div className="flex items-center gap-1 min-w-max px-0.5">
-          {allNavLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              end={link.to === '/'}
-              className={({ isActive }) =>
-                `px-3 py-1 rounded-full text-xs font-bold transition-all whitespace-nowrap ${
-                  isActive
-                    ? 'bg-earthora-forest text-white shadow-xs font-black'
-                    : 'bg-white/80 border border-earthora-sand/80 text-earthora-charcoal/85 hover:text-earthora-forest hover:bg-white'
-                }`
-              }
-            >
-              {link.label}
-            </NavLink>
-          ))}
-        </div>
-      </nav>
 
       {/* Live Search Drawer Overlay */}
       {searchOpen && (
