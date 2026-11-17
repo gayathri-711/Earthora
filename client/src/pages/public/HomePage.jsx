@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Activity,
   ArrowRight,
-  Award,
-  BarChart3,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   CloudSun,
   Cpu,
   Droplets,
   Layers,
-  Leaf,
-  MapPin,
+  Menu,
+  MoreHorizontal,
+  MoreVertical,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Sprout,
-  Star,
   Tractor,
-  TrendingUp,
   Users,
+  X,
 } from 'lucide-react';
 import api from '../../api/client';
 import SectionHeading from '../../components/common/SectionHeading';
@@ -34,73 +34,91 @@ import {
 
 const ECOSYSTEM_MODULES = [
   {
+    id: 'crops',
     icon: Sprout,
-    title: 'Crop Lifecycle Tracking',
-    badge: 'Biological Phenology',
-    description: 'Track growth progress, root-zone irrigation logs, and harvest projections across monitored acreage.',
+    title: 'Crop Lifecycle',
+    badge: 'Agronomy',
+    color: 'emerald',
+    description: 'Track sowing cycles, irrigation intervals, and harvest dates in real time.',
     link: '/crop-management',
-    btnText: 'Open Crop Suite',
+    btnText: 'Open Crops',
   },
   {
+    id: 'marketplace',
     icon: ShoppingBag,
-    title: 'Agricultural Marketplace',
-    badge: 'Verified Organic · ₹ INR',
-    description: 'Direct-trade certified seeds, biochar compost, automated irrigation hardware, and fresh harvest produce.',
+    title: 'Marketplace',
+    badge: 'Fair Trade · ₹ INR',
+    color: 'amber',
+    description: 'Direct-trade heirloom seeds, biochar compost, equipment, and fresh harvest.',
     link: '/marketplace',
-    btnText: 'Shop Marketplace',
+    btnText: 'Shop Market',
   },
   {
+    id: 'soil',
     icon: Layers,
-    title: 'Soil Insights & NPK Telemetry',
-    badge: 'Lab & Probe Analytics',
-    description: 'Real-time laboratory & sensor telemetry tracking pH balance, Nitrogen, Phosphorus, Potassium, and carbon.',
+    title: 'Soil Health & NPK',
+    badge: 'Live Telemetry',
+    color: 'lime',
+    description: 'Instant Nitrogen, Phosphorus, Potassium, moisture, and pH sensor readings.',
     link: '/soil-insights',
-    btnText: 'Inspect Soil Health',
+    btnText: 'Inspect Soil',
   },
   {
+    id: 'weather',
     icon: CloudSun,
-    title: 'Agro-Weather Intelligence',
-    badge: 'Microclimate Radar',
-    description: 'Hyperlocal evapotranspiration forecasts, frost warnings, and spraying suitability windows to protect crops.',
+    title: 'Weather Radar',
+    badge: 'Microclimate',
+    color: 'sky',
+    description: 'Hyperlocal rainfall forecasts, frost hazard alerts, and spraying windows.',
     link: '/weather-intelligence',
-    btnText: 'View Weather Radar',
+    btnText: 'View Radar',
   },
   {
+    id: 'experts',
     icon: Users,
-    title: 'Expert Connect & Advisory',
-    badge: '1-on-1 Agronomy',
-    description: 'Book 45-minute virtual telemetry consultations with accredited agronomists and soil microbiologists.',
+    title: 'Expert Connect',
+    badge: '1-on-1 Advice',
+    color: 'purple',
+    description: 'Consult certified agronomists and soil microbiologists via virtual telemetry.',
     link: '/expert-connect',
-    btnText: 'Connect with Experts',
+    btnText: 'Talk to Expert',
   },
   {
+    id: 'smart-agri',
     icon: Cpu,
-    title: 'Smart Precision Agriculture',
-    badge: 'IoT & LoRaWAN Sensors',
-    description: 'Autonomous soil moisture telemetry, smart valve actuation, and drone NDVI vegetative indices.',
+    title: 'Smart Agri Suite',
+    badge: 'IoT Precision',
+    color: 'cyan',
+    description: 'Automated solar drip valves, drone NDVI maps, and field telemetry nodes.',
     link: '/smart-agriculture',
-    btnText: 'Explore IoT Suite',
+    btnText: 'Explore IoT',
   },
   {
+    id: 'farmer-hub',
     icon: Tractor,
-    title: 'Farmer Hub & Acreage',
-    badge: 'Partner Growers',
-    description: 'Verified regional farm directory, land profile audits, acreage metrics, and grower onboarding.',
+    title: 'Farmer Hub',
+    badge: 'Grower Network',
+    color: 'orange',
+    description: 'Verified regional family farms, soil audit reports, and collective harvest logs.',
     link: '/farmer-hub',
-    btnText: 'Visit Farmer Hub',
+    btnText: 'Visit Hub',
   },
   {
+    id: 'knowledge',
     icon: Sparkles,
-    title: 'Knowledge Hub & Research',
-    badge: 'Scientific Whitepapers',
-    description: 'Peer-reviewed field guides, regenerative organic research, and weekly agro-intelligence dispatches.',
+    title: 'Knowledge Hub',
+    badge: 'Research',
+    color: 'teal',
+    description: 'Actionable organic pest recipes, regenerative field trials, and guides.',
     link: '/knowledge-hub',
-    btnText: 'Read Field Guides',
+    btnText: 'Read Guides',
   },
 ];
 
 export default function HomePage() {
   const { showToast } = useToast();
+  const modulesScrollRef = useRef(null);
+  const [modulesDrawerOpen, setModulesDrawerOpen] = useState(false);
   const [dashboardMetrics, setDashboardMetrics] = useState({
     totalFarmers: 48,
     activeFarms: 42,
@@ -113,6 +131,16 @@ export default function HomePage() {
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [contactForm, setContactForm] = useState({ name: '', email: '', subject: '', message: '' });
   const [submittingContact, setSubmittingContact] = useState(false);
+
+  const scrollModules = (direction) => {
+    if (modulesScrollRef.current) {
+      const scrollAmount = 330;
+      modulesScrollRef.current.scrollBy({
+        left: direction === 'left' ? -scrollAmount : scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   useEffect(() => {
     api
@@ -169,100 +197,142 @@ export default function HomePage() {
   };
 
   return (
-    <div className="space-y-20 pb-20">
-      {/* 1. Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-earthora-beige/60 via-earthora-ivory to-earthora-ivory pt-12 pb-20 border-b border-earthora-sand/70">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div className="space-y-16 sm:space-y-20 pb-20">
+      {/* 1. Stunning Hero Section with Immersive Nature / Smart Agro Background */}
+      <section className="relative overflow-hidden bg-earthora-deep text-white border-b border-earthora-sand/70">
+        {/* Full-Bleed High-Impact Photographic Background */}
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-1000 scale-105"
+          style={{
+            backgroundImage: "url('/assets/img/about/earthora-farm-aerial.jpg')",
+          }}
+          aria-hidden="true"
+        />
+
+        {/* Sophisticated Cinematic Overlay with Radiant Emerald Glow */}
+        <div
+          className="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-earthora-deep/90 to-emerald-950/85 backdrop-blur-[2px]"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-earthora-mint/20 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+        <div
+          className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-emerald-600/20 blur-3xl pointer-events-none"
+          aria-hidden="true"
+        />
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-32">
           <div className="grid items-center gap-12 lg:grid-cols-12">
             {/* Left Content */}
             <div className="space-y-6 lg:col-span-7">
-              <div className="inline-flex items-center gap-2 rounded-full border border-earthora-forest/20 bg-white/90 px-4 py-1.5 text-xs sm:text-sm font-black text-earthora-forest backdrop-blur-md shadow-subtle uppercase tracking-[0.2em]">
-                <Sparkles className="h-4 w-4 text-earthora-mint" />
-                <span>EARTHORA · NEXT-GEN AGRI ECOSYSTEM</span>
+              {/* Badge + 3 Lines / 3 Dots Feature Module Quick Launcher */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <div className="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-900/60 px-3.5 py-1 text-xs font-black text-earthora-mint backdrop-blur-md shadow-subtle uppercase tracking-[0.2em]">
+                  <Sparkles className="h-3.5 w-3.5" />
+                  <span>EARTHORA · SMART AGRI ECOSYSTEM</span>
+                </div>
+
+                {/* The 3 Lines / 3 Dots Button for Feature Modules */}
+                <button
+                  type="button"
+                  onClick={() => setModulesDrawerOpen(true)}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/15 px-3 py-1 text-xs font-bold text-white hover:bg-white hover:text-earthora-forest backdrop-blur-md transition-all shadow-sm group"
+                  title="Open all feature modules in three lines or three dots"
+                >
+                  <Menu className="h-3.5 w-3.5 text-earthora-mint group-hover:rotate-90 transition-transform" />
+                  <span>All Feature Modules</span>
+                  <MoreHorizontal className="h-3.5 w-3.5 text-earthora-mint" />
+                </button>
               </div>
 
-              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] text-earthora-forest tracking-tight">
+              <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight drop-shadow-md text-white">
                 Rooted in Nature. <br />
-                <span className="text-emerald-700">Driven by Innovation.</span>
+                <span className="text-earthora-mint">Driven by Innovation.</span>
               </h1>
 
-              <p className="max-w-xl text-base leading-relaxed text-earthora-muted sm:text-lg">
-                EARTHORA unites sustainable growers, certified agronomists, input suppliers,
-                and conscious consumers on one intelligent platform. Monitor crops with precision IoT,
-                audit soil health, and trade certified agricultural inputs and produce.
+              <p className="max-w-xl text-base leading-relaxed text-emerald-100/90 sm:text-lg">
+                The smart agriculture platform uniting sustainable growers, agronomy experts, and consumers with IoT field telemetry, living soil analytics, and fair-trade organic commerce.
               </p>
 
-              <div className="flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center gap-3 pt-2">
-                <Link to="/smart-agriculture" className="btn-primary px-6 py-3 justify-center">
-                  Explore Smart Agri Suite
-                  <ArrowRight className="h-4 w-4" />
+              {/* The EXACT TWO Hero CTA Buttons: Join as Farmer & Marketplace */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 pt-2">
+                <Link
+                  to="/register?role=farmer"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-earthora-mint px-7 py-3.5 text-sm sm:text-base font-extrabold text-earthora-forest shadow-lg shadow-earthora-mint/20 hover:bg-emerald-300 hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  <Sprout className="h-4.5 w-4.5" />
+                  <span>Join as Farmer</span>
                 </Link>
-                <Link to="/marketplace" className="btn-secondary px-6 py-3 justify-center">
-                  Agricultural Marketplace
-                </Link>
-                <Link to="/register?role=farmer" className="btn-accent px-6 py-3 justify-center">
-                  Join as Farmer
+
+                <Link
+                  to="/marketplace"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur-md px-7 py-3.5 text-sm sm:text-base font-extrabold text-white shadow-md hover:bg-white hover:text-earthora-forest hover:scale-[1.02] active:scale-[0.98] transition-all"
+                >
+                  <ShoppingBag className="h-4.5 w-4.5" />
+                  <span>Marketplace</span>
                 </Link>
               </div>
 
-              {/* Verified Metrics Counter */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 border-t border-earthora-sand/80 pt-6">
-                <div>
-                  <p className="font-heading text-2xl font-black text-earthora-forest">{dashboardMetrics.totalFarmers || 48}+</p>
-                  <p className="text-[11px] font-semibold text-earthora-muted uppercase">Verified Farms</p>
+              {/* Verified Metrics Counter (Short and Sweet) */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4 border-t border-white/15 pt-6">
+                <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
+                  <p className="font-heading text-2xl font-black text-earthora-mint">{dashboardMetrics.totalFarmers || 48}+</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Verified Farms</p>
                 </div>
-                <div>
-                  <p className="font-heading text-2xl font-black text-earthora-forest">{dashboardMetrics.totalCropAcreage || 1840} ac</p>
-                  <p className="text-[11px] font-semibold text-earthora-muted uppercase">Precision Acreage</p>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
+                  <p className="font-heading text-2xl font-black text-earthora-mint">{dashboardMetrics.totalCropAcreage || 1840} ac</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Precision Land</p>
                 </div>
-                <div>
-                  <p className="font-heading text-2xl font-black text-earthora-forest">42%</p>
-                  <p className="text-[11px] font-semibold text-earthora-muted uppercase">Water Saved</p>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
+                  <p className="font-heading text-2xl font-black text-earthora-mint">42%</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Water Saved</p>
                 </div>
-                <div>
-                  <p className="font-heading text-2xl font-black text-earthora-forest">99.4%</p>
-                  <p className="text-[11px] font-semibold text-earthora-muted uppercase">Soil Traceability</p>
+                <div className="rounded-xl bg-white/5 border border-white/10 p-3 backdrop-blur-xs">
+                  <p className="font-heading text-2xl font-black text-earthora-mint">99.4%</p>
+                  <p className="text-[10px] font-semibold text-emerald-200/80 uppercase">Soil Accuracy</p>
                 </div>
               </div>
             </div>
 
-            {/* Right Hero Graphic / Live Platform Preview */}
+            {/* Right Hero Graphic: Live Telemetry Glass Card */}
             <div className="lg:col-span-5">
-              <div className="card-surface relative overflow-hidden border-2 border-earthora-forest/10 p-3 shadow-elevated">
+              <div className="relative overflow-hidden rounded-2xl border border-white/20 bg-white/10 p-3 shadow-2xl backdrop-blur-md">
                 <img
-                  src="/assets/img/hero/smart-agri-hero.jpg"
+                  src="/assets/img/smart-agri/smart-agtech-ecosystem.jpg"
                   alt="Earthora Smart Farm"
-                  className="aspect-[4/3] w-full rounded-xl object-cover"
+                  className="aspect-[4/3] w-full rounded-xl object-cover shadow-inner"
                 />
 
-                {/* Floating Telemetry Card */}
-                <div className="mt-3 grid grid-cols-2 gap-2.5 text-xs">
-                  <div className="rounded-xl border border-earthora-sand/70 bg-earthora-beige/60 p-3">
-                    <div className="flex items-center justify-between text-earthora-olive">
+                {/* Floating Live Sensor Readings */}
+                <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div className="rounded-xl border border-white/15 bg-black/25 p-3 backdrop-blur-md">
+                    <div className="flex items-center justify-between text-emerald-300">
                       <span className="font-bold">Soil Moisture</span>
                       <Droplets className="h-3.5 w-3.5 text-earthora-mint" />
                     </div>
-                    <p className="mt-1 font-heading text-lg font-bold text-earthora-forest">28% (Optimal)</p>
-                    <p className="text-[10px] text-earthora-muted">LoRaWAN Probe #12 · North Plot</p>
+                    <p className="mt-1 font-heading text-lg font-bold text-white">28% (Optimal)</p>
+                    <p className="text-[10px] text-emerald-200/60">Probe #12 · North Plot</p>
                   </div>
 
-                  <div className="rounded-xl border border-earthora-sand/70 bg-earthora-forest p-3 text-white">
-                    <div className="flex items-center justify-between text-emerald-200">
-                      <span className="font-bold">Soil Health Index</span>
+                  <div className="rounded-xl border border-white/15 bg-emerald-950/60 p-3 backdrop-blur-md text-white">
+                    <div className="flex items-center justify-between text-emerald-300">
+                      <span className="font-bold">Soil Health</span>
                       <Activity className="h-3.5 w-3.5 text-earthora-mint" />
                     </div>
                     <p className="mt-1 font-heading text-lg font-bold text-earthora-mint">92 / 100</p>
-                    <p className="text-[10px] text-emerald-100/70">pH 6.8 · High Mycorrhizae</p>
+                    <p className="text-[10px] text-emerald-200/60">pH 6.8 · Living Organic</p>
                   </div>
                 </div>
 
-                <div className="mt-2.5 flex items-center justify-between rounded-xl bg-earthora-ivory p-3 text-xs text-earthora-muted">
-                  <span className="inline-flex items-center gap-1.5 font-semibold text-earthora-forest">
+                <div className="mt-2.5 flex items-center justify-between rounded-xl bg-black/30 p-2.5 text-xs text-emerald-100 backdrop-blur-sm">
+                  <span className="inline-flex items-center gap-1.5 font-semibold text-white">
                     <CheckCircle2 className="h-4 w-4 text-earthora-mint" />
-                    Live Regional Telemetry: Sonoma &amp; Willamette
+                    Active LoRaWAN Telemetry
                   </span>
-                  <Link to="/weather-intelligence" className="font-bold text-earthora-olive hover:underline">
-                    View Weather Radar →
+                  <Link to="/weather-intelligence" className="font-bold text-earthora-mint hover:underline">
+                    Radar Live →
                   </Link>
                 </div>
               </div>
@@ -271,45 +341,93 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 2. All Ecosystem Modules (Directly visible on Mobile & Desktop) */}
+      {/* 2. All Platform Modules & Agronomy Suites (Horizontal Left-to-Right Flow with 3 Lines / 3 Dots) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionHeading
-          align="center"
-          eyebrow="Ecosystem Architecture"
-          title="All Platform Modules & Agronomy Suites"
-          subtitle="Direct one-tap access to all 8 operational suites uniting field IoT telemetry, living soil analytics, and direct-trade agricultural commerce."
-        />
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
+          <div>
+            <div className="inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-1">
+              <Sparkles className="h-3.5 w-3.5 text-earthora-mint" />
+              <span>Comprehensive Ecosystem</span>
+            </div>
+            <h2 className="font-heading text-2xl sm:text-4xl font-extrabold text-earthora-forest">
+              All Platform Modules &amp; Agronomy Suites
+            </h2>
+            <p className="mt-1.5 text-xs sm:text-sm text-earthora-muted">
+              Explore all 8 smart farming tools from left to right. Short, fast, and actionable.
+            </p>
+          </div>
 
-        <div className="mt-8 sm:mt-12 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Left / Right Carousel Controls + 3 Lines / 3 Dots Button */}
+          <div className="flex items-center gap-2 self-start md:self-auto">
+            <button
+              type="button"
+              onClick={() => scrollModules('left')}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-earthora-sand/80 bg-white text-earthora-forest shadow-xs hover:bg-earthora-sand/30 hover:border-earthora-forest transition-all"
+              aria-label="Scroll left"
+              title="Scroll left"
+            >
+              <ChevronLeft className="h-5 w-5" />
+            </button>
+
+            <button
+              type="button"
+              onClick={() => scrollModules('right')}
+              className="flex h-10 w-10 items-center justify-center rounded-xl border border-earthora-sand/80 bg-white text-earthora-forest shadow-xs hover:bg-earthora-sand/30 hover:border-earthora-forest transition-all"
+              aria-label="Scroll right"
+              title="Scroll right"
+            >
+              <ChevronRight className="h-5 w-5" />
+            </button>
+
+            {/* Three Lines / Three Dots Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setModulesDrawerOpen(true)}
+              className="inline-flex items-center gap-1.5 rounded-xl border border-earthora-forest/20 bg-earthora-forest px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:bg-earthora-deep transition-all"
+              title="View all modules in 3 lines or 3 dots drawer"
+            >
+              <Menu className="h-4 w-4 text-earthora-mint" />
+              <span className="hidden sm:inline">All Modules</span>
+              <MoreVertical className="h-3.5 w-3.5 text-earthora-mint" />
+            </button>
+          </div>
+        </div>
+
+        {/* Left-to-Right Smooth Scrolling Track */}
+        <div
+          ref={modulesScrollRef}
+          className="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scrollbar-none scroll-smooth snap-x snap-mandatory py-2 px-1"
+        >
           {ECOSYSTEM_MODULES.map((mod) => {
             const Icon = mod.icon;
             return (
               <div
-                key={mod.title}
-                className="card-surface group flex flex-col justify-between p-4 sm:p-6 transition-all duration-200 hover:-translate-y-1 hover:border-earthora-mint hover:shadow-elevated"
+                key={mod.id}
+                className="w-[280px] sm:w-[310px] md:w-[330px] shrink-0 snap-start card-surface group flex flex-col justify-between p-5 border border-earthora-sand/80 hover:border-earthora-mint hover:shadow-elevated transition-all duration-200"
               >
                 <div>
-                  <div className="flex items-center justify-between mb-3 sm:mb-4">
-                    <div className="inline-flex rounded-xl bg-earthora-mint/20 p-2.5 sm:p-3 text-earthora-forest group-hover:bg-earthora-forest group-hover:text-earthora-mint transition-colors">
-                      <Icon className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="inline-flex rounded-xl bg-earthora-mint/20 p-2.5 text-earthora-forest group-hover:bg-earthora-forest group-hover:text-earthora-mint transition-colors">
+                      <Icon className="h-5 w-5" />
                     </div>
-                    <span className="hidden sm:inline-block rounded-full bg-earthora-ivory px-2 py-0.5 text-[10px] font-bold text-earthora-olive uppercase">
+                    <span className="rounded-full bg-earthora-ivory border border-earthora-sand/60 px-2 py-0.5 text-[10px] font-bold text-earthora-olive uppercase">
                       {mod.badge}
                     </span>
                   </div>
-                  <h3 className="font-heading text-sm sm:text-lg font-bold text-earthora-forest group-hover:text-emerald-800 leading-snug">
+                  <h3 className="font-heading text-base sm:text-lg font-bold text-earthora-forest group-hover:text-emerald-800 leading-snug">
                     {mod.title}
                   </h3>
-                  <p className="mt-1.5 text-[11px] sm:text-xs leading-relaxed text-earthora-muted line-clamp-2 sm:line-clamp-3">
+                  <p className="mt-1.5 text-xs leading-relaxed text-earthora-muted line-clamp-2">
                     {mod.description}
                   </p>
                 </div>
+
                 <Link
                   to={mod.link}
-                  className="mt-4 sm:mt-6 inline-flex items-center justify-between rounded-xl bg-earthora-ivory px-3 py-2 text-xs font-bold text-earthora-forest group-hover:bg-earthora-forest group-hover:text-white transition-all shadow-xs"
+                  className="mt-5 inline-flex items-center justify-between rounded-xl bg-earthora-ivory px-3.5 py-2 text-xs font-bold text-earthora-forest group-hover:bg-earthora-forest group-hover:text-white transition-all shadow-xs"
                 >
-                  <span className="truncate">{mod.btnText}</span>
-                  <ArrowRight className="h-3.5 w-3.5 shrink-0 ml-1 text-earthora-mint group-hover:text-earthora-mint" />
+                  <span>{mod.btnText}</span>
+                  <ArrowRight className="h-3.5 w-3.5 text-earthora-mint ml-1" />
                 </Link>
               </div>
             );
@@ -317,43 +435,114 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 3. Smart Agriculture Showcase Banner */}
+      {/* 3. Interactive All Feature Modules Modal / Drawer (Triggered by 3 Lines / 3 Dots) */}
+      {modulesDrawerOpen && (
+        <>
+          <div
+            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setModulesDrawerOpen(false)}
+            aria-hidden="true"
+          />
+          <aside
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col bg-white shadow-2xl transition-transform border-l border-earthora-sand/80 animate-in slide-in-from-right duration-200"
+            aria-label="All feature modules drawer"
+          >
+            <div className="flex items-center justify-between border-b border-earthora-sand/80 bg-earthora-forest p-4 text-white">
+              <div className="flex items-center gap-2">
+                <Menu className="h-5 w-5 text-earthora-mint" />
+                <h3 className="font-heading text-base sm:text-lg font-bold">
+                  All Feature Modules &amp; Suites
+                </h3>
+                <MoreVertical className="h-4 w-4 text-earthora-mint" />
+              </div>
+              <button
+                type="button"
+                onClick={() => setModulesDrawerOpen(false)}
+                className="rounded-xl border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                aria-label="Close drawer"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+              <p className="text-xs text-earthora-muted px-1">
+                Direct 1-tap jump to all 8 operational suites. Short, sweet, and actionable.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {ECOSYSTEM_MODULES.map((mod) => {
+                  const Icon = mod.icon;
+                  return (
+                    <Link
+                      key={mod.id}
+                      to={mod.link}
+                      onClick={() => setModulesDrawerOpen(false)}
+                      className="group flex flex-col justify-between rounded-xl border border-earthora-sand/80 bg-earthora-ivory/40 p-3.5 hover:bg-white hover:border-earthora-forest/40 hover:shadow-md transition-all"
+                    >
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-earthora-forest text-earthora-mint">
+                            <Icon className="h-4 w-4" />
+                          </span>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-olive">
+                            {mod.badge}
+                          </span>
+                        </div>
+                        <h4 className="font-heading text-sm font-bold text-earthora-forest group-hover:text-emerald-700">
+                          {mod.title}
+                        </h4>
+                        <p className="mt-1 text-[11px] text-earthora-muted line-clamp-2">
+                          {mod.description}
+                        </p>
+                      </div>
+                      <div className="mt-3 flex items-center text-xs font-bold text-earthora-forest group-hover:text-emerald-700">
+                        <span>{mod.btnText}</span>
+                        <ArrowRight className="h-3.5 w-3.5 ml-1" />
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          </aside>
+        </>
+      )}
+
+      {/* 4. Smart Precision Agriculture Showcase (Short and Sweet) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="relative overflow-hidden rounded-3xl bg-earthora-forest p-8 text-white sm:p-12 lg:p-16">
-          <div className="grid items-center gap-10 lg:grid-cols-12">
-            <div className="space-y-5 lg:col-span-7">
+        <div className="relative overflow-hidden rounded-3xl bg-earthora-forest p-7 sm:p-10 lg:p-14 text-white shadow-elevated">
+          <div className="grid items-center gap-8 lg:grid-cols-12">
+            <div className="space-y-4 lg:col-span-7">
               <span className="badge-tag border border-emerald-400/30 bg-emerald-950/60 text-xs font-bold uppercase tracking-wider text-earthora-mint">
                 Smart Precision IoT
               </span>
-              <h2 className="font-heading text-3xl font-extrabold sm:text-4xl lg:text-5xl">
+              <h2 className="font-heading text-2xl sm:text-4xl lg:text-5xl font-extrabold leading-tight">
                 Eliminate Guesswork with Live Field Telemetry
               </h2>
-              <p className="text-sm leading-relaxed text-emerald-100/80">
-                Earthora connects IoT soil probes, drone multispectral NDVI imagery, and solar drip valves
-                directly to your dashboard. Make data-backed irrigation and fertilizer decisions that save costs
-                and boost yields by up to 28%.
+              <p className="text-sm leading-relaxed text-emerald-100/85">
+                Automated solar drip actuators, multispectral drone NDVI imaging, and in-situ NPK probes deliver real-time field insights that cut water waste and boost yields by up to 28%.
               </p>
-              <div className="grid gap-3 sm:grid-cols-2 pt-2 text-xs text-emerald-100">
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint" /> Automated Irrigation Windows</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint" /> NPK &amp; Soil Moisture Alerts</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint" /> Hyperlocal Frost Risk Advisories</span>
-                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint" /> Direct Agronomist Consultations</span>
+              <div className="grid gap-2 sm:grid-cols-2 pt-1 text-xs text-emerald-100">
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Automated Irrigation Windows</span>
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Instant NPK &amp; Soil Alerts</span>
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> Hyperlocal Frost Risk Advisories</span>
+                <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4 text-earthora-mint shrink-0" /> 1-on-1 Agronomist Support</span>
               </div>
-              <div className="pt-4 flex flex-wrap gap-3">
-                <Link to="/smart-agriculture" className="btn-accent px-6 py-3">
-                  View Smart Agriculture Architecture
+              <div className="pt-3 flex flex-wrap gap-3">
+                <Link to="/smart-agriculture" className="btn-accent px-6 py-2.5 text-xs font-bold">
+                  View IoT Suite
                 </Link>
-                <Link to="/crop-management" className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 px-6 py-3">
-                  Crop Management Suite
+                <Link to="/crop-management" className="btn-secondary bg-white/10 text-white border-white/20 hover:bg-white/20 px-6 py-2.5 text-xs font-bold">
+                  Crop Management
                 </Link>
               </div>
             </div>
 
             <div className="lg:col-span-5">
-              <div className="rounded-2xl border border-white/15 bg-white/5 p-5 backdrop-blur-md">
-                <p className="text-xs font-bold uppercase tracking-wider text-earthora-mint">Live Field Status</p>
-                <h3 className="mt-1 font-heading text-lg font-bold text-white">North Plot 02 — Heirloom Tomatoes</h3>
-                <div className="mt-4 space-y-3">
+              <div className="rounded-2xl border border-white/15 bg-white/5 p-4 backdrop-blur-md">
+                <p className="text-[11px] font-bold uppercase tracking-wider text-earthora-mint">Live Field Sensor</p>
+                <h3 className="mt-0.5 font-heading text-base font-bold text-white">Plot #02 — Heirloom Tomatoes</h3>
+                <div className="mt-3 space-y-2.5">
                   <div>
                     <div className="flex justify-between text-xs text-emerald-200">
                       <span>Growth Stage: Maturing</span>
@@ -373,12 +562,6 @@ export default function HomePage() {
                       <p className="font-heading text-base font-bold text-white">29%</p>
                     </div>
                   </div>
-                  <Link
-                    to="/soil-insights"
-                    className="block text-center text-xs font-semibold text-emerald-300 hover:text-white"
-                  >
-                    Open Soil Insights &amp; NPK Analyzer →
-                  </Link>
                 </div>
               </div>
             </div>
@@ -386,110 +569,112 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 4. Agricultural Marketplace Highlights */}
+      {/* 5. Agricultural Marketplace Highlights (Short and Sweet) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <SectionHeading
-            eyebrow="Agricultural Marketplace"
-            title="Certified Seeds, Equipment &amp; Fresh Harvest"
-            subtitle="Verified organic inputs, precision smart irrigation hardware, and fresh harvest produce directly from regenerative farms."
-          />
-          <Link to="/marketplace" className="btn-secondary shrink-0">
-            Browse All 5 Categories <ArrowRight className="h-4 w-4" />
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end mb-8">
+          <div>
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive">Direct-Trade Store</span>
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest mt-0.5">
+              Certified Seeds, Equipment &amp; Fresh Harvest
+            </h2>
+            <p className="text-xs sm:text-sm text-earthora-muted mt-1">
+              Verified organic inputs, precision drip valves, and harvest produce in Indian Rupee (₹).
+            </p>
+          </div>
+          <Link to="/marketplace" className="btn-secondary shrink-0 text-xs font-bold">
+            Browse All Marketplace <ArrowRight className="h-3.5 w-3.5 ml-1" />
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {featuredProducts.map((product) => (
             <ProductCard key={product._id} product={product} />
           ))}
         </div>
       </section>
 
-      {/* 5. Farmer Hub & Expert Connect Preview */}
+      {/* 6. Farmer Hub & Expert Connect (Short and Sweet) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-2">
           {/* Farmer Hub */}
-          <div className="card-surface flex flex-col justify-between p-8">
+          <div className="card-surface flex flex-col justify-between p-6 sm:p-7">
             <div>
               <div className="flex items-center justify-between">
-                <span className="badge-tag bg-earthora-beige text-earthora-forest">Partner Network</span>
+                <span className="badge-tag bg-earthora-beige text-earthora-forest text-xs">Partner Network</span>
                 <Link to="/farmer-hub" className="text-xs font-bold text-earthora-olive hover:underline">
                   View All Farms →
                 </Link>
               </div>
-              <h3 className="mt-3 font-heading text-2xl font-bold text-earthora-forest">
+              <h3 className="mt-2.5 font-heading text-xl font-bold text-earthora-forest">
                 Farmer Hub: Verified Land Stewards
               </h3>
-              <p className="mt-2 text-sm text-earthora-muted">
-                Explore family farms and organic collectives practicing regenerative soil stewardship,
-                verified cover-crop cycling, and transparent cold-chain distribution.
+              <p className="mt-1.5 text-xs text-earthora-muted leading-relaxed">
+                Connect with family farms and organic collectives practicing regenerative soil stewardship and verified cold-chain distribution.
               </p>
 
-              <div className="mt-6 space-y-3">
+              <div className="mt-4 space-y-2.5">
                 {EARTHORA_FARMERS.slice(0, 2).map((farmer) => (
-                  <div key={farmer._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3 bg-white/50">
+                  <div key={farmer._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-2.5 bg-white/50">
                     <img
                       src={farmer.image}
                       alt={farmer.name}
-                      className="h-12 w-12 rounded-xl object-cover shadow-xs border border-earthora-sand/80"
+                      className="h-11 w-11 rounded-xl object-cover border border-earthora-sand/80 shrink-0"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = '/assets/img/farmers/farmer-elena.jpg';
                       }}
                     />
-                    <div>
-                      <h4 className="font-heading text-sm font-bold text-earthora-forest">{farmer.farmName}</h4>
-                      <p className="text-xs text-earthora-muted">{farmer.location} · {farmer.totalAcres} acres</p>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-heading text-xs font-bold text-earthora-forest truncate">{farmer.farmName}</h4>
+                      <p className="text-[11px] text-earthora-muted truncate">{farmer.location} · {farmer.totalAcres} acres</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <Link to="/register?role=farmer" className="btn-primary mt-6 text-xs">
+            <Link to="/register?role=farmer" className="btn-primary mt-5 text-xs justify-center">
               <Sprout className="h-4 w-4" />
               Register Your Farm on Earthora
             </Link>
           </div>
 
           {/* Expert Connect */}
-          <div className="card-surface flex flex-col justify-between p-8">
+          <div className="card-surface flex flex-col justify-between p-6 sm:p-7">
             <div>
               <div className="flex items-center justify-between">
-                <span className="badge-tag bg-earthora-mint/20 text-earthora-forest">Agronomy Advisory</span>
+                <span className="badge-tag bg-earthora-mint/20 text-earthora-forest text-xs">Agronomy Advisory</span>
                 <Link to="/expert-connect" className="text-xs font-bold text-earthora-olive hover:underline">
                   Meet Agronomists →
                 </Link>
               </div>
-              <h3 className="mt-3 font-heading text-2xl font-bold text-earthora-forest">
+              <h3 className="mt-2.5 font-heading text-xl font-bold text-earthora-forest">
                 Expert Connect: Science-Backed Guidance
               </h3>
-              <p className="mt-2 text-sm text-earthora-muted">
-                Schedule 1-on-1 consultations with accredited soil microbiologists, irrigation engineers,
-                and organic IPM specialists. Ask questions in our public peer-reviewed forum.
+              <p className="mt-1.5 text-xs text-earthora-muted leading-relaxed">
+                Schedule 1-on-1 virtual sessions with accredited soil microbiologists, irrigation engineers, and certified crop advisors.
               </p>
 
-              <div className="mt-6 space-y-3">
+              <div className="mt-4 space-y-2.5">
                 {EARTHORA_EXPERTS.slice(0, 2).map((exp) => (
-                  <div key={exp._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-3 bg-white/50">
+                  <div key={exp._id} className="flex items-center gap-3 rounded-xl border border-earthora-sand/70 p-2.5 bg-white/50">
                     <img
                       src={exp.image}
                       alt={exp.name}
-                      className="h-12 w-12 rounded-xl object-cover shadow-xs border border-earthora-sand/80"
+                      className="h-11 w-11 rounded-xl object-cover border border-earthora-sand/80 shrink-0"
                       onError={(e) => {
                         e.currentTarget.onerror = null;
                         e.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
                       }}
                     />
-                    <div>
-                      <h4 className="font-heading text-sm font-bold text-earthora-forest">{exp.name}</h4>
-                      <p className="text-xs text-earthora-muted">{exp.title} · {exp.rating} ★</p>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="font-heading text-xs font-bold text-earthora-forest truncate">{exp.name}</h4>
+                      <p className="text-[11px] text-earthora-muted truncate">{exp.title} · {exp.rating} ★</p>
                     </div>
                   </div>
                 ))}
               </div>
             </div>
-            <Link to="/expert-connect" className="btn-secondary mt-6 text-xs">
+            <Link to="/expert-connect" className="btn-secondary mt-5 text-xs justify-center">
               <Users className="h-4 w-4" />
               Book Agronomist Consultation
             </Link>
@@ -497,52 +682,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 6. Knowledge Hub Highlights */}
+      {/* 7. Knowledge Hub Highlights (Short and Sweet) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-          <SectionHeading
-            eyebrow="Knowledge Hub"
-            title="Agronomy Insights &amp; Technical Research"
-            subtitle="Field trials, soil regeneration guides, and modern sustainable agriculture whitepapers."
-          />
-          <Link to="/knowledge-hub" className="btn-secondary shrink-0">
-            Read Knowledge Base <ArrowRight className="h-4 w-4" />
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end mb-8">
+          <div>
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive">Scientific Whitepapers</span>
+            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest mt-0.5">
+              Knowledge Hub &amp; Field Trials
+            </h2>
+            <p className="text-xs sm:text-sm text-earthora-muted mt-1">
+              Field guides, soil microbiology research, and weekly agro-intelligence updates.
+            </p>
+          </div>
+          <Link to="/knowledge-hub" className="btn-secondary shrink-0 text-xs font-bold">
+            Read Knowledge Base <ArrowRight className="h-3.5 w-3.5 ml-1" />
           </Link>
         </div>
 
-        <div className="mt-10 grid gap-6 md:grid-cols-3">
+        <div className="grid gap-5 md:grid-cols-3">
           {articles.map((art) => (
-            <article key={art._id} className="card-surface flex flex-col overflow-hidden hover:shadow-elevated">
+            <article key={art._id} className="card-surface flex flex-col overflow-hidden hover:shadow-elevated transition-all">
               <Link to={`/knowledge-hub/${art.slug}`}>
                 <img
                   src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
                   alt={art.title}
-                  className="aspect-[16/10] w-full object-cover transition-transform duration-500 hover:scale-105"
+                  className="aspect-[16/10] w-full object-cover transition-transform duration-300 hover:scale-105"
                   onError={(e) => {
                     e.currentTarget.onerror = null;
                     e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
                   }}
                 />
               </Link>
-              <div className="flex flex-1 flex-col p-6">
-                <div className="flex items-center gap-2 text-xs text-earthora-olive font-bold">
+              <div className="flex flex-1 flex-col p-5">
+                <div className="flex items-center gap-2 text-[11px] text-earthora-olive font-bold">
                   <span>{art.category}</span>
                   <span>·</span>
                   <span className="text-earthora-muted font-normal">{art.readTime || '5 min'}</span>
                 </div>
                 <Link
                   to={`/knowledge-hub/${art.slug}`}
-                  className="mt-2 font-heading text-lg font-bold text-earthora-forest hover:text-earthora-mint line-clamp-2"
+                  className="mt-1.5 font-heading text-base font-bold text-earthora-forest hover:text-earthora-mint line-clamp-2"
                 >
                   {art.title}
                 </Link>
-                <p className="mt-2 flex-1 text-xs leading-relaxed text-earthora-muted line-clamp-3">
+                <p className="mt-1.5 flex-1 text-xs leading-relaxed text-earthora-muted line-clamp-2">
                   {art.excerpt}
                 </p>
-                <div className="mt-4 border-t border-earthora-sand/70 pt-3 text-xs text-earthora-muted flex items-center justify-between">
-                  <span>By {art.author}</span>
-                  <Link to={`/knowledge-hub/${art.slug}`} className="font-bold text-earthora-forest hover:underline">
-                    Read Article →
+                <div className="mt-3.5 border-t border-earthora-sand/70 pt-2.5 text-xs text-earthora-muted flex items-center justify-between">
+                  <span className="truncate">By {art.author}</span>
+                  <Link to={`/knowledge-hub/${art.slug}`} className="font-bold text-earthora-forest hover:underline shrink-0 ml-2">
+                    Read →
                   </Link>
                 </div>
               </div>
@@ -551,55 +740,56 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. Newsletter & Contact Section */}
+      {/* 8. Weekly Dispatch & Quick Contact Form */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-8 lg:grid-cols-12">
+        <div className="grid gap-6 lg:grid-cols-12">
           {/* Dispatch Box */}
-          <div className="rounded-3xl bg-earthora-forest p-8 text-white lg:col-span-5 flex flex-col justify-between shadow-elevated">
+          <div className="rounded-3xl bg-earthora-forest p-7 sm:p-8 text-white lg:col-span-5 flex flex-col justify-between shadow-elevated">
             <div>
               <span className="badge-tag border border-emerald-400/30 bg-emerald-950/70 text-xs font-bold uppercase tracking-wider text-earthora-mint">
                 Weekly Intelligence
               </span>
-              <h3 className="mt-3 font-heading text-3xl font-extrabold">
-                Get Hyperlocal Agro-Weather &amp; Soil Bulletins
+              <h3 className="mt-3 font-heading text-2xl sm:text-3xl font-extrabold leading-snug">
+                Hyperlocal Agro-Weather &amp; Soil Bulletins
               </h3>
-              <p className="mt-3 text-sm text-emerald-100/80 leading-relaxed">
-                Receive regional frost alerts, evapotranspiration irrigation advisories, and certified
-                marketplace updates every Thursday.
+              <p className="mt-2 text-xs sm:text-sm text-emerald-100/80 leading-relaxed">
+                Receive regional frost alerts, irrigation advisories, and marketplace updates every Thursday.
               </p>
             </div>
 
-            <form onSubmit={handleNewsletter} className="mt-8 space-y-3">
+            <form onSubmit={handleNewsletter} className="mt-6 space-y-2.5">
               <input
                 type="email"
                 required
                 value={newsletterEmail}
                 onChange={(e) => setNewsletterEmail(e.target.value)}
                 placeholder="agronomist@farm.com"
-                className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-emerald-200/50 focus:border-earthora-mint focus:outline-none"
+                className="w-full rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 text-xs text-white placeholder:text-emerald-200/50 focus:border-earthora-mint focus:outline-none"
               />
-              <button type="submit" className="btn-accent w-full py-3 text-sm font-bold">
+              <button type="submit" className="btn-accent w-full py-2.5 text-xs font-bold">
                 Subscribe to Weekly Intelligence
               </button>
             </form>
           </div>
 
           {/* Quick Contact Form */}
-          <div className="card-surface p-8 lg:col-span-7">
-            <SectionHeading
-              eyebrow="Connect With Earthora"
-              title="Questions About IoT Hardware, Onboarding, or Advisory?"
-              subtitle="Send a direct message to our agronomy support team."
-            />
+          <div className="card-surface p-7 sm:p-8 lg:col-span-7">
+            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive">Connect With Us</span>
+            <h3 className="mt-1 font-heading text-xl sm:text-2xl font-bold text-earthora-forest">
+              Questions About Hardware, Onboarding, or Advisory?
+            </h3>
+            <p className="text-xs text-earthora-muted mt-1">
+              Drop our agronomy support team a quick note below.
+            </p>
 
-            <form onSubmit={handleQuickContact} className="mt-6 grid gap-4 sm:grid-cols-2">
+            <form onSubmit={handleQuickContact} className="mt-5 grid gap-3 sm:grid-cols-2">
               <input
                 type="text"
                 required
                 value={contactForm.name}
                 onChange={(e) => setContactForm((f) => ({ ...f, name: e.target.value }))}
                 placeholder="Full Name"
-                className="input-field"
+                className="input-field text-xs py-2"
               />
               <input
                 type="email"
@@ -607,7 +797,7 @@ export default function HomePage() {
                 value={contactForm.email}
                 onChange={(e) => setContactForm((f) => ({ ...f, email: e.target.value }))}
                 placeholder="Email Address"
-                className="input-field"
+                className="input-field text-xs py-2"
               />
               <input
                 type="text"
@@ -615,19 +805,19 @@ export default function HomePage() {
                 value={contactForm.subject}
                 onChange={(e) => setContactForm((f) => ({ ...f, subject: e.target.value }))}
                 placeholder="Subject (e.g. Farm Onboarding / Hardware Integration)"
-                className="input-field sm:col-span-2"
+                className="input-field text-xs py-2 sm:col-span-2"
               />
               <textarea
-                rows={4}
+                rows={3}
                 required
                 value={contactForm.message}
                 onChange={(e) => setContactForm((f) => ({ ...f, message: e.target.value }))}
                 placeholder="How can Earthora support your agricultural operations?"
-                className="input-field sm:col-span-2"
+                className="input-field text-xs py-2 sm:col-span-2"
               />
               <div className="sm:col-span-2">
-                <button type="submit" disabled={submittingContact} className="btn-primary px-6 py-3">
-                  {submittingContact ? 'Sending Inquiry...' : 'Submit Inquiry'}
+                <button type="submit" disabled={submittingContact} className="btn-primary px-6 py-2.5 text-xs font-bold">
+                  {submittingContact ? 'Sending...' : 'Submit Inquiry'}
                 </button>
               </div>
             </form>

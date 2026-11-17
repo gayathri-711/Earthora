@@ -115,31 +115,46 @@
 
       <!-- Main Content Container with safe bottom spacing on mobile for bottom bar -->
       <main class="pb-20 lg:pb-0">
-        <!-- Hero Section -->
-        <section class="relative overflow-hidden bg-gradient-to-b from-emerald-950 via-earthora-forest to-emerald-900 text-white py-14 sm:py-20 lg:py-28 px-4 sm:px-6 lg:px-8">
-          <div class="mx-auto max-w-7xl">
+        <!-- Hero Section with Stunning Nature/Agro Background -->
+        <section class="relative overflow-hidden bg-emerald-950 text-white border-b border-earthora-sand/70">
+          <div
+            class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+            style="background-image: url('/assets/img/about/earthora-farm-aerial.jpg');"
+          ></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-emerald-950/95 via-earthora-forest/85 to-emerald-950/90 backdrop-blur-[2px]"></div>
+
+          <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24 lg:py-28">
             <div class="max-w-3xl">
-              <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-900/60 px-3.5 py-1 text-xs font-bold text-earthora-mint backdrop-blur-xs mb-4">
-                <span class="flex h-2 w-2 rounded-full bg-earthora-mint"></span>
-                Rooted in Nature · Driven by Innovation
+              <div class="flex flex-wrap items-center gap-2 mb-4">
+                <div class="inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-900/60 px-3.5 py-1 text-xs font-bold text-earthora-mint backdrop-blur-xs">
+                  <span class="flex h-2 w-2 rounded-full bg-earthora-mint"></span>
+                  Rooted in Nature · Driven by Innovation
+                </div>
+                <a href="#all-modules" class="inline-flex items-center gap-1.5 rounded-full border border-white/25 bg-white/10 px-3 py-1 text-xs font-bold text-white hover:bg-white hover:text-earthora-forest backdrop-blur-xs transition-all">
+                  <span>☰ All Modules</span>
+                  <span class="text-earthora-mint">⋮</span>
+                </a>
               </div>
+
               <h1 class="font-heading text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight mb-4 sm:mb-6">
                 Next-Generation Smart Agriculture &amp; Sustainable Farming
               </h1>
               <p class="text-base sm:text-lg text-emerald-100/90 leading-relaxed mb-6 sm:mb-8 max-w-2xl">
                 Connecting organic farmers, agronomists, and consumers with real-time IoT soil telemetry, microclimate radar, and fair-trade marketplace transparency across India.
               </p>
-              <div class="flex flex-wrap items-center gap-3">
-                <a href="/marketplace" class="rounded-xl bg-earthora-mint px-6 py-3 text-sm font-bold text-earthora-forest shadow-md hover:bg-emerald-400 transition-all">
-                  Explore Marketplace →
+
+              <!-- EXACT TWO Hero Buttons: Join as Farmer & Marketplace -->
+              <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5">
+                <a href="/register?role=farmer" class="inline-flex items-center justify-center gap-2 rounded-xl bg-earthora-mint px-7 py-3.5 text-sm sm:text-base font-extrabold text-earthora-forest shadow-lg hover:bg-emerald-300 transition-all">
+                  <span>Join as Farmer</span>
                 </a>
-                <a href="/smart-agriculture" class="rounded-xl border border-emerald-400/40 bg-white/10 px-6 py-3 text-sm font-bold text-white hover:bg-white/20 transition-all">
-                  Smart Agri IoT Suite
+                <a href="/marketplace" class="inline-flex items-center justify-center gap-2 rounded-xl border border-white/30 bg-white/10 backdrop-blur-md px-7 py-3.5 text-sm sm:text-base font-extrabold text-white shadow-md hover:bg-white hover:text-earthora-forest transition-all">
+                  <span>Marketplace</span>
                 </a>
               </div>
             </div>
 
-            <!-- Key Ecosystem Metrics -->
+            <!-- Key Ecosystem Metrics (Short and Sweet) -->
             <div class="mt-12 sm:mt-16 grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 pt-8 border-t border-white/15">
               <div class="rounded-2xl border border-white/10 bg-white/5 p-4 backdrop-blur-xs">
                 <div class="text-2xl sm:text-3xl font-black text-earthora-mint">15,000+</div>
@@ -161,123 +176,151 @@
           </div>
         </section>
 
-        <!-- All 8 Agriculture Modules Section -->
-        <section class="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-earthora-ivory">
+        <!-- All Platform Modules & Agronomy Suites (Left-to-Right Flow with 3 Lines / 3 Dots) -->
+        <section id="all-modules" class="py-12 sm:py-16 px-4 sm:px-6 lg:px-8 bg-earthora-ivory">
           <div class="mx-auto max-w-7xl">
-            <div class="text-center max-w-2xl mx-auto mb-8 sm:mb-12">
-              <span class="text-xs font-black uppercase tracking-widest text-earthora-olive">Comprehensive Ecosystem</span>
-              <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-earthora-forest mt-1.5">
-                Explore All 8 Agricultural Modules
-              </h2>
-              <p class="text-xs sm:text-sm text-earthora-muted mt-2">
-                Every tool needed to track crop life cycles, monitor soil microbiology, analyze weather hazards, and trade fair organic produce.
-              </p>
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-8">
+              <div>
+                <span class="text-xs font-black uppercase tracking-widest text-earthora-olive">Comprehensive Ecosystem</span>
+                <h2 class="font-heading text-2xl sm:text-4xl font-extrabold text-earthora-forest mt-1.5">
+                  All Platform Modules &amp; Agronomy Suites
+                </h2>
+                <p class="text-xs sm:text-sm text-earthora-muted mt-2">
+                  Explore all 8 smart farming tools going from left to right. Short, fast, and actionable.
+                </p>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="inline-flex items-center gap-1.5 rounded-xl border border-earthora-forest/20 bg-earthora-forest px-3.5 py-2 text-xs font-bold text-white">
+                  <span>☰ All Modules</span>
+                  <span class="text-earthora-mint">⋮</span>
+                </span>
+              </div>
             </div>
 
-            <!-- Modules Grid: 2 columns on mobile, 4 columns on desktop -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-5">
+            <!-- Left to Right Modules Track -->
+            <div class="flex items-stretch gap-4 sm:gap-5 overflow-x-auto scrollbar-none pb-4 mobile-scroll-ribbon">
               <!-- Module 1: Crops -->
-              <a href="/crop-management" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/crop-management" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-emerald-50 text-earthora-forest mb-3">
-                    <span class="text-xl sm:text-2xl">🌱</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">🌱</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-earthora-olive bg-earthora-ivory px-2 py-0.5 rounded-full">Agronomy</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-earthora-olive">Agronomy</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Crop Lifecycle</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Sowing-to-harvest schedules, irrigation intervals, and disease diagnosis.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Crop Lifecycle</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Track sowing cycles, irrigation intervals, and harvest dates in real time.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Open Crops</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 2: Marketplace -->
-              <a href="/marketplace" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/marketplace" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-amber-50 text-amber-700 mb-3">
-                    <span class="text-xl sm:text-2xl">🛒</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">🛒</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full">₹ INR</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Commerce</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Marketplace</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Direct farm-to-door produce, heirloom seeds, biochar, and biofertilizers.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Marketplace</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Direct-trade heirloom seeds, biochar compost, equipment, and harvest.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Shop Market</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 3: Soil Health -->
-              <a href="/soil-insights" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/soil-insights" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-lime-50 text-lime-800 mb-3">
-                    <span class="text-xl sm:text-2xl">🧪</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">🧪</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-lime-800 bg-lime-50 px-2 py-0.5 rounded-full">Telemetry</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-lime-800">Telemetry</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Soil Health &amp; NPK</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Real-time nitrogen, phosphorus, moisture, and pH telemetry readings.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Soil Health &amp; NPK</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Instant Nitrogen, Phosphorus, Potassium, moisture, and pH sensor readings.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Inspect Soil</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 4: Weather Radar -->
-              <a href="/weather-intelligence" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/weather-intelligence" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-sky-50 text-sky-700 mb-3">
-                    <span class="text-xl sm:text-2xl">🌦️</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">🌦️</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700 bg-sky-50 px-2 py-0.5 rounded-full">Forecasts</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-sky-700">Forecasting</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Weather Radar</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Microclimate alerts, precipitation radar, and frost warnings for farm acreage.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Weather Radar</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Hyperlocal rainfall forecasts, frost hazard alerts, and spraying windows.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>View Radar</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 5: Experts -->
-              <a href="/expert-connect" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/expert-connect" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-purple-50 text-purple-700 mb-3">
-                    <span class="text-xl sm:text-2xl">👨‍🌾</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">👨‍🌾</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700 bg-purple-50 px-2 py-0.5 rounded-full">1-on-1 Advice</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-purple-700">Advisory</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Expert Connect</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Book 1-on-1 consultations with verified agronomists and soil pathologists.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Expert Connect</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Consult certified agronomists and soil microbiologists via virtual telemetry.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Talk to Expert</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 6: Smart Agri -->
-              <a href="/smart-agriculture" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/smart-agriculture" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-cyan-50 text-cyan-800 mb-3">
-                    <span class="text-xl sm:text-2xl">📡</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">📡</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-800 bg-cyan-50 px-2 py-0.5 rounded-full">IoT Precision</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-cyan-800">Hardware &amp; IoT</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Smart Agri Suite</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Automated drip actuators, drone NDVI mapping, and field telemetry nodes.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Smart Agri Suite</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Automated solar drip valves, drone NDVI maps, and field telemetry nodes.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Explore IoT</span> <span class="ml-1">→</span>
                 </div>
               </a>
 
               <!-- Module 7: Farmer Hub -->
-              <a href="/farmer-hub" class="group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-4 sm:p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+              <a href="/farmer-hub" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
                 <div>
-                  <div class="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-orange-50 text-orange-700 mb-3">
-                    <span class="text-xl sm:text-2xl">🚜</span>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">🚜</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-orange-700 bg-orange-50 px-2 py-0.5 rounded-full">Grower Network</span>
                   </div>
-                  <span class="text-[10px] font-bold uppercase tracking-wider text-orange-700">Community</span>
-                  <h3 class="font-heading text-sm sm:text-base font-extrabold text-earthora-forest mt-0.5 group-hover:text-emerald-700">Farmer Hub</h3>
-                  <p class="text-xs text-earthora-muted mt-1.5 line-clamp-2">Verified organic growers, harvest logs, and regional collective supply networks.</p>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Farmer Hub</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Verified regional family farms, soil audit reports, and harvest logs.</p>
                 </div>
                 <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
-                  <span>Open Module</span> <span class="ml-1">→</span>
+                  <span>Visit Hub</span> <span class="ml-1">→</span>
+                </div>
+              </a>
+
+              <!-- Module 8: Knowledge Hub -->
+              <a href="/knowledge-hub" class="w-[280px] sm:w-[310px] shrink-0 group flex flex-col justify-between rounded-2xl border border-earthora-sand/80 bg-white p-5 shadow-xs hover:shadow-md hover:border-earthora-forest/40 transition-all">
+                <div>
+                  <div class="flex items-center justify-between mb-3">
+                    <span class="text-2xl">📚</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded-full">Research</span>
+                  </div>
+                  <h3 class="font-heading text-base font-extrabold text-earthora-forest group-hover:text-emerald-700">Knowledge Hub</h3>
+                  <p class="text-xs text-earthora-muted mt-1.5">Actionable organic pest recipes, regenerative field trials, and guides.</p>
+                </div>
+                <div class="mt-4 flex items-center text-xs font-bold text-earthora-forest">
+                  <span>Read Guides</span> <span class="ml-1">→</span>
+                </div>
+              </a>
+            </div>
+          </div>
+        </section>
                 </div>
               </a>
 
