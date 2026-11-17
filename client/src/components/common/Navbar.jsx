@@ -14,7 +14,6 @@ import {
   LogOut,
   Mail,
   Menu,
-  MoreHorizontal,
   Package,
   Search,
   ShoppingBag,
@@ -315,23 +314,20 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* ALL FEATURE MODULES PILL BUTTON NEAR SIGN IN (Three Dashes & Three Dots) */}
+          {/* THREE DASHES (HAMBURGER) MENU BUTTON (Icon only - no words, no dots) */}
           <button
             type="button"
             onClick={() => setMenuDrawerOpen((v) => !v)}
-            className="inline-flex items-center gap-1.5 rounded-full border border-earthora-forest/20 bg-earthora-forest px-3 sm:px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-earthora-deep hover:scale-[1.02] active:scale-[0.98] transition-all shrink-0 ml-1 sm:ml-1.5 group"
-            aria-label="Open all feature modules"
+            className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-earthora-forest/20 bg-earthora-forest text-white shadow-xs hover:bg-earthora-deep hover:scale-105 active:scale-95 transition-all shrink-0 ml-1 sm:ml-1.5 group"
+            aria-label="Open category menu"
             aria-expanded={menuDrawerOpen}
-            title="Open all feature modules"
+            title="Open category menu"
           >
             {menuDrawerOpen ? (
-              <X className="h-3.5 w-3.5 text-earthora-mint" />
+              <X className="h-5 w-5 text-earthora-mint" />
             ) : (
-              <Menu className="h-3.5 w-3.5 text-earthora-mint group-hover:rotate-90 transition-transform" />
+              <Menu className="h-5 w-5 text-earthora-mint group-hover:rotate-90 transition-transform" />
             )}
-            <span className="hidden sm:inline">All Feature Modules</span>
-            <span className="sm:hidden">Modules</span>
-            <MoreHorizontal className="h-3.5 w-3.5 text-earthora-mint" />
           </button>
         </div>
       </div>
