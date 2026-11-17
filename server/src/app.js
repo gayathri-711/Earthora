@@ -6,7 +6,11 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import mongoose from 'mongoose';
 
+import { connectDatabase } from './config/db.js';
+import { ensureFixedAdmin } from './config/fixedAdmin.js';
+import { seedIfEmpty } from './seeds/seed.js';
 import { errorHandler, notFoundHandler } from './middleware/errorMiddleware.js';
 import { uploadsDir } from './middleware/uploadMiddleware.js';
 import adminRoutes from './routes/adminRoutes.js';
@@ -43,6 +47,25 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Lazy DB initialization middleware (handles serverless cold starts seamlessly)
+let isDbInitialized = false;
+app.use(async (_req, _res, next) => {
+  if (!isDbInitialized) {
+    try {
+      await connectDatabase(process.env.MONGO_URI);
+      if (mongoose.connection.readyState === 1) {
+        await seedIfEmpty();
+        await ensureFixedAdmin();
+      }
+    } catch (err) {
+      console.warn('[DB] Init deferred:', err.message);
+    } finally {
+      isDbInitialized = true;
+    }
+  }
+  next();
+});
+
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -51,7 +74,7 @@ app.use(
 );
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || '*',
+    origin: true,
     credentials: true,
   })
 );
@@ -79,7 +102,7 @@ const apiLimiter = rateLimit({
   },
 });
 
-app.get('/api/health', (_req, res) => {
+app.get(['/api/health', '/health', '/api/v1/health'], (_req, res) => {
   res.json({
     success: true,
     platform: 'EARTHORA',
@@ -96,11 +119,11 @@ app.use((req, _res, next) => {
 });
 
 const mountApiRoutes = (prefix) => {
-  app.use(prefix, apiLimiter);
+  app.use(prefix || '/', apiLimiter);
   app.get(`${prefix}/dashboard/smart`, getSmartDashboard);
   app.use(`${prefix}/auth`, authRoutes);
-  app.use(prefix, catalogRoutes);
-  app.use(prefix, cartWishlistRoutes);
+  app.use(prefix || '/', catalogRoutes);
+  app.use(prefix || '/', cartWishlistRoutes);
   app.use(`${prefix}/crops`, cropRoutes);
   app.use(`${prefix}/soil`, soilRoutes);
   app.use(`${prefix}/weather`, weatherRoutes);
@@ -115,6 +138,8 @@ const mountApiRoutes = (prefix) => {
 
 mountApiRoutes('/api/v1');
 mountApiRoutes('/api');
+mountApiRoutes('/v1');
+mountApiRoutes('');
 
 if (fs.existsSync(clientDistDir)) {
   app.use(express.static(clientDistDir));

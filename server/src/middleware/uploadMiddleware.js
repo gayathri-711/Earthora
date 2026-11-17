@@ -1,13 +1,22 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import multer from 'multer';
 import { fileURLToPath } from 'node:url';
 
+const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-export const uploadsDir = path.resolve(__dirname, '../../uploads');
 
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
+export const uploadsDir = isServerless
+  ? path.join(os.tmpdir(), 'earthora_uploads')
+  : path.resolve(__dirname, '../../uploads');
+
+try {
+  if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir, { recursive: true });
+  }
+} catch (err) {
+  console.warn('[Uploads] Directory initialization notice:', err.message);
 }
 
 const storage = multer.diskStorage({
@@ -27,4 +36,3 @@ export const uploadImage = multer({
     else cb(new Error('Only image files are allowed'));
   },
 });
-
