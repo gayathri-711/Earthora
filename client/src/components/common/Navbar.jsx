@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
   BookOpen,
+  ChevronDown,
+  ChevronRight,
   CloudSun,
   Cpu,
   Heart,
@@ -26,19 +28,127 @@ import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
-// All navigation module options matching user's screenshot
+// Desktop & Ribbon links
 const allNavLinks = [
-  { to: '/', label: 'Home', icon: Home, desc: 'Ecosystem overview & live field telemetry' },
-  { to: '/about', label: 'About', icon: Sparkles, desc: 'The Earthora standard & scientific pillars' },
-  { to: '/smart-agriculture', label: 'Smart Agri', icon: Cpu, desc: 'Precision IoT architecture & drone NDVI' },
-  { to: '/farmer-hub', label: 'Farmer Hub', icon: Tractor, desc: 'Regional farm directory & land metrics' },
-  { to: '/crop-management', label: 'Crops', icon: Sprout, desc: 'Crop lifecycle phenology & harvest tracking' },
-  { to: '/marketplace', label: 'Marketplace', icon: ShoppingBag, desc: 'Seeds, organic fertilizers & tools in ₹' },
-  { to: '/weather-intelligence', label: 'Weather', icon: CloudSun, desc: 'Hyperlocal microclimate radar & frost alerts' },
-  { to: '/soil-insights', label: 'Soil', icon: Layers, desc: 'Rhizosphere NPK availability & biochar' },
-  { to: '/expert-connect', label: 'Experts', icon: Users, desc: '1-on-1 consultations with accredited agronomists' },
-  { to: '/knowledge-hub', label: 'Knowledge', icon: BookOpen, desc: 'Regenerative field trials & whitepapers' },
-  { to: '/contact', label: 'Contact', icon: Mail, desc: 'Regional campuses & agronomy inquiry' },
+  { to: '/', label: 'Home' },
+  { to: '/about', label: 'About' },
+  { to: '/smart-agriculture', label: 'Smart Agri' },
+  { to: '/farmer-hub', label: 'Farmer Hub' },
+  { to: '/crop-management', label: 'Crops' },
+  { to: '/marketplace', label: 'Marketplace' },
+  { to: '/weather-intelligence', label: 'Weather' },
+  { to: '/soil-insights', label: 'Soil' },
+  { to: '/expert-connect', label: 'Experts' },
+  { to: '/knowledge-hub', label: 'Knowledge' },
+  { to: '/contact', label: 'Contact' },
+];
+
+// Clean vertical category & module items styled exactly like user's second photo
+const DRAWER_CATEGORIES = [
+  {
+    id: 'home',
+    label: 'Home',
+    to: '/',
+  },
+  {
+    id: 'marketplace',
+    label: 'Agricultural Marketplace',
+    to: '/marketplace',
+    subItems: [
+      { label: 'All Marketplace Products', to: '/marketplace' },
+      { label: 'Seeds & Seedlings', to: '/marketplace?category=seeds' },
+      { label: 'Organic Fertilizers', to: '/marketplace?category=fertilizers' },
+      { label: 'Farming Equipment', to: '/marketplace?category=equipment' },
+      { label: 'Smart Irrigation Systems', to: '/marketplace?category=irrigation' },
+      { label: 'Fresh Harvest Produce', to: '/marketplace?category=produce' },
+    ],
+  },
+  {
+    id: 'smart-agri',
+    label: 'Smart Agriculture',
+    to: '/smart-agriculture',
+    subItems: [
+      { label: 'Precision IoT Suite', to: '/smart-agriculture' },
+      { label: 'LoRaWAN Soil Probes', to: '/smart-agriculture' },
+      { label: 'Automated Solar Drip Valves', to: '/smart-agriculture' },
+      { label: 'Drone Multispectral NDVI', to: '/smart-agriculture' },
+    ],
+  },
+  {
+    id: 'crops',
+    label: 'Crop Management',
+    to: '/crop-management',
+    subItems: [
+      { label: 'Active Crop Phenology', to: '/crop-management' },
+      { label: 'Sowing & Growth Cycles', to: '/crop-management' },
+      { label: 'Harvest Planning & Yield Logs', to: '/crop-management' },
+    ],
+  },
+  {
+    id: 'soil',
+    label: 'Soil Insights',
+    to: '/soil-insights',
+    subItems: [
+      { label: 'Rhizosphere NPK Telemetry', to: '/soil-insights' },
+      { label: 'pH & Soil Carbon Equilibrium', to: '/soil-insights' },
+      { label: 'Biochar Soil Amendment', to: '/soil-insights' },
+    ],
+  },
+  {
+    id: 'weather',
+    label: 'Weather Intelligence',
+    to: '/weather-intelligence',
+    subItems: [
+      { label: 'Hyperlocal Weather Radar', to: '/weather-intelligence' },
+      { label: 'Spraying Windows & Frost Hazards', to: '/weather-intelligence' },
+      { label: 'Microclimate Advisories', to: '/weather-intelligence' },
+    ],
+  },
+  {
+    id: 'farmer-hub',
+    label: 'Farmer Hub',
+    to: '/farmer-hub',
+    subItems: [
+      { label: 'Regional Partner Farms', to: '/farmer-hub' },
+      { label: 'Register Your Farm on Earthora', to: '/register?role=farmer' },
+      { label: 'Soil Stewardship Collective', to: '/farmer-hub' },
+    ],
+  },
+  {
+    id: 'experts',
+    label: 'Expert Connect',
+    to: '/expert-connect',
+    subItems: [
+      { label: 'Meet Agronomists & Scientists', to: '/expert-connect' },
+      { label: 'Book 1-on-1 Virtual Advisory', to: '/expert-connect' },
+      { label: 'Community Agro Q&A Forum', to: '/expert-connect' },
+    ],
+  },
+  {
+    id: 'knowledge',
+    label: 'Knowledge Hub',
+    to: '/knowledge-hub',
+    subItems: [
+      { label: 'Regenerative Field Guides', to: '/knowledge-hub' },
+      { label: 'Biochar Preparation Whitepapers', to: '/knowledge-hub' },
+      { label: 'Organic Pest Recipes', to: '/knowledge-hub' },
+    ],
+  },
+  {
+    id: 'about',
+    label: 'About Earthora',
+    to: '/about',
+    subItems: [
+      { label: 'The Earthora Standard', to: '/about' },
+      { label: '4 Scientific Pillars', to: '/about' },
+      { label: 'Global Sustainability Goals', to: '/about' },
+    ],
+  },
+  {
+    id: 'contact',
+    label: 'Contact Us',
+    to: '/contact',
+  },
 ];
 
 export default function Navbar() {
@@ -46,6 +156,7 @@ export default function Navbar() {
   const { summary } = useCart();
   const { items: wishlistItems } = useWishlist();
   const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
+  const [openCategory, setOpenCategory] = useState('marketplace');
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -149,7 +260,7 @@ export default function Navbar() {
         {/* Divider on desktop */}
         <div className="h-5 w-px bg-earthora-sand/80 hidden lg:block mx-1 shrink-0" />
 
-        {/* Action Features (Search, Wishlist, Cart, Sign In, Three Dashes Button) */}
+        {/* Action Features (Search, Wishlist, Cart, Sign In, All Feature Modules Pill Button) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Quick Search Button */}
           <button
@@ -229,7 +340,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* All Feature Modules Pill Button (Near Sign In Option - Three Dashes & Three Dots) */}
+          {/* ALL FEATURE MODULES PILL BUTTON NEAR SIGN IN (Three Dashes & Three Dots) */}
           <button
             type="button"
             onClick={() => setMenuDrawerOpen((v) => !v)}
@@ -304,213 +415,137 @@ export default function Navbar() {
         </div>
       )}
 
-      {/* SLIDE-OVER DRAWER WITH ALL MODULE OPTIONS (TRIGGERED BY THREE DASHES) */}
+      {/* SLIDE-OVER DRAWER STYLED EXACTLY LIKE SECOND PHOTO */}
       {menuDrawerOpen && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-50 bg-earthora-forest/60 backdrop-blur-xs transition-opacity duration-300"
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-xs transition-opacity duration-300"
             onClick={() => setMenuDrawerOpen(false)}
             aria-hidden="true"
           />
 
-          {/* Slide-over Panel (Active across all screen sizes) */}
+          {/* Slide-over Panel (Exact match to second uploaded photo) */}
           <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm sm:max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-earthora-sand/80 overflow-y-auto"
-            aria-label="All Module Navigation Drawer"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-[320px] sm:max-w-[350px] flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-gray-100 overflow-y-auto"
+            aria-label="Category Navigation Drawer"
           >
-            {/* Drawer Header */}
-            <div className="flex items-center justify-between border-b border-earthora-sand/80 bg-earthora-forest p-4 sm:p-5 text-white">
-              <Link
-                to="/"
-                onClick={() => setMenuDrawerOpen(false)}
-                className="flex items-center gap-2.5 group"
-              >
-                <img
-                  src="/assets/earthora/logo-icon.svg"
-                  alt="EARTHORA"
-                  className="h-9 w-9 shrink-0"
-                />
-                <div>
-                  <div className="font-heading text-xl font-black tracking-widest leading-none">
-                    EARTHORA
-                  </div>
-                  <div className="text-[10px] font-bold tracking-[0.2em] text-earthora-mint uppercase mt-0.5">
-                    All Platform Modules
-                  </div>
-                </div>
-              </Link>
-
+            {/* Header: Exact "Category" with divider line & close button */}
+            <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+              <h2 className="text-base sm:text-lg font-extrabold text-gray-900 tracking-tight font-heading">
+                Category
+              </h2>
               <button
                 type="button"
                 onClick={() => setMenuDrawerOpen(false)}
-                className="rounded-xl border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
+                className="p-1 text-gray-400 hover:text-gray-800 transition-colors rounded-lg hover:bg-gray-100"
                 aria-label="Close menu"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            {/* Quick Search inside Drawer */}
-            <div className="p-4 border-b border-earthora-sand/60 bg-earthora-ivory/50">
-              <form onSubmit={handleSearchSubmit} className="relative">
-                <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-earthora-muted" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search marketplace, weather, articles..."
-                  className="w-full rounded-xl border border-earthora-sand bg-white py-2 pl-9 pr-8 text-xs text-earthora-charcoal placeholder-earthora-muted focus:border-earthora-forest focus:outline-none"
-                />
-                {searchQuery && (
+            {/* Menu Items List (Vertical list with chevron right and expandable green active state) */}
+            <div className="flex-1 overflow-y-auto py-2">
+              {DRAWER_CATEGORIES.map((cat) => {
+                const isOpen = openCategory === cat.id;
+                const hasSubs = cat.subItems && cat.subItems.length > 0;
+
+                return (
+                  <div key={cat.id} className="border-b border-gray-100/70 last:border-b-0">
+                    {hasSubs ? (
+                      <div>
+                        {/* Parent Row with Chevron Toggle */}
+                        <button
+                          type="button"
+                          onClick={() => setOpenCategory(isOpen ? null : cat.id)}
+                          className={`w-full flex items-center justify-between px-6 py-3.5 text-left transition-colors group ${
+                            isOpen ? 'text-emerald-600 font-bold' : 'text-gray-900 hover:text-emerald-600 font-semibold'
+                          }`}
+                        >
+                          <span className="text-sm sm:text-base leading-snug">{cat.label}</span>
+                          {isOpen ? (
+                            <ChevronDown className="h-4 w-4 text-emerald-600 shrink-0" />
+                          ) : (
+                            <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
+                          )}
+                        </button>
+
+                        {/* Indented Sub-Items with Left Green Border Line (Exact match to second photo) */}
+                        {isOpen && (
+                          <div className="ml-6 border-l-2 border-emerald-500 pl-4 py-1.5 space-y-2 mb-2">
+                            {cat.subItems.map((sub, idx) => (
+                              <Link
+                                key={idx}
+                                to={sub.to}
+                                onClick={() => setMenuDrawerOpen(false)}
+                                className="block text-xs sm:text-sm font-medium text-gray-700 hover:text-emerald-600 transition-colors py-0.5"
+                              >
+                                {sub.label}
+                              </Link>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* Direct Link Item */
+                      <Link
+                        to={cat.to}
+                        onClick={() => setMenuDrawerOpen(false)}
+                        className="flex items-center justify-between px-6 py-3.5 text-sm sm:text-base font-semibold text-gray-900 hover:text-emerald-600 transition-colors group"
+                      >
+                        <span>{cat.label}</span>
+                        <ChevronRight className="h-4 w-4 text-gray-400 group-hover:text-emerald-600 shrink-0" />
+                      </Link>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Quick Links at the bottom */}
+            <div className="border-t border-gray-100 bg-gray-50/70 p-4 space-y-2.5">
+              <div className="flex items-center justify-between text-xs font-semibold text-gray-600">
+                <Link
+                  to="/cart"
+                  onClick={() => setMenuDrawerOpen(false)}
+                  className="hover:text-emerald-600 flex items-center gap-1.5"
+                >
+                  <ShoppingBag className="h-4 w-4" />
+                  <span>Cart ({summary.count})</span>
+                </Link>
+                <Link
+                  to="/wishlist"
+                  onClick={() => setMenuDrawerOpen(false)}
+                  className="hover:text-emerald-600 flex items-center gap-1.5"
+                >
+                  <Heart className="h-4 w-4" />
+                  <span>Wishlist ({wishlistItems.length})</span>
+                </Link>
+              </div>
+
+              {isAuthenticated ? (
+                <div className="flex items-center justify-between pt-1 border-t border-gray-200/60">
+                  <span className="text-xs font-bold text-gray-800 truncate">{user?.name}</span>
                   <button
                     type="button"
-                    onClick={() => setSearchQuery('')}
-                    className="absolute right-2.5 top-1/2 -translate-y-1/2 text-earthora-muted hover:text-earthora-charcoal"
+                    onClick={() => {
+                      logout();
+                      setMenuDrawerOpen(false);
+                    }}
+                    className="text-xs text-red-600 font-bold hover:underline"
                   >
-                    <X className="h-3.5 w-3.5" />
+                    Sign Out
                   </button>
-                )}
-              </form>
-            </div>
-
-            {/* Drawer Content: ALL MODULE OPTIONS */}
-            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
-              <div>
-                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2.5 flex items-center justify-between">
-                  <span>Ecosystem Modules ({allNavLinks.length})</span>
-                  <span className="text-[10px] text-earthora-muted">1-Tap Navigation</span>
-                </div>
-
-                <div className="grid grid-cols-1 gap-1.5">
-                  {allNavLinks.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <NavLink
-                        key={link.to}
-                        to={link.to}
-                        end={link.to === '/'}
-                        onClick={() => setMenuDrawerOpen(false)}
-                        className={({ isActive }) =>
-                          `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all group ${
-                            isActive
-                              ? 'bg-earthora-forest text-white shadow-xs'
-                              : 'text-earthora-forest bg-earthora-ivory/40 border border-earthora-sand/60 hover:bg-earthora-forest hover:text-white hover:border-earthora-forest'
-                          }`
-                        }
-                      >
-                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-earthora-mint/20 text-earthora-forest group-hover:bg-white/20 group-hover:text-earthora-mint shrink-0">
-                          <Icon className="h-4 w-4" />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-heading text-xs font-bold leading-none">{link.label}</div>
-                          <div className="text-[10px] text-earthora-muted group-hover:text-emerald-200 truncate mt-0.5">
-                            {link.desc}
-                          </div>
-                        </div>
-                        <span className="text-xs opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transform transition-transform">
-                          →
-                        </span>
-                      </NavLink>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Commerce Quick Links */}
-              <div>
-                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  Shopping &amp; Wishlist
-                </div>
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to="/cart"
-                    onClick={() => setMenuDrawerOpen(false)}
-                    className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
-                  >
-                    <ShoppingBag className="h-4 w-4 text-earthora-forest" />
-                    <span>Cart ({summary.count})</span>
-                  </Link>
-                  <Link
-                    to="/wishlist"
-                    onClick={() => setMenuDrawerOpen(false)}
-                    className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
-                  >
-                    <Heart className="h-4 w-4 text-earthora-olive" />
-                    <span>Saved ({wishlistItems.length})</span>
-                  </Link>
-                  <Link
-                    to="/track-order"
-                    onClick={() => setMenuDrawerOpen(false)}
-                    className="col-span-2 flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
-                  >
-                    <Package className="h-4 w-4 text-earthora-muted" />
-                    <span>Track Active Order</span>
-                  </Link>
-                </div>
-              </div>
-            </div>
-
-            {/* Bottom Auth Card */}
-            <div className="border-t border-earthora-sand/80 bg-earthora-beige/40 p-4">
-              {isAuthenticated ? (
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-earthora-forest text-xs font-bold text-white uppercase">
-                        {user?.name?.[0] || 'U'}
-                      </div>
-                      <div>
-                        <div className="text-xs font-bold text-earthora-forest">{user?.name}</div>
-                        <div className="text-[10px] font-semibold text-earthora-olive uppercase">
-                          Role: {user?.role}
-                        </div>
-                      </div>
-                    </div>
-                    <span className="rounded-full bg-emerald-100 border border-emerald-300 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
-                      Active
-                    </span>
-                  </div>
-
-                  <div className="flex items-center gap-2">
-                    <Link
-                      to={dashboardPath}
-                      onClick={() => setMenuDrawerOpen(false)}
-                      className="btn-primary flex-1 py-2 text-xs"
-                    >
-                      <LayoutDashboard className="h-4 w-4" />
-                      Open Dashboard
-                    </Link>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        logout();
-                        setMenuDrawerOpen(false);
-                      }}
-                      className="rounded-xl border border-red-200 bg-white p-2 text-red-600 hover:bg-red-50 transition-colors"
-                      title="Sign Out"
-                    >
-                      <LogOut className="h-4 w-4" />
-                    </button>
-                  </div>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-2">
-                  <Link
-                    to="/login"
-                    onClick={() => setMenuDrawerOpen(false)}
-                    className="btn-secondary py-2 text-xs font-bold text-center"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMenuDrawerOpen(false)}
-                    className="btn-primary py-2 text-xs font-bold text-center"
-                  >
-                    Get Started
-                  </Link>
-                </div>
+                <Link
+                  to="/login"
+                  onClick={() => setMenuDrawerOpen(false)}
+                  className="block w-full text-center py-2 text-xs font-bold text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded-lg border border-emerald-200 transition-colors"
+                >
+                  Sign In / Register
+                </Link>
               )}
             </div>
           </aside>
