@@ -239,7 +239,7 @@ export default function HomePage() {
 
               {/* Varaha-Inspired Mission Headline */}
               <h1 className="font-heading text-4xl sm:text-6xl lg:text-7xl font-black leading-[1.05] tracking-tight drop-shadow-md text-white">
-                Empowering Smallholder Farmers to <span className="text-earthora-mint">Regenerate Land</span> &amp; Feed the Future.
+                Rooted in Nature, <span className="text-earthora-mint">Driven by Innovation:</span> Smart Farming for Every Acre.
               </h1>
 
               <p className="max-w-xl text-base leading-relaxed text-emerald-100/90 sm:text-lg">
