@@ -5,6 +5,9 @@ import Wishlist from '../models/Wishlist.js';
 import { asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const getCart = asyncHandler(async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, { items: [] });
+  }
   const cart = await Cart.findOne({ user: req.user._id }).populate('items.product');
   const validItems = (cart?.items || []).filter((i) => i.product != null);
   sendSuccess(res, { items: validItems });
@@ -96,6 +99,9 @@ export const clearCart = asyncHandler(async (req, res) => {
 });
 
 export const getWishlist = asyncHandler(async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, { products: [] });
+  }
   const wishlist = await Wishlist.findOne({ user: req.user._id }).populate('products');
   const validProducts = (wishlist?.products || []).filter((p) => p != null);
   sendSuccess(res, { products: validProducts });

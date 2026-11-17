@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Article from '../models/Article.js';
 import ContactMessage from '../models/ContactMessage.js';
 import Crop from '../models/Crop.js';
@@ -8,9 +9,42 @@ import Product from '../models/Product.js';
 import Review from '../models/Review.js';
 import SoilTest from '../models/SoilTest.js';
 import User from '../models/User.js';
+import { DEMO_USERS } from '../config/demoUsers.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const getAdminOverview = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, {
+      stats: {
+        totalRevenue: 48920.5,
+        totalOrders: 142,
+        totalCustomers: 89,
+        totalFarmers: 18,
+        totalExperts: 6,
+        totalProducts: 24,
+        totalCrops: 32,
+      },
+      salesChart: [
+        { label: 'Jan', revenue: 3200 },
+        { label: 'Feb', revenue: 4100 },
+        { label: 'Mar', revenue: 5800 },
+        { label: 'Apr', revenue: 7200 },
+        { label: 'May', revenue: 8900 },
+        { label: 'Jun', revenue: 11200 },
+        { label: 'Jul', revenue: 8520.5 },
+      ],
+      recentOrders: [
+        { _id: '6735e0000000000000000101', orderNumber: 'ETH-2026-1001', customerName: 'Claire Bennett', totalAmount: 1840, status: 'In Transit', createdAt: new Date() },
+        { _id: '6735e0000000000000000102', orderNumber: 'ETH-2026-1002', customerName: 'Michael Chang', totalAmount: 920, status: 'Harvested', createdAt: new Date() },
+        { _id: '6735e0000000000000000103', orderNumber: 'ETH-2026-1003', customerName: 'Sara Lin', totalAmount: 3150, status: 'Confirmed', createdAt: new Date() }
+      ],
+      lowStockProducts: [
+        { name: 'Organic Heirloom Tomato Seeds', stock: 8, price: 349, category: 'seeds' },
+        { name: 'Biochar Enriched Compost (25kg)', stock: 5, price: 899, category: 'fertilizers' },
+        { name: 'Solar Drip Irrigation Solenoid Valve', stock: 12, price: 2199, category: 'irrigation' }
+      ],
+    });
+  }
   const [
     totalOrders,
     totalCustomers,
@@ -62,6 +96,9 @@ export const getAdminOverview = asyncHandler(async (_req, res) => {
 });
 
 export const getAllOrders = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, { orders: [] });
+  }
   const orders = await Order.find().populate('user', 'name email').sort({ createdAt: -1 });
   sendSuccess(res, { orders });
 });
@@ -77,11 +114,22 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 });
 
 export const getAllUsers = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, { users: DEMO_USERS });
+  }
   const users = await User.find().sort({ createdAt: -1 });
   sendSuccess(res, { users });
 });
 
 export const getAllFarmers = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, {
+      farmers: [
+        { _id: '6735e0000000000000000011', name: 'Elena Vance', farmName: 'Green Valley Regenerative Farm', location: 'Sonoma County, CA', totalAcres: 45, verified: true },
+        { _id: '6735e0000000000000000012', name: 'Marcus Thorne', farmName: 'Sunridge Agro-Ecosystems', location: 'Willamette Valley, OR', totalAcres: 78, verified: true },
+      ],
+    });
+  }
   const farmers = await Farmer.find().sort({ createdAt: -1 });
   sendSuccess(res, { farmers });
 });
@@ -97,6 +145,14 @@ export const updateFarmerVerification = asyncHandler(async (req, res) => {
 });
 
 export const getAllExperts = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, {
+      experts: [
+        { _id: '6735e0000000000000000021', name: 'Dr. Aris Thorne', title: 'Principal Soil Microbiologist', fieldOfStudy: 'Soil Science', verified: true, approvalStatus: 'approved' },
+        { _id: '6735e0000000000000000022', name: 'Sofia Al-Mansoor', title: 'Precision Irrigation Engineer', fieldOfStudy: 'Smart Water Systems', verified: true, approvalStatus: 'approved' },
+      ],
+    });
+  }
   const experts = await Expert.find()
     .populate('user', 'name email role phone isApproved approvalStatus createdAt')
     .sort({ createdAt: -1 });

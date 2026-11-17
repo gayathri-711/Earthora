@@ -1,23 +1,49 @@
 import mongoose from 'mongoose';
-import { MongoMemoryServer } from 'mongodb-memory-server';
 
 let memoryServer = null;
 
 /**
  * Connects to external MONGO_URI if configured, or falls back to an embedded
  * MongoMemoryServer instance for zero-config local execution and testing.
+ * On serverless platforms (e.g. Vercel), gracefully falls back to in-memory demo mode
+ * if MONGO_URI environment variable is not configured.
  */
 export async function connectDatabase(mongoUri) {
   let uri = mongoUri?.trim();
   let usingMemory = false;
 
+  // On Vercel / serverless: do NOT attempt to spawn MongoMemoryServer binary
+  // (which exceeds 50MB limits and crashes or times out in AWS Lambda)
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+
   if (!uri) {
-    memoryServer = await MongoMemoryServer.create();
-    uri = memoryServer.getUri();
-    usingMemory = true;
+    if (isServerless) {
+      console.warn('[DB] Running on Vercel without MONGO_URI. Fallback demo mode active.');
+      return { uri: null, usingMemory: true };
+    }
+
+    try {
+      const { MongoMemoryServer } = await import('mongodb-memory-server');
+      memoryServer = await MongoMemoryServer.create();
+      uri = memoryServer.getUri();
+      usingMemory = true;
+    } catch (err) {
+      console.warn('[DB] MongoMemoryServer unavailable:', err.message);
+      return { uri: null, usingMemory: false };
+    }
   }
 
-  await mongoose.connect(uri);
+  if (uri) {
+    try {
+      await mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 5000,
+      });
+      console.log('[DB] Connected successfully to MongoDB:', usingMemory ? 'Embedded In-Memory' : 'Remote MongoDB');
+    } catch (err) {
+      console.warn('[DB] Mongoose connection attempt failed:', err.message);
+    }
+  }
+
   return { uri, usingMemory };
 }
 
@@ -28,4 +54,3 @@ export async function disconnectDatabase() {
     memoryServer = null;
   }
 }
-

@@ -3,9 +3,25 @@ import Category from '../models/Category.js';
 import Farmer from '../models/Farmer.js';
 import Product from '../models/Product.js';
 import Review from '../models/Review.js';
+import { DEMO_PRODUCTS } from '../config/demoProducts.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const listProducts = asyncHandler(async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    const { category, search } = req.query;
+    let list = [...DEMO_PRODUCTS];
+    if (category && category !== 'all' && category !== 'All') {
+      list = list.filter((p) => p.category === category.toLowerCase());
+    }
+    if (search) {
+      list = list.filter(
+        (p) =>
+          p.name.toLowerCase().includes(search.toLowerCase()) ||
+          p.shortDescription.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+    return sendSuccess(res, { products: list });
+  }
   const { category, search, featured, minPrice, maxPrice, sort, limit = 100 } = req.query;
   const query = {};
 
@@ -43,6 +59,10 @@ export const listProducts = asyncHandler(async (req, res) => {
 
 export const getProductDetails = asyncHandler(async (req, res) => {
   const { id } = req.params;
+  if (mongoose.connection.readyState !== 1) {
+    const p = DEMO_PRODUCTS.find((item) => item._id === id || item.slug === id) || DEMO_PRODUCTS[0];
+    return sendSuccess(res, { product: p, reviews: [] });
+  }
   const query = mongoose.isValidObjectId(id) ? { _id: id } : { slug: id };
   const product = await Product.findOne(query).populate(
     'farmer',
@@ -105,6 +125,38 @@ export const listCategories = asyncHandler(async (_req, res) => {
 });
 
 export const listFarmers = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, {
+      farmers: [
+        {
+          _id: '6735e0000000000000000011',
+          name: 'Elena Vance',
+          farmName: 'Green Valley Regenerative Farm',
+          location: 'Sonoma County, CA',
+          specialty: 'Heirloom Brassicas & Bio-Intensive Roots',
+          totalAcres: 45,
+          cultivatedAcres: 38,
+          primaryCrops: ['Savoy Cabbage', 'Heirloom Vine Tomatoes', 'Winter Rye Cover'],
+          certifications: ['USDA Organic', 'Regenerative Organic Certified', 'Earthora Verified'],
+          verified: true,
+          image: '/assets/img/farmers/farmer-elena.jpg',
+        },
+        {
+          _id: '6735e0000000000000000012',
+          name: 'Marcus Thorne',
+          farmName: 'Sunridge Agro-Ecosystems',
+          location: 'Willamette Valley, OR',
+          specialty: 'Ancient Grains & Silvopasture Orchard Systems',
+          totalAcres: 78,
+          cultivatedAcres: 64,
+          primaryCrops: ['Ancient Einkorn Wheat', 'Honeycrisp Apples', 'Comfrey Understory'],
+          certifications: ['Certified Biodynamic', 'Earthora Verified'],
+          verified: true,
+          image: '/assets/img/farmers/farmer-marcus.jpg',
+        },
+      ],
+    });
+  }
   const farmers = await Farmer.find({ verified: true }).sort({ createdAt: -1 });
   sendSuccess(res, { farmers });
 });

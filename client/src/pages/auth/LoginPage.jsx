@@ -69,6 +69,55 @@ export default function LoginPage() {
           Access your farm telemetry, customer orders, expert consultations, or admin console.
         </p>
 
+        {/* Quick Demo Fill Buttons for 1-Click Login */}
+        <div className="mt-5 rounded-2xl border border-earthora-sand/70 bg-earthora-ivory/60 p-3">
+          <p className="text-[10px] font-black uppercase tracking-wider text-earthora-olive mb-2">
+            Quick 1-Click Demo Credentials:
+          </p>
+          <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4">
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('admin@earthora.io');
+                setPassword('Earthora123!');
+              }}
+              className="rounded-lg border border-earthora-forest/20 bg-white py-1.5 px-2 text-[11px] font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-2xs text-center"
+            >
+              👑 Admin
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('farmer@earthora.io');
+                setPassword('Earthora123!');
+              }}
+              className="rounded-lg border border-earthora-forest/20 bg-white py-1.5 px-2 text-[11px] font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-2xs text-center"
+            >
+              🌱 Farmer
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('expert@earthora.io');
+                setPassword('Earthora123!');
+              }}
+              className="rounded-lg border border-earthora-forest/20 bg-white py-1.5 px-2 text-[11px] font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-2xs text-center"
+            >
+              🔬 Expert
+            </button>
+            <button
+              type="button"
+              onClick={() => {
+                setEmail('customer@earthora.io');
+                setPassword('Earthora123!');
+              }}
+              className="rounded-lg border border-earthora-forest/20 bg-white py-1.5 px-2 text-[11px] font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-2xs text-center"
+            >
+              🛒 Customer
+            </button>
+          </div>
+        </div>
+
         {/* Approval notice banner if expert is awaiting admin acceptance */}
         {approvalNotice && (
           <div className="mt-5 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-xs text-amber-900 shadow-sm animate-fade-in">
