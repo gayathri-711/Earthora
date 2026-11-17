@@ -569,19 +569,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 5. Agricultural Marketplace Highlights (Short and Sweet) */}
+      {/* 5. Agricultural Marketplace Highlights */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end mb-8">
-          <div>
-            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive">Direct-Trade Store</span>
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest mt-0.5">
-              Certified Seeds, Equipment &amp; Fresh Harvest
-            </h2>
-            <p className="text-xs sm:text-sm text-earthora-muted mt-1">
-              Verified organic inputs, precision drip valves, and harvest produce in Indian Rupee (₹).
-            </p>
-          </div>
-          <Link to="/marketplace" className="btn-secondary shrink-0 text-xs font-bold">
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest">
+            Certified Seeds, Equipment &amp; Fresh Harvest
+          </h2>
+          <Link to="/marketplace" className="btn-secondary shrink-0 text-xs font-bold self-start sm:self-auto">
             Browse All Marketplace <ArrowRight className="h-3.5 w-3.5 ml-1" />
           </Link>
         </div>
@@ -682,58 +676,52 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* 7. Knowledge Hub Highlights (Short and Sweet) */}
+      {/* 7. Knowledge Hub & Field Trials (Left-to-Right Single Row, Limited, Article Name + Read Article Only) */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end mb-8">
-          <div>
-            <span className="text-[11px] font-black uppercase tracking-[0.2em] text-earthora-olive">Scientific Whitepapers</span>
-            <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest mt-0.5">
-              Knowledge Hub &amp; Field Trials
-            </h2>
-            <p className="text-xs sm:text-sm text-earthora-muted mt-1">
-              Field guides, soil microbiology research, and weekly agro-intelligence updates.
-            </p>
-          </div>
-          <Link to="/knowledge-hub" className="btn-secondary shrink-0 text-xs font-bold">
-            Read Knowledge Base <ArrowRight className="h-3.5 w-3.5 ml-1" />
+        <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center mb-6">
+          <h2 className="font-heading text-2xl sm:text-3xl font-bold text-earthora-forest">
+            Knowledge Hub &amp; Field Trials
+          </h2>
+          <Link to="/knowledge-hub" className="btn-secondary shrink-0 text-xs font-bold self-start sm:self-auto">
+            View All Articles <ArrowRight className="h-3.5 w-3.5 ml-1" />
           </Link>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {articles.map((art) => (
-            <article key={art._id} className="card-surface flex flex-col overflow-hidden hover:shadow-elevated transition-all">
-              <Link to={`/knowledge-hub/${art.slug}`}>
-                <img
-                  src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
-                  alt={art.title}
-                  className="aspect-[16/10] w-full object-cover transition-transform duration-300 hover:scale-105"
-                  onError={(e) => {
-                    e.currentTarget.onerror = null;
-                    e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
-                  }}
-                />
-              </Link>
-              <div className="flex flex-1 flex-col p-5">
-                <div className="flex items-center gap-2 text-[11px] text-earthora-olive font-bold">
-                  <span>{art.category}</span>
-                  <span>·</span>
-                  <span className="text-earthora-muted font-normal">{art.readTime || '5 min'}</span>
-                </div>
+        {/* Single Row from Left to Right */}
+        <div className="flex items-stretch gap-4 sm:gap-6 overflow-x-auto scrollbar-none pb-3 snap-x snap-mandatory">
+          {articles.slice(0, 3).map((art) => (
+            <article
+              key={art._id}
+              className="w-[280px] sm:w-[320px] md:w-[350px] shrink-0 snap-start card-surface flex flex-col justify-between p-4 overflow-hidden hover:shadow-elevated transition-all"
+            >
+              <div>
+                <Link to={`/knowledge-hub/${art.slug}`}>
+                  <img
+                    src={art.image || '/assets/img/knowledge/precision-drip-irrigation.jpg'}
+                    alt={art.title}
+                    className="aspect-[16/10] w-full object-cover rounded-xl transition-transform duration-300 hover:scale-102"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = '/assets/img/knowledge/precision-drip-irrigation.jpg';
+                    }}
+                  />
+                </Link>
                 <Link
                   to={`/knowledge-hub/${art.slug}`}
-                  className="mt-1.5 font-heading text-base font-bold text-earthora-forest hover:text-earthora-mint line-clamp-2"
+                  className="mt-3 block font-heading text-base font-bold text-earthora-forest hover:text-earthora-mint leading-snug line-clamp-2"
                 >
                   {art.title}
                 </Link>
-                <p className="mt-1.5 flex-1 text-xs leading-relaxed text-earthora-muted line-clamp-2">
-                  {art.excerpt}
-                </p>
-                <div className="mt-3.5 border-t border-earthora-sand/70 pt-2.5 text-xs text-earthora-muted flex items-center justify-between">
-                  <span className="truncate">By {art.author}</span>
-                  <Link to={`/knowledge-hub/${art.slug}`} className="font-bold text-earthora-forest hover:underline shrink-0 ml-2">
-                    Read →
-                  </Link>
-                </div>
+              </div>
+
+              <div className="mt-4 pt-3 border-t border-earthora-sand/70">
+                <Link
+                  to={`/knowledge-hub/${art.slug}`}
+                  className="inline-flex items-center text-xs font-bold text-earthora-forest hover:text-earthora-mint transition-colors"
+                >
+                  <span>Read Article</span>
+                  <ArrowRight className="h-3.5 w-3.5 ml-1 text-earthora-mint" />
+                </Link>
               </div>
             </article>
           ))}
