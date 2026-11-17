@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Heart, ShieldCheck, ShoppingBag, Star, Zap } from 'lucide-react';
+import { ArrowRight, Heart, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
@@ -35,7 +35,7 @@ export default function ProductCard({ product }) {
           />
         </Link>
 
-        {/* Category & Cert Badges */}
+        {/* Category Badge */}
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           <span className={`inline-flex items-center gap-1 rounded-lg border px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider backdrop-blur-md ${badgeClass}`}>
             {product.categoryLabel || product.category}
@@ -57,29 +57,27 @@ export default function ProductCard({ product }) {
         </button>
       </div>
 
-      <div className="flex flex-1 flex-col p-5">
-        <div className="flex items-center justify-between text-xs text-earthora-muted">
-          <span className="font-semibold text-earthora-olive">
-            {product.supplierName || product.farmer?.farmName || 'Earthora Verified'}
-          </span>
-          <span className="inline-flex items-center gap-1 font-semibold text-earthora-charcoal">
-            <Star className="h-3.5 w-3.5 fill-earthora-gold text-earthora-gold" />
-            {(product.rating || 4.9).toFixed(1)}
-          </span>
-        </div>
-
+      <div className="flex flex-1 flex-col p-4 sm:p-5">
+        {/* Only Product Name */}
         <Link
           to={`/marketplace/${product.slug || product._id}`}
-          className="mt-1.5 font-heading text-base font-bold text-earthora-forest transition-colors hover:text-earthora-mint line-clamp-1"
+          className="font-heading text-base font-bold text-earthora-forest transition-colors hover:text-emerald-700 leading-snug line-clamp-2"
         >
           {product.name}
         </Link>
 
-        <p className="mt-1 line-clamp-2 text-xs leading-relaxed text-earthora-muted">
-          {product.shortDescription}
-        </p>
+        {/* View Details Option to Learn About the Product */}
+        <div className="mt-2.5">
+          <Link
+            to={`/marketplace/${product.slug || product._id}`}
+            className="inline-flex items-center gap-1 text-xs font-bold text-earthora-olive hover:text-earthora-forest transition-colors"
+          >
+            <span>View Details</span>
+            <ArrowRight className="h-3 w-3" />
+          </Link>
+        </div>
 
-        <div className="mt-auto flex items-center justify-between gap-3 border-t border-earthora-sand/70 pt-4">
+        <div className="mt-auto flex items-center justify-between gap-3 border-t border-earthora-sand/70 pt-4 mt-4">
           <div>
             <div className="flex items-baseline gap-1.5">
               <span className="text-lg font-black text-earthora-forest">
