@@ -1,40 +1,50 @@
 import { useState, useEffect } from 'react';
 import { Link, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import {
+  BookOpen,
+  CloudSun,
+  Cpu,
   Heart,
+  Home,
+  Layers,
   LayoutDashboard,
   LogOut,
+  Mail,
   Menu,
   Package,
   Search,
   ShoppingBag,
+  Sparkles,
+  Sprout,
+  Tractor,
   User,
+  Users,
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
 import { useWishlist } from '../../context/WishlistContext';
 
-// All navigation links matching the desktop navigation bar
+// All navigation module options matching user's screenshot
 const allNavLinks = [
-  { to: '/', label: 'Home' },
-  { to: '/about', label: 'About' },
-  { to: '/smart-agriculture', label: 'Smart Agri' },
-  { to: '/farmer-hub', label: 'Farmer Hub' },
-  { to: '/crop-management', label: 'Crops' },
-  { to: '/marketplace', label: 'Marketplace' },
-  { to: '/weather-intelligence', label: 'Weather' },
-  { to: '/soil-insights', label: 'Soil' },
-  { to: '/expert-connect', label: 'Experts' },
-  { to: '/knowledge-hub', label: 'Knowledge' },
-  { to: '/contact', label: 'Contact' },
+  { to: '/', label: 'Home', icon: Home, desc: 'Ecosystem overview & live field telemetry' },
+  { to: '/about', label: 'About', icon: Sparkles, desc: 'The Earthora standard & scientific pillars' },
+  { to: '/smart-agriculture', label: 'Smart Agri', icon: Cpu, desc: 'Precision IoT architecture & drone NDVI' },
+  { to: '/farmer-hub', label: 'Farmer Hub', icon: Tractor, desc: 'Regional farm directory & land metrics' },
+  { to: '/crop-management', label: 'Crops', icon: Sprout, desc: 'Crop lifecycle phenology & harvest tracking' },
+  { to: '/marketplace', label: 'Marketplace', icon: ShoppingBag, desc: 'Seeds, organic fertilizers & tools in ₹' },
+  { to: '/weather-intelligence', label: 'Weather', icon: CloudSun, desc: 'Hyperlocal microclimate radar & frost alerts' },
+  { to: '/soil-insights', label: 'Soil', icon: Layers, desc: 'Rhizosphere NPK availability & biochar' },
+  { to: '/expert-connect', label: 'Experts', icon: Users, desc: '1-on-1 consultations with accredited agronomists' },
+  { to: '/knowledge-hub', label: 'Knowledge', icon: BookOpen, desc: 'Regenerative field trials & whitepapers' },
+  { to: '/contact', label: 'Contact', icon: Mail, desc: 'Regional campuses & agronomy inquiry' },
 ];
 
 export default function Navbar() {
   const { user, isAuthenticated, logout } = useAuth();
   const { summary } = useCart();
   const { items: wishlistItems } = useWishlist();
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const [menuDrawerOpen, setMenuDrawerOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
@@ -42,13 +52,13 @@ export default function Navbar() {
 
   // Close menus on route change
   useEffect(() => {
-    setMobileOpen(false);
+    setMenuDrawerOpen(false);
     setSearchOpen(false);
   }, [location.pathname]);
 
-  // Lock body scroll when mobile drawer is open
+  // Lock body scroll when drawer is open
   useEffect(() => {
-    if (mobileOpen) {
+    if (menuDrawerOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -56,7 +66,7 @@ export default function Navbar() {
     return () => {
       document.body.style.overflow = 'auto';
     };
-  }, [mobileOpen]);
+  }, [menuDrawerOpen]);
 
   const dashboardPath =
     user?.role === 'admin'
@@ -71,13 +81,13 @@ export default function Navbar() {
     e.preventDefault();
     const q = searchQuery.trim();
     setSearchOpen(false);
-    setMobileOpen(false);
+    setMenuDrawerOpen(false);
     navigate(q ? `/marketplace?search=${encodeURIComponent(q)}` : '/marketplace');
   };
 
   return (
     <header className="sticky top-0 z-40 border-b border-earthora-sand/70 bg-earthora-ivory/95 backdrop-blur-md">
-      {/* Top Announcement Banner (Responsive) */}
+      {/* Top Announcement Banner */}
       <div className="bg-earthora-forest px-3 sm:px-6 lg:px-8 py-1.5 text-center text-[11px] sm:text-xs font-medium text-emerald-200">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2">
           <span className="hidden md:inline-flex items-center gap-2 shrink-0">
@@ -138,7 +148,7 @@ export default function Navbar() {
         {/* Divider on desktop */}
         <div className="h-5 w-px bg-earthora-sand/80 hidden lg:block mx-1 shrink-0" />
 
-        {/* Action Features (Search, Wishlist, Cart, Dashboard Pill, Hamburger) */}
+        {/* Action Features (Search, Wishlist, Cart, Sign In, Three Dashes Button) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Quick Search Button */}
           <button
@@ -151,11 +161,11 @@ export default function Navbar() {
             <Search className="h-4.5 w-4.5" />
           </button>
 
-          {/* Wishlist Link */}
+          {/* Favourite / Wishlist Link */}
           <Link
             to="/wishlist"
             className="relative rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
-            aria-label="Wishlist"
+            aria-label="Wishlist (Favourite)"
             title="Saved items"
           >
             <Heart className="h-4.5 w-4.5" />
@@ -181,7 +191,7 @@ export default function Navbar() {
             )}
           </Link>
 
-          {/* Sign In / Auth Status (Always visible on mobile & desktop) */}
+          {/* Sign In / Auth Status */}
           {isAuthenticated ? (
             <div className="flex items-center gap-1 sm:gap-1.5">
               <Link
@@ -218,23 +228,24 @@ export default function Navbar() {
             </Link>
           )}
 
-          {/* Mobile Hamburger Toggle (Visible on < lg screens) */}
+          {/* THREE DASHES (☰) IN RIGHT CORNER NEAR CART, FAVOURITE & SIGN IN */}
           <button
             type="button"
-            onClick={() => setMobileOpen((v) => !v)}
-            className="rounded-xl border border-earthora-sand bg-white p-2 text-earthora-forest lg:hidden shadow-xs hover:bg-earthora-ivory"
-            aria-label="Toggle navigation menu"
-            aria-expanded={mobileOpen}
+            onClick={() => setMenuDrawerOpen((v) => !v)}
+            className="rounded-xl border border-earthora-sand/90 bg-white p-2 text-earthora-forest shadow-xs hover:bg-earthora-forest hover:text-earthora-mint hover:border-earthora-forest transition-all flex items-center justify-center shrink-0 ml-0.5 sm:ml-1"
+            aria-label="Open all module options"
+            aria-expanded={menuDrawerOpen}
+            title="Open all module options"
           >
-            {mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            {menuDrawerOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Sticky Options Ribbon (Guarantees every option from the desktop bar is directly accessible on mobile) */}
+      {/* Mobile Horizontal Ribbon */}
       <nav
         className="lg:hidden border-t border-earthora-sand/70 bg-earthora-ivory/95 backdrop-blur-md px-2.5 py-1.5 overflow-x-auto scrollbar-none shadow-xs"
-        aria-label="Mobile navigation options"
+        aria-label="Mobile navigation ribbon"
       >
         <div className="flex items-center gap-1 min-w-max px-0.5">
           {allNavLinks.map((link) => (
@@ -258,71 +269,53 @@ export default function Navbar() {
 
       {/* Live Search Drawer Overlay */}
       {searchOpen && (
-        <div className="border-t border-earthora-sand bg-white px-4 py-4 shadow-md animate-in fade-in duration-200">
-          <form onSubmit={handleSearchSubmit} className="mx-auto flex max-w-2xl gap-2">
+        <div className="border-t border-earthora-sand/80 bg-white px-4 py-4 shadow-elevated transition-all">
+          <form onSubmit={handleSearchSubmit} className="mx-auto flex max-w-2xl items-center gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-earthora-muted" />
               <input
                 type="text"
+                autoFocus
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search seeds, fertilizers, smart irrigation, equipment, produce..."
-                className="w-full rounded-xl border border-earthora-sand bg-earthora-ivory/40 py-2.5 pl-10 pr-4 text-xs sm:text-sm text-earthora-charcoal placeholder-earthora-muted focus:border-earthora-forest focus:bg-white focus:outline-none"
-                autoFocus
+                placeholder="Search heirloom seeds, bio-fertilizers, weather, guides, or crop varieties..."
+                className="w-full rounded-xl border border-earthora-sand bg-earthora-ivory/60 py-2.5 pl-10 pr-4 text-xs sm:text-sm text-earthora-charcoal placeholder-earthora-muted focus:border-earthora-forest focus:bg-white focus:outline-none"
               />
             </div>
-            <button type="submit" className="btn-primary shrink-0 text-xs sm:text-sm">
+            <button type="submit" className="btn-primary py-2.5 px-4 text-xs font-bold shrink-0">
               Search
             </button>
             <button
               type="button"
               onClick={() => setSearchOpen(false)}
-              className="rounded-xl border border-earthora-sand p-2.5 text-earthora-muted hover:bg-earthora-ivory"
-              aria-label="Close search"
+              className="rounded-xl border border-earthora-sand p-2 text-earthora-muted hover:bg-earthora-ivory hover:text-earthora-charcoal"
             >
               <X className="h-4 w-4" />
             </button>
           </form>
-          <div className="mx-auto mt-2.5 flex max-w-2xl flex-wrap items-center gap-1.5 text-[11px] text-earthora-muted">
-            <span className="font-semibold text-earthora-charcoal">Quick suggestions:</span>
-            {['Heirloom Tomatoes', 'Organic Biochar', 'Drip Kits', 'Ancient Grain', 'NPK Sensor'].map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => {
-                  setSearchQuery(s);
-                  navigate(`/marketplace?search=${encodeURIComponent(s)}`);
-                  setSearchOpen(false);
-                }}
-                className="rounded-lg bg-earthora-ivory px-2 py-0.5 text-earthora-forest hover:bg-earthora-sand/60 transition-colors"
-              >
-                {s}
-              </button>
-            ))}
-          </div>
         </div>
       )}
 
-      {/* Modern Responsive Mobile Slide-Over Drawer */}
-      {mobileOpen && (
+      {/* SLIDE-OVER DRAWER WITH ALL MODULE OPTIONS (TRIGGERED BY THREE DASHES) */}
+      {menuDrawerOpen && (
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-50 bg-earthora-forest/60 backdrop-blur-xs transition-opacity duration-300 lg:hidden"
-            onClick={() => setMobileOpen(false)}
+            className="fixed inset-0 z-50 bg-earthora-forest/60 backdrop-blur-xs transition-opacity duration-300"
+            onClick={() => setMenuDrawerOpen(false)}
             aria-hidden="true"
           />
 
-          {/* Slide-over Panel */}
+          {/* Slide-over Panel (Active across all screen sizes) */}
           <aside
-            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-earthora-sand/80 lg:hidden overflow-y-auto"
-            aria-label="Mobile Navigation"
+            className="fixed inset-y-0 right-0 z-50 flex w-full max-w-sm sm:max-w-md flex-col bg-white shadow-2xl transition-transform duration-300 ease-in-out border-l border-earthora-sand/80 overflow-y-auto"
+            aria-label="All Module Navigation Drawer"
           >
             {/* Drawer Header */}
-            <div className="flex items-center justify-between border-b border-earthora-sand/80 bg-earthora-forest p-4 text-white">
+            <div className="flex items-center justify-between border-b border-earthora-sand/80 bg-earthora-forest p-4 sm:p-5 text-white">
               <Link
                 to="/"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => setMenuDrawerOpen(false)}
                 className="flex items-center gap-2.5 group"
               >
                 <img
@@ -335,14 +328,14 @@ export default function Navbar() {
                     EARTHORA
                   </div>
                   <div className="text-[10px] font-bold tracking-[0.2em] text-earthora-mint uppercase mt-0.5">
-                    Rooted in Nature
+                    All Platform Modules
                   </div>
                 </div>
               </Link>
 
               <button
                 type="button"
-                onClick={() => setMobileOpen(false)}
+                onClick={() => setMenuDrawerOpen(false)}
                 className="rounded-xl border border-white/20 bg-white/10 p-2 text-white hover:bg-white/20 transition-colors"
                 aria-label="Close menu"
               >
@@ -350,7 +343,7 @@ export default function Navbar() {
               </button>
             </div>
 
-            {/* Quick Search In Drawer */}
+            {/* Quick Search inside Drawer */}
             <div className="p-4 border-b border-earthora-sand/60 bg-earthora-ivory/50">
               <form onSubmit={handleSearchSubmit} className="relative">
                 <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-earthora-muted" />
@@ -358,7 +351,7 @@ export default function Navbar() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search marketplace &amp; articles..."
+                  placeholder="Search marketplace, weather, articles..."
                   className="w-full rounded-xl border border-earthora-sand bg-white py-2 pl-9 pr-8 text-xs text-earthora-charcoal placeholder-earthora-muted focus:border-earthora-forest focus:outline-none"
                 />
                 {searchQuery && (
@@ -373,44 +366,58 @@ export default function Navbar() {
               </form>
             </div>
 
-            {/* Drawer Content */}
-            <div className="flex-1 overflow-y-auto px-4 py-3 space-y-4">
-              {/* 1. All Navigation Options (Matching Desktop Navbar & Screenshot) */}
+            {/* Drawer Content: ALL MODULE OPTIONS */}
+            <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
               <div>
-                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  All Navigation Options
+                <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2.5 flex items-center justify-between">
+                  <span>Ecosystem Modules ({allNavLinks.length})</span>
+                  <span className="text-[10px] text-earthora-muted">1-Tap Navigation</span>
                 </div>
-                <div className="grid grid-cols-1 gap-1">
-                  {allNavLinks.map((link) => (
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
-                      end={link.to === '/'}
-                      onClick={() => setMobileOpen(false)}
-                      className={({ isActive }) =>
-                        `flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition-colors ${
-                          isActive
-                            ? 'bg-earthora-forest text-white shadow-xs font-black'
-                            : 'text-earthora-charcoal hover:bg-earthora-sand/40 hover:text-earthora-forest'
-                        }`
-                      }
-                    >
-                      <span>{link.label}</span>
-                      <span className="text-[11px] opacity-70">→</span>
-                    </NavLink>
-                  ))}
+
+                <div className="grid grid-cols-1 gap-1.5">
+                  {allNavLinks.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <NavLink
+                        key={link.to}
+                        to={link.to}
+                        end={link.to === '/'}
+                        onClick={() => setMenuDrawerOpen(false)}
+                        className={({ isActive }) =>
+                          `flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all group ${
+                            isActive
+                              ? 'bg-earthora-forest text-white shadow-xs'
+                              : 'text-earthora-forest bg-earthora-ivory/40 border border-earthora-sand/60 hover:bg-earthora-forest hover:text-white hover:border-earthora-forest'
+                          }`
+                        }
+                      >
+                        <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-earthora-mint/20 text-earthora-forest group-hover:bg-white/20 group-hover:text-earthora-mint shrink-0">
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <div className="font-heading text-xs font-bold leading-none">{link.label}</div>
+                          <div className="text-[10px] text-earthora-muted group-hover:text-emerald-200 truncate mt-0.5">
+                            {link.desc}
+                          </div>
+                        </div>
+                        <span className="text-xs opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 transform transition-transform">
+                          →
+                        </span>
+                      </NavLink>
+                    );
+                  })}
                 </div>
               </div>
 
-              {/* 2. Commerce & Quick Links */}
+              {/* Commerce Quick Links */}
               <div>
                 <div className="px-2 text-[10px] font-black uppercase tracking-[0.2em] text-earthora-olive mb-2">
-                  Commerce &amp; Tracking
+                  Shopping &amp; Wishlist
                 </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     to="/cart"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMenuDrawerOpen(false)}
                     className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
                   >
                     <ShoppingBag className="h-4 w-4 text-earthora-forest" />
@@ -418,25 +425,25 @@ export default function Navbar() {
                   </Link>
                   <Link
                     to="/wishlist"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMenuDrawerOpen(false)}
                     className="flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
                   >
                     <Heart className="h-4 w-4 text-earthora-olive" />
-                    <span>Wishlist ({wishlistItems.length})</span>
+                    <span>Saved ({wishlistItems.length})</span>
                   </Link>
                   <Link
                     to="/track-order"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMenuDrawerOpen(false)}
                     className="col-span-2 flex items-center gap-2 rounded-xl border border-earthora-sand bg-white p-2.5 text-xs font-bold text-earthora-charcoal hover:bg-earthora-sand/30"
                   >
                     <Package className="h-4 w-4 text-earthora-muted" />
-                    <span>Live Order Tracking</span>
+                    <span>Track Active Order</span>
                   </Link>
                 </div>
               </div>
             </div>
 
-            {/* Bottom Auth & Portal Card */}
+            {/* Bottom Auth Card */}
             <div className="border-t border-earthora-sand/80 bg-earthora-beige/40 p-4">
               {isAuthenticated ? (
                 <div className="space-y-3">
@@ -460,7 +467,7 @@ export default function Navbar() {
                   <div className="flex items-center gap-2">
                     <Link
                       to={dashboardPath}
-                      onClick={() => setMobileOpen(false)}
+                      onClick={() => setMenuDrawerOpen(false)}
                       className="btn-primary flex-1 py-2 text-xs"
                     >
                       <LayoutDashboard className="h-4 w-4" />
@@ -470,7 +477,7 @@ export default function Navbar() {
                       type="button"
                       onClick={() => {
                         logout();
-                        setMobileOpen(false);
+                        setMenuDrawerOpen(false);
                       }}
                       className="rounded-xl border border-red-200 bg-white p-2 text-red-600 hover:bg-red-50 transition-colors"
                       title="Sign Out"
@@ -483,14 +490,14 @@ export default function Navbar() {
                 <div className="grid grid-cols-2 gap-2">
                   <Link
                     to="/login"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMenuDrawerOpen(false)}
                     className="btn-secondary py-2 text-xs font-bold text-center"
                   >
                     Sign In
                   </Link>
                   <Link
                     to="/register"
-                    onClick={() => setMobileOpen(false)}
+                    onClick={() => setMenuDrawerOpen(false)}
                     className="btn-primary py-2 text-xs font-bold text-center"
                   >
                     Get Started
