@@ -216,47 +216,47 @@ export default function Navbar() {
       </div>
 
       {/* Main Navbar Bar */}
-      <div className="mx-auto w-full max-w-7xl px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4">
+      <div className="mx-auto w-full max-w-7xl px-2.5 sm:px-6 lg:px-8 py-2 sm:py-3 flex items-center justify-between gap-1 sm:gap-4">
         {/* Brand Symbol & Name (Left Corner) */}
-        <Link to="/" className="flex items-center gap-2.5 sm:gap-3 shrink-0 group">
+        <Link to="/" className="flex items-center gap-1.5 sm:gap-3 shrink-0 group">
           <img
             src="/assets/earthora/logo-icon.svg"
             alt="EARTHORA"
-            className="h-9 w-9 sm:h-11 sm:w-11 transition-transform duration-200 group-hover:scale-105 shrink-0"
+            className="h-8 w-8 sm:h-11 sm:w-11 transition-transform duration-200 group-hover:scale-105 shrink-0"
           />
           <div className="flex flex-col">
-            <span className="font-heading text-xl sm:text-2xl lg:text-3xl font-black tracking-widest text-earthora-forest leading-none">
+            <span className="font-heading text-lg sm:text-2xl lg:text-3xl font-black tracking-wider sm:tracking-widest text-earthora-forest leading-none">
               EARTHORA
             </span>
-            <span className="hidden xs:block text-[9px] sm:text-[10px] font-black tracking-[0.24em] text-earthora-olive uppercase mt-0.5 sm:mt-1">
+            <span className="hidden sm:block text-[9px] sm:text-[10px] font-black tracking-[0.24em] text-earthora-olive uppercase mt-0.5 sm:mt-1">
               Smart Agri Ecosystem
             </span>
           </div>
         </Link>
 
-        {/* Action Features (Search, Wishlist, Cart, Sign In, All Feature Modules Pill Button) */}
+        {/* Action Features (Search, Wishlist, Cart, Sign In, Three Dashes Menu) */}
         <div className="flex items-center gap-1 sm:gap-2 shrink-0">
           {/* Quick Search Button */}
           <button
             type="button"
             onClick={() => setSearchOpen((v) => !v)}
-            className="rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
+            className="rounded-full border border-transparent p-1.5 sm:p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
             aria-label="Search agricultural marketplace"
             title="Search products and knowledge"
           >
-            <Search className="h-4.5 w-4.5" />
+            <Search className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
           </button>
 
           {/* Favourite / Wishlist Link */}
           <Link
             to="/wishlist"
-            className="relative rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
+            className="relative rounded-full border border-transparent p-1.5 sm:p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
             aria-label="Wishlist (Favourite)"
             title="Saved items"
           >
-            <Heart className="h-4.5 w-4.5" />
+            <Heart className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
             {wishlistItems.length > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-earthora-olive px-1 text-[10px] font-bold text-white shadow-xs">
+              <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 sm:h-4 sm:min-w-4 items-center justify-center rounded-full bg-earthora-olive px-0.5 sm:px-1 text-[9px] sm:text-[10px] font-bold text-white shadow-xs">
                 {wishlistItems.length}
               </span>
             )}
@@ -265,13 +265,13 @@ export default function Navbar() {
           {/* Shopping Cart Link */}
           <Link
             to="/cart"
-            className="relative rounded-xl border border-transparent p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
+            className="relative rounded-full border border-transparent p-1.5 sm:p-2 text-earthora-charcoal transition-colors hover:border-earthora-sand hover:bg-white"
             aria-label="Shopping Cart"
             title="Agricultural cart"
           >
-            <ShoppingBag className="h-4.5 w-4.5" />
+            <ShoppingBag className="h-4 w-4 sm:h-4.5 sm:w-4.5" />
             {summary.count > 0 && (
-              <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-earthora-forest px-1 text-[10px] font-bold text-white shadow-xs">
+              <span className="absolute -right-0.5 -top-0.5 flex h-3.5 min-w-3.5 sm:h-4 sm:min-w-4 items-center justify-center rounded-full bg-earthora-forest px-0.5 sm:px-1 text-[9px] sm:text-[10px] font-bold text-white shadow-xs">
                 {summary.count}
               </span>
             )}
@@ -279,13 +279,14 @@ export default function Navbar() {
 
           {/* Sign In / Auth Status */}
           {isAuthenticated ? (
-            <div className="flex items-center gap-1 sm:gap-1.5">
+            <div className="flex items-center gap-1">
               <Link
                 to={dashboardPath}
-                className="inline-flex items-center gap-1 rounded-full border border-earthora-forest/20 bg-earthora-forest px-2.5 sm:px-3 py-1.5 text-xs font-bold text-white transition-colors hover:bg-earthora-deep shadow-xs"
+                className="inline-flex items-center gap-1 rounded-full border border-earthora-forest/20 bg-earthora-forest p-1.5 sm:px-3 sm:py-1.5 text-xs font-bold text-white transition-colors hover:bg-earthora-deep shadow-xs"
+                title="Dashboard"
               >
                 <LayoutDashboard className="h-3.5 w-3.5 text-earthora-mint" />
-                <span className="hidden xs:inline">
+                <span className="hidden sm:inline">
                   {user.role === 'admin'
                     ? 'Admin'
                     : user.role === 'farmer'
@@ -298,7 +299,7 @@ export default function Navbar() {
               <button
                 type="button"
                 onClick={logout}
-                className="hidden sm:inline-flex rounded-xl p-2 text-earthora-muted hover:bg-white hover:text-red-700 transition-colors"
+                className="hidden md:inline-flex rounded-xl p-2 text-earthora-muted hover:bg-white hover:text-red-700 transition-colors"
                 title="Sign out"
               >
                 <LogOut className="h-4 w-4" />
@@ -307,26 +308,27 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="inline-flex items-center gap-1.5 rounded-full border border-earthora-sand bg-white px-2.5 sm:px-3 py-1.5 text-xs font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-xs whitespace-nowrap"
+              className="inline-flex items-center gap-1 rounded-full border border-earthora-sand bg-white p-1.5 sm:px-3 sm:py-1.5 text-xs font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-xs whitespace-nowrap"
+              title="Sign In"
             >
               <User className="h-3.5 w-3.5" />
-              <span>Sign In</span>
+              <span className="hidden sm:inline">Sign In</span>
             </Link>
           )}
 
-          {/* THREE DASHES (HAMBURGER) MENU BUTTON (Icon only - no words, no dots) */}
+          {/* THREE DASHES (HAMBURGER) MENU BUTTON (Guaranteed visible on mobile and desktop) */}
           <button
             type="button"
             onClick={() => setMenuDrawerOpen((v) => !v)}
-            className="inline-flex items-center justify-center h-9 w-9 rounded-full border border-earthora-forest/20 bg-earthora-forest text-white shadow-xs hover:bg-earthora-deep hover:scale-105 active:scale-95 transition-all shrink-0 ml-1 sm:ml-1.5 group"
+            className="inline-flex items-center justify-center h-8 w-8 sm:h-9 sm:w-9 rounded-full border border-earthora-forest/20 bg-earthora-forest text-white shadow-xs hover:bg-earthora-deep hover:scale-105 active:scale-95 transition-all shrink-0 ml-0.5 sm:ml-1 group"
             aria-label="Open category menu"
             aria-expanded={menuDrawerOpen}
             title="Open category menu"
           >
             {menuDrawerOpen ? (
-              <X className="h-5 w-5 text-earthora-mint" />
+              <X className="h-4 w-4 sm:h-5 sm:w-5 text-earthora-mint" />
             ) : (
-              <Menu className="h-5 w-5 text-earthora-mint group-hover:rotate-90 transition-transform" />
+              <Menu className="h-4 w-4 sm:h-5 sm:w-5 text-earthora-mint group-hover:rotate-90 transition-transform" />
             )}
           </button>
         </div>
