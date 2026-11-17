@@ -1,5 +1,5 @@
 /**
- * Pre-configured verified demo users for EARTHORA.
+ * Pre-configured verified demo users and mutable registries for EARTHORA.
  * Enables zero-delay authentication and instant fallback in serverless environments (e.g. Vercel).
  */
 export const DEMO_USERS = [
@@ -82,5 +82,51 @@ export const DEMO_USERS = [
     isActive: true,
     isApproved: true,
     approvalStatus: 'approved',
+  },
+];
+
+// Mutable runtime registry that persists registered users & experts within serverless instance
+export const IN_MEMORY_USERS = [...DEMO_USERS];
+
+export const IN_MEMORY_EXPERTS = [
+  {
+    _id: '6735e0000000000000000021',
+    user: '6735e0000000000000000004',
+    name: 'Dr. Aris Thorne',
+    title: 'Principal Soil Microbiologist',
+    fieldOfStudy: 'Soil Science & Mycorrhizal Ecology',
+    organization: 'Earthora Agronomy Advisory',
+    experienceYears: 16,
+    consultationFee: 75,
+    verified: true,
+    approvalStatus: 'approved',
+    userObj: {
+      name: 'Dr. Aris Thorne',
+      email: 'expert@earthora.io',
+      role: 'expert',
+      phone: '+1 555 017 9900',
+      isApproved: true,
+      approvalStatus: 'approved',
+    },
+  },
+  {
+    _id: '6735e0000000000000000022',
+    user: '6735e0000000000000000005',
+    name: 'Sofia Al-Mansoor',
+    title: 'Precision Irrigation Engineer',
+    fieldOfStudy: 'Smart Water Systems',
+    organization: 'Global Smart Water Systems',
+    experienceYears: 12,
+    consultationFee: 85,
+    verified: true,
+    approvalStatus: 'approved',
+    userObj: {
+      name: 'Sofia Al-Mansoor',
+      email: 'sofia@earthora.io',
+      role: 'expert',
+      phone: '+1 555 018 7744',
+      isApproved: true,
+      approvalStatus: 'approved',
+    },
   },
 ];

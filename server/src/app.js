@@ -29,6 +29,20 @@ const clientDistDir = path.resolve(__dirname, '../../client/dist');
 
 const app = express();
 
+app.set('trust proxy', 1);
+
+// Guarantee req.socket & remoteAddress exist in serverless (e.g. Vercel) environments
+app.use((req, _res, next) => {
+  if (!req.socket) req.socket = {};
+  if (!req.socket.remoteAddress) {
+    req.socket.remoteAddress =
+      req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+      req.headers['x-real-ip'] ||
+      '127.0.0.1';
+  }
+  next();
+});
+
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: 'cross-origin' },
@@ -42,14 +56,27 @@ app.use(
   })
 );
 app.use(express.json({ limit: '4mb' }));
-app.use(morgan('dev'));
+
+if (process.env.NODE_ENV !== 'production' && !process.env.VERCEL) {
+  app.use(morgan('dev'));
+}
+
 app.use('/uploads', express.static(uploadsDir));
 
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 500,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
+  validate: false,
+  keyGenerator: (req) => {
+    return (
+      req.headers['x-forwarded-for']?.split(',')[0]?.trim() ||
+      req.headers['x-real-ip'] ||
+      req.socket?.remoteAddress ||
+      '127.0.0.1'
+    );
+  },
 });
 
 app.get('/api/health', (_req, res) => {
@@ -61,22 +88,33 @@ app.get('/api/health', (_req, res) => {
   });
 });
 
-app.use('/api/v1', apiLimiter);
-app.get('/api/v1/dashboard/smart', getSmartDashboard);
-app.use('/api/v1/auth', authRoutes);
-app.use('/api/v1', catalogRoutes);
-app.use('/api/v1', cartWishlistRoutes);
-app.use('/api/v1/crops', cropRoutes);
-app.use('/api/v1/soil', soilRoutes);
-app.use('/api/v1/weather', weatherRoutes);
-app.use('/api/v1/experts', expertRoutes);
-app.use('/api/v1/knowledge', knowledgeRoutes);
-app.use('/api/v1/orders', orderRoutes);
-app.use('/api/v1/farmer', farmerRoutes);
-app.use('/api/v1/admin', adminRoutes);
-app.use('/api/v1/content', contentRoutes);
-app.use('/api/v1/ai', aiRoutes);
-app.use('/api/v1', contentRoutes);
+app.use((req, _res, next) => {
+  if (req.url.startsWith('/v1/')) {
+    req.url = '/api' + req.url;
+  }
+  next();
+});
+
+const mountApiRoutes = (prefix) => {
+  app.use(prefix, apiLimiter);
+  app.get(`${prefix}/dashboard/smart`, getSmartDashboard);
+  app.use(`${prefix}/auth`, authRoutes);
+  app.use(prefix, catalogRoutes);
+  app.use(prefix, cartWishlistRoutes);
+  app.use(`${prefix}/crops`, cropRoutes);
+  app.use(`${prefix}/soil`, soilRoutes);
+  app.use(`${prefix}/weather`, weatherRoutes);
+  app.use(`${prefix}/experts`, expertRoutes);
+  app.use(`${prefix}/knowledge`, knowledgeRoutes);
+  app.use(`${prefix}/orders`, orderRoutes);
+  app.use(`${prefix}/farmer`, farmerRoutes);
+  app.use(`${prefix}/admin`, adminRoutes);
+  app.use(`${prefix}/content`, contentRoutes);
+  app.use(`${prefix}/ai`, aiRoutes);
+};
+
+mountApiRoutes('/api/v1');
+mountApiRoutes('/api');
 
 if (fs.existsSync(clientDistDir)) {
   app.use(express.static(clientDistDir));

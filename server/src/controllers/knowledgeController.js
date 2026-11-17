@@ -27,13 +27,45 @@ const DEMO_ARTICLES = [
     featured: true,
     image: '/assets/img/knowledge/article-drip.jpg',
   },
+  {
+    _id: '6735e0000000000000000063',
+    title: 'Living Mulch & Cover Crop Poly-Cultures for Maximum Nitrogen Fixation',
+    slug: 'living-mulch-cover-crop-polycultures',
+    category: 'Regenerative Agriculture',
+    excerpt: 'Pairing hairy vetch with winter rye to build 120 lbs of organic nitrogen per acre.',
+    author: 'Elena Vance',
+    readTime: '7 min read',
+    publishedAt: new Date(),
+    featured: true,
+    image: '/assets/img/knowledge/article-covercrops.jpg',
+  },
+  {
+    _id: '6735e0000000000000000064',
+    title: 'Indigenous Seed Saving and Climate Resilience in Semiarid Farmlands',
+    slug: 'indigenous-seed-saving-climate-resilience',
+    category: 'Seeds & Heritage',
+    excerpt: 'Preserving open-pollinated heirloom grain varieties to withstand heat spikes and erratic rainfall.',
+    author: 'Marcus Thorne',
+    readTime: '4 min read',
+    publishedAt: new Date(),
+    featured: false,
+    image: '/assets/img/knowledge/article-seeds.jpg',
+  },
 ];
 
 export const getArticles = asyncHandler(async (req, res) => {
-  if (mongoose.connection.readyState !== 1) {
-    return sendSuccess(res, { articles: DEMO_ARTICLES });
-  }
   const { category, search, limit = 50 } = req.query;
+
+  if (mongoose.connection.readyState !== 1) {
+    let list = [...DEMO_ARTICLES];
+    if (category && category !== 'All') list = list.filter((a) => a.category === category);
+    if (search) {
+      list = list.filter((a) => a.title.toLowerCase().includes(search.toLowerCase()) || a.excerpt.toLowerCase().includes(search.toLowerCase()));
+    }
+    if (limit) list = list.slice(0, Number(limit));
+    return sendSuccess(res, { articles: list });
+  }
+
   const filter = {};
   if (category && category !== 'All') filter.category = category;
   if (search) {
@@ -44,8 +76,15 @@ export const getArticles = asyncHandler(async (req, res) => {
     ];
   }
 
-  const articles = await Article.find(filter).sort({ publishedAt: -1 }).limit(Number(limit));
-  sendSuccess(res, { articles });
+  try {
+    const articles = await Article.find(filter).sort({ publishedAt: -1 }).limit(Number(limit));
+    sendSuccess(res, { articles });
+  } catch (err) {
+    console.warn('[Knowledge] DB query error, falling back to demo articles:', err.message);
+    let list = [...DEMO_ARTICLES];
+    if (limit) list = list.slice(0, Number(limit));
+    sendSuccess(res, { articles: list });
+  }
 });
 
 export const getArticleBySlug = asyncHandler(async (req, res) => {

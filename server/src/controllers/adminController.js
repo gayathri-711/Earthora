@@ -9,7 +9,7 @@ import Product from '../models/Product.js';
 import Review from '../models/Review.js';
 import SoilTest from '../models/SoilTest.js';
 import User from '../models/User.js';
-import { DEMO_USERS } from '../config/demoUsers.js';
+import { DEMO_USERS, IN_MEMORY_USERS, IN_MEMORY_EXPERTS } from '../config/demoUsers.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const getAdminOverview = asyncHandler(async (_req, res) => {
@@ -115,7 +115,12 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 
 export const getAllUsers = asyncHandler(async (_req, res) => {
   if (mongoose.connection.readyState !== 1) {
-    return sendSuccess(res, { users: DEMO_USERS });
+    const safeUsers = IN_MEMORY_USERS.map((u) => {
+      const copy = { ...u };
+      delete copy.password;
+      return copy;
+    });
+    return sendSuccess(res, { users: safeUsers });
   }
   const users = await User.find().sort({ createdAt: -1 });
   sendSuccess(res, { users });
@@ -135,6 +140,9 @@ export const getAllFarmers = asyncHandler(async (_req, res) => {
 });
 
 export const updateFarmerVerification = asyncHandler(async (req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    return sendSuccess(res, { farmer: { _id: req.params.id, verified: Boolean(req.body.verified) } });
+  }
   const farmer = await Farmer.findByIdAndUpdate(
     req.params.id,
     { verified: Boolean(req.body.verified) },
@@ -145,92 +153,240 @@ export const updateFarmerVerification = asyncHandler(async (req, res) => {
 });
 
 export const getAllExperts = asyncHandler(async (_req, res) => {
-  if (mongoose.connection.readyState !== 1) {
-    return sendSuccess(res, {
-      experts: [
-        { _id: '6735e0000000000000000021', name: 'Dr. Aris Thorne', title: 'Principal Soil Microbiologist', fieldOfStudy: 'Soil Science', verified: true, approvalStatus: 'approved' },
-        { _id: '6735e0000000000000000022', name: 'Sofia Al-Mansoor', title: 'Precision Irrigation Engineer', fieldOfStudy: 'Smart Water Systems', verified: true, approvalStatus: 'approved' },
-      ],
-    });
+  let dbExperts = [];
+  if (mongoose.connection.readyState === 1) {
+    try {
+      dbExperts = await Expert.find()
+        .populate('user', 'name email role phone isApproved approvalStatus createdAt')
+        .sort({ createdAt: -1 });
+    } catch (err) {
+      console.warn('[Admin] getAllExperts DB lookup error:', err.message);
+    }
   }
-  const experts = await Expert.find()
-    .populate('user', 'name email role phone isApproved approvalStatus createdAt')
-    .sort({ createdAt: -1 });
-  sendSuccess(res, { experts });
+
+  // Merge in-memory expert applications (newly registered experts awaiting or completed approval)
+  const existingDbIds = new Set(dbExperts.map((e) => String(e._id)));
+  const inMemoryMapped = IN_MEMORY_EXPERTS.filter(
+    (e) => !existingDbIds.has(String(e._id))
+  ).map((e) => ({
+    ...e,
+    user: e.userObj || {
+      name: e.name,
+      email: e.email || 'expert@earthora.io',
+      role: 'expert',
+      isApproved: e.approvalStatus === 'approved',
+      approvalStatus: e.approvalStatus,
+    },
+  }));
+
+  const allExperts = [...dbExperts, ...inMemoryMapped];
+  sendSuccess(res, { experts: allExperts });
 });
 
 export const approveExpert = asyncHandler(async (req, res) => {
-  const expert = await Expert.findById(req.params.id);
-  if (!expert) throw new ApiError(404, 'Expert profile not found');
+  const { id } = req.params;
+  let updated = null;
 
-  expert.verified = true;
-  expert.approvalStatus = 'approved';
-  await expert.save();
+  // 1. Update in-memory registry
+  const mem = IN_MEMORY_EXPERTS.find((e) => String(e._id) === String(id));
+  if (mem) {
+    mem.verified = true;
+    mem.approvalStatus = 'approved';
+    if (mem.userObj) {
+      mem.userObj.isApproved = true;
+      mem.userObj.approvalStatus = 'approved';
+    }
 
-  if (expert.user) {
-    await User.findByIdAndUpdate(expert.user, {
-      isApproved: true,
-      approvalStatus: 'approved',
-    });
+    const memUser = IN_MEMORY_USERS.find(
+      (u) =>
+        String(u._id) === String(mem.user) ||
+        (mem.userObj && u.email.toLowerCase() === mem.userObj.email.toLowerCase())
+    );
+    if (memUser) {
+      memUser.isApproved = true;
+      memUser.approvalStatus = 'approved';
+    }
+
+    updated = {
+      ...mem,
+      user: mem.userObj || {
+        name: mem.name,
+        email: memUser?.email || 'expert@earthora.io',
+        role: 'expert',
+        isApproved: true,
+        approvalStatus: 'approved',
+      },
+    };
   }
 
-  const populated = await Expert.findById(expert._id).populate(
-    'user',
-    'name email role phone isApproved approvalStatus'
-  );
+  // 2. Also update database if connected
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const expert = await Expert.findById(id);
+      if (expert) {
+        expert.verified = true;
+        expert.approvalStatus = 'approved';
+        await expert.save();
+
+        if (expert.user) {
+          await User.findByIdAndUpdate(expert.user, {
+            isApproved: true,
+            approvalStatus: 'approved',
+          });
+        }
+
+        updated = await Expert.findById(expert._id).populate(
+          'user',
+          'name email role phone isApproved approvalStatus'
+        );
+      }
+    } catch (err) {
+      console.warn('[Admin] approveExpert DB update error:', err.message);
+    }
+  }
+
+  if (!updated && !mem) {
+    throw new ApiError(404, 'Expert profile not found');
+  }
+
   sendSuccess(
     res,
-    { expert: populated },
+    { expert: updated || mem },
     'Agriculture Expert accepted and verified. Login access has been granted.'
   );
 });
 
 export const rejectExpert = asyncHandler(async (req, res) => {
-  const expert = await Expert.findById(req.params.id);
-  if (!expert) throw new ApiError(404, 'Expert profile not found');
+  const { id } = req.params;
+  let updated = null;
 
-  expert.verified = false;
-  expert.approvalStatus = 'rejected';
-  await expert.save();
+  // 1. Update in-memory registry
+  const mem = IN_MEMORY_EXPERTS.find((e) => String(e._id) === String(id));
+  if (mem) {
+    mem.verified = false;
+    mem.approvalStatus = 'rejected';
+    if (mem.userObj) {
+      mem.userObj.isApproved = false;
+      mem.userObj.approvalStatus = 'rejected';
+    }
 
-  if (expert.user) {
-    await User.findByIdAndUpdate(expert.user, {
-      isApproved: false,
-      approvalStatus: 'rejected',
-    });
+    const memUser = IN_MEMORY_USERS.find(
+      (u) =>
+        String(u._id) === String(mem.user) ||
+        (mem.userObj && u.email.toLowerCase() === mem.userObj.email.toLowerCase())
+    );
+    if (memUser) {
+      memUser.isApproved = false;
+      memUser.approvalStatus = 'rejected';
+    }
+
+    updated = {
+      ...mem,
+      user: mem.userObj || {
+        name: mem.name,
+        email: memUser?.email || 'expert@earthora.io',
+        role: 'expert',
+        isApproved: false,
+        approvalStatus: 'rejected',
+      },
+    };
   }
 
-  const populated = await Expert.findById(expert._id).populate(
-    'user',
-    'name email role phone isApproved approvalStatus'
-  );
-  sendSuccess(res, { expert: populated }, 'Agriculture Expert registration rejected.');
+  // 2. Update database if connected
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const expert = await Expert.findById(id);
+      if (expert) {
+        expert.verified = false;
+        expert.approvalStatus = 'rejected';
+        await expert.save();
+
+        if (expert.user) {
+          await User.findByIdAndUpdate(expert.user, {
+            isApproved: false,
+            approvalStatus: 'rejected',
+          });
+        }
+
+        updated = await Expert.findById(expert._id).populate(
+          'user',
+          'name email role phone isApproved approvalStatus'
+        );
+      }
+    } catch (err) {
+      console.warn('[Admin] rejectExpert DB update error:', err.message);
+    }
+  }
+
+  if (!updated && !mem) {
+    throw new ApiError(404, 'Expert profile not found');
+  }
+
+  sendSuccess(res, { expert: updated || mem }, 'Agriculture Expert registration rejected.');
 });
 
 export const updateExpertVerification = asyncHandler(async (req, res) => {
+  const { id } = req.params;
   const { verified, approvalStatus } = req.body;
   const isVerified = Boolean(verified);
   const status = approvalStatus || (isVerified ? 'approved' : 'pending');
 
-  const expert = await Expert.findById(req.params.id);
-  if (!expert) throw new ApiError(404, 'Expert profile not found');
-
-  expert.verified = isVerified;
-  expert.approvalStatus = status;
-  await expert.save();
-
-  if (expert.user) {
-    await User.findByIdAndUpdate(expert.user, {
-      isApproved: isVerified,
-      approvalStatus: status,
-    });
+  let updated = null;
+  const mem = IN_MEMORY_EXPERTS.find((e) => String(e._id) === String(id));
+  if (mem) {
+    mem.verified = isVerified;
+    mem.approvalStatus = status;
+    if (mem.userObj) {
+      mem.userObj.isApproved = isVerified;
+      mem.userObj.approvalStatus = status;
+    }
+    const memUser = IN_MEMORY_USERS.find(
+      (u) =>
+        String(u._id) === String(mem.user) ||
+        (mem.userObj && u.email.toLowerCase() === mem.userObj.email.toLowerCase())
+    );
+    if (memUser) {
+      memUser.isApproved = isVerified;
+      memUser.approvalStatus = status;
+    }
+    updated = {
+      ...mem,
+      user: mem.userObj || {
+        name: mem.name,
+        email: memUser?.email || 'expert@earthora.io',
+        role: 'expert',
+        isApproved: isVerified,
+        approvalStatus: status,
+      },
+    };
   }
 
-  const populated = await Expert.findById(expert._id).populate(
-    'user',
-    'name email role phone isApproved approvalStatus'
-  );
-  sendSuccess(res, { expert: populated }, 'Expert status updated.');
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const expert = await Expert.findById(id);
+      if (expert) {
+        expert.verified = isVerified;
+        expert.approvalStatus = status;
+        await expert.save();
+
+        if (expert.user) {
+          await User.findByIdAndUpdate(expert.user, {
+            isApproved: isVerified,
+            approvalStatus: status,
+          });
+        }
+
+        updated = await Expert.findById(expert._id).populate(
+          'user',
+          'name email role phone isApproved approvalStatus'
+        );
+      }
+    } catch (err) {
+      console.warn('[Admin] updateExpertVerification DB error:', err.message);
+    }
+  }
+
+  sendSuccess(res, { expert: updated || mem }, 'Expert status updated.');
 });
 
 export const deleteProductAdmin = asyncHandler(async (req, res) => {

@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import mongoose from 'mongoose';
 import User from '../models/User.js';
-import { DEMO_USERS } from '../config/demoUsers.js';
+import { DEMO_USERS, IN_MEMORY_USERS } from '../config/demoUsers.js';
 import { ApiError, asyncHandler } from '../utils/http.js';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'agriva-dev-secret-change-in-production';
@@ -36,13 +36,13 @@ export const protect = asyncHandler(async (req, _res, next) => {
     }
   }
 
-  // Fallback to demo user if database is disconnected or user was authenticated in demo mode
+  // Fallback to in-memory user registry if database is disconnected or user was authenticated in demo/memory mode
   if (!user) {
-    const demo = DEMO_USERS.find(
-      (u) => u._id === decoded.id || u.role === decoded.role
-    );
-    if (demo && demo.isActive) {
-      user = { ...demo };
+    const mem = (IN_MEMORY_USERS || DEMO_USERS).find(
+      (u) => String(u._id) === String(decoded.id) || (u.id && String(u.id) === String(decoded.id))
+    ) || DEMO_USERS.find((u) => u.role === decoded.role);
+    if (mem && mem.isActive) {
+      user = { ...mem };
       delete user.password;
     }
   }

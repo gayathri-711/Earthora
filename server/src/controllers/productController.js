@@ -7,11 +7,15 @@ import { DEMO_PRODUCTS } from '../config/demoProducts.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
 export const listProducts = asyncHandler(async (req, res) => {
+  const { category, search, featured, minPrice, maxPrice, sort, limit = 100 } = req.query;
+
   if (mongoose.connection.readyState !== 1) {
-    const { category, search } = req.query;
     let list = [...DEMO_PRODUCTS];
     if (category && category !== 'all' && category !== 'All') {
       list = list.filter((p) => p.category === category.toLowerCase());
+    }
+    if (featured === 'true') {
+      list = list.filter((p) => p.featured === true);
     }
     if (search) {
       list = list.filter(
@@ -20,9 +24,12 @@ export const listProducts = asyncHandler(async (req, res) => {
           p.shortDescription.toLowerCase().includes(search.toLowerCase())
       );
     }
+    if (limit) {
+      list = list.slice(0, Number(limit));
+    }
     return sendSuccess(res, { products: list });
   }
-  const { category, search, featured, minPrice, maxPrice, sort, limit = 100 } = req.query;
+
   const query = {};
 
   if (category && category !== 'all' && category !== 'All') {
@@ -49,12 +56,20 @@ export const listProducts = asyncHandler(async (req, res) => {
     newest: { createdAt: -1 },
   };
 
-  const products = await Product.find(query)
-    .populate('farmer', 'name farmName location specialty certifications image verified')
-    .sort(sortMap[sort] || { featured: -1, createdAt: -1 })
-    .limit(Number(limit));
+  try {
+    const products = await Product.find(query)
+      .populate('farmer', 'name farmName location specialty certifications image verified')
+      .sort(sortMap[sort] || { featured: -1, createdAt: -1 })
+      .limit(Number(limit));
 
-  sendSuccess(res, { products });
+    sendSuccess(res, { products });
+  } catch (err) {
+    console.warn('[Products] DB query error, falling back to demo products:', err.message);
+    let list = [...DEMO_PRODUCTS];
+    if (featured === 'true') list = list.filter((p) => p.featured === true);
+    if (limit) list = list.slice(0, Number(limit));
+    sendSuccess(res, { products: list });
+  }
 });
 
 export const getProductDetails = asyncHandler(async (req, res) => {

@@ -9,6 +9,10 @@ export function errorHandler(err, _req, res, _next) {
   let statusCode = err.statusCode || 500;
   let message = err.message || 'Internal server error';
 
+  if (statusCode >= 500) {
+    console.error('[Server Error]', err);
+  }
+
   if (err.name === 'ValidationError') {
     statusCode = 400;
     message = Object.values(err.errors)
