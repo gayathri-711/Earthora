@@ -48,19 +48,22 @@ app.use((req, _res, next) => {
 });
 
 // Lazy DB initialization middleware (handles serverless cold starts seamlessly)
-let isDbInitialized = false;
+let isSeeded = false;
 app.use(async (_req, _res, next) => {
-  if (!isDbInitialized) {
+  if (mongoose.connection.readyState !== 1 && process.env.MONGO_URI) {
     try {
       await connectDatabase(process.env.MONGO_URI);
-      if (mongoose.connection.readyState === 1) {
-        await seedIfEmpty();
-        await ensureFixedAdmin();
-      }
     } catch (err) {
-      console.warn('[DB] Init deferred:', err.message);
-    } finally {
-      isDbInitialized = true;
+      console.warn('[DB] Connection deferred:', err.message);
+    }
+  }
+  if (mongoose.connection.readyState === 1 && !isSeeded) {
+    try {
+      await seedIfEmpty();
+      await ensureFixedAdmin();
+      isSeeded = true;
+    } catch (err) {
+      console.warn('[DB] Seed warning:', err.message);
     }
   }
   next();
