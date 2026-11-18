@@ -50,9 +50,9 @@ app.use((req, _res, next) => {
 // Lazy DB initialization middleware (handles serverless cold starts seamlessly)
 let isSeeded = false;
 app.use(async (_req, _res, next) => {
-  if (mongoose.connection.readyState !== 1 && process.env.MONGO_URI) {
+  if (mongoose.connection.readyState !== 1) {
     try {
-      await connectDatabase(process.env.MONGO_URI);
+      await connectDatabase();
     } catch (err) {
       console.warn('[DB] Connection deferred:', err.message);
     }

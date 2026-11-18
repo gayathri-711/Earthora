@@ -408,13 +408,26 @@ export default function AdminDashboard() {
         api.get('/admin/supply-receipts').catch(() => ({ data: {} })),
       ]);
       if (ovRes.data?.data?.stats) setOverview(ovRes.data.data);
-      if (ordRes.data?.data?.orders?.length > 0) setOrders(ordRes.data.data.orders);
-      if (prodRes.data?.data?.products?.length > 0) setProducts(prodRes.data.data.products);
-      if (frmRes.data?.data?.farmers?.length > 0) setFarmers(frmRes.data.data.farmers);
-      if (expRes.data?.data?.experts?.length > 0) setExperts(expRes.data.data.experts);
-      if (msgRes.data?.data?.messages?.length > 0) setMessages(msgRes.data.data.messages);
-      if (usrRes.data?.data?.users?.length > 0) setUsers(usrRes.data.data.users);
-      if (recRes.data?.data?.receipts?.length > 0) setSupplyReceipts(recRes.data.data.receipts);
+      const fetchedOrders = ordRes.data?.data?.orders || ordRes.data?.orders;
+      if (Array.isArray(fetchedOrders) && fetchedOrders.length > 0) setOrders(fetchedOrders);
+
+      const fetchedProducts = prodRes.data?.data?.products || prodRes.data?.products;
+      if (Array.isArray(fetchedProducts) && fetchedProducts.length > 0) setProducts(fetchedProducts);
+
+      const fetchedFarmers = frmRes.data?.data?.farmers || frmRes.data?.farmers;
+      if (Array.isArray(fetchedFarmers) && fetchedFarmers.length > 0) setFarmers(fetchedFarmers);
+
+      const fetchedExperts = expRes.data?.data?.experts || expRes.data?.experts;
+      if (Array.isArray(fetchedExperts) && fetchedExperts.length > 0) setExperts(fetchedExperts);
+
+      const fetchedMessages = msgRes.data?.data?.messages || msgRes.data?.messages;
+      if (Array.isArray(fetchedMessages) && fetchedMessages.length > 0) setMessages(fetchedMessages);
+
+      const fetchedUsers = usrRes.data?.data?.users || usrRes.data?.users;
+      if (Array.isArray(fetchedUsers) && fetchedUsers.length > 0) setUsers(fetchedUsers);
+
+      const fetchedReceipts = recRes.data?.data?.receipts || recRes.data?.receipts;
+      if (Array.isArray(fetchedReceipts) && fetchedReceipts.length > 0) setSupplyReceipts(fetchedReceipts);
     } catch {
       // Fallback to local default data
     }

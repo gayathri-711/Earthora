@@ -19,12 +19,12 @@ export async function connectDatabase(mongoUri) {
     return { uri: mongoUri, usingMemory: false };
   }
 
-  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  const isTest = process.env.NODE_ENV === 'test';
   let uri = mongoUri?.trim() || process.env.MONGO_URI?.trim();
   let usingMemory = false;
 
-  // On Vercel / serverless: automatically connect to MongoDB Atlas cluster
-  if (!uri && isServerless) {
+  // Automatically connect to MongoDB Atlas cluster if no explicit URI is supplied (except in unit tests)
+  if (!uri && !isTest) {
     uri = ATLAS_PRODUCTION_URI;
   }
 

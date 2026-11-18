@@ -11,6 +11,7 @@ import Review from '../models/Review.js';
 import SoilTest from '../models/SoilTest.js';
 import SupplyReceipt from '../models/SupplyReceipt.js';
 import User from '../models/User.js';
+import { connectDatabase } from '../config/db.js';
 import { DEMO_USERS, IN_MEMORY_USERS, IN_MEMORY_EXPERTS } from '../config/demoUsers.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
 
@@ -98,6 +99,14 @@ export const getAdminOverview = asyncHandler(async (_req, res) => {
 });
 
 export const getAllOrders = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] getAllOrders connectDatabase error:', err.message);
+    }
+  }
+
   if (mongoose.connection.readyState !== 1) {
     return sendSuccess(res, {
       orders: [
@@ -232,6 +241,14 @@ let IN_MEMORY_RECEIPTS = [
 ];
 
 export const getAllSupplyReceipts = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] getAllSupplyReceipts connectDatabase error:', err.message);
+    }
+  }
+
   if (mongoose.connection.readyState === 1) {
     try {
       const receipts = await SupplyReceipt.find()
@@ -359,6 +376,14 @@ export const deleteSupplyReceipt = asyncHandler(async (req, res) => {
 });
 
 export const getAllUsers = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] getAllUsers connectDatabase error:', err.message);
+    }
+  }
+
   let dbUsers = [];
   if (mongoose.connection.readyState === 1) {
     try {
@@ -382,6 +407,14 @@ export const getAllUsers = asyncHandler(async (_req, res) => {
 });
 
 export const getAllFarmers = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] getAllFarmers connectDatabase error:', err.message);
+    }
+  }
+
   if (mongoose.connection.readyState !== 1) {
     return sendSuccess(res, {
       farmers: [
@@ -408,6 +441,14 @@ export const updateFarmerVerification = asyncHandler(async (req, res) => {
 });
 
 export const getAllExperts = asyncHandler(async (_req, res) => {
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] getAllExperts connectDatabase error:', err.message);
+    }
+  }
+
   let dbExperts = [];
   if (mongoose.connection.readyState === 1) {
     try {
