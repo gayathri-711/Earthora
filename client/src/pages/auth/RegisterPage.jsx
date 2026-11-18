@@ -27,6 +27,7 @@ export default function RegisterPage() {
 
   const [role, setRole] = useState(initialRole);
   const [submittedExpert, setSubmittedExpert] = useState(null);
+  const [errorMessage, setErrorMessage] = useState('');
   const [form, setForm] = useState({
     name: '',
     email: '',
@@ -45,6 +46,7 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage('');
     setLoading(true);
     try {
       const res = await register({ ...form, role });
@@ -57,7 +59,9 @@ export default function RegisterPage() {
         else navigate('/dashboard/customer', { replace: true });
       }
     } catch (err) {
-      showToast(err.message || 'Registration failed', 'error');
+      const msg = err.message || 'Registration failed';
+      setErrorMessage(msg);
+      showToast(msg, 'error');
     } finally {
       setLoading(false);
     }
@@ -132,7 +136,7 @@ export default function RegisterPage() {
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
           <button
             type="button"
-            onClick={() => setRole('customer')}
+            onClick={() => { setRole('customer'); setErrorMessage(''); }}
             className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
               role === 'customer'
                 ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
@@ -146,7 +150,7 @@ export default function RegisterPage() {
 
           <button
             type="button"
-            onClick={() => setRole('farmer')}
+            onClick={() => { setRole('farmer'); setErrorMessage(''); }}
             className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
               role === 'farmer'
                 ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
@@ -160,7 +164,7 @@ export default function RegisterPage() {
 
           <button
             type="button"
-            onClick={() => setRole('expert')}
+            onClick={() => { setRole('expert'); setErrorMessage(''); }}
             className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
               role === 'expert'
                 ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
@@ -283,15 +287,27 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-              <div>
-                <label className="text-xs font-semibold text-earthora-charcoal">Primary Crops / Specialty</label>
-                <input
-                  type="text"
-                  value={form.specialty}
-                  onChange={(e) => setForm({ ...form, specialty: e.target.value })}
-                  placeholder="Heirloom Brassicas, Cover Crops, Stone Fruit"
-                  className="input-field mt-1 text-xs"
-                />
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Farm Location (City / District)</label>
+                  <input
+                    type="text"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    placeholder="e.g. Pune, Maharashtra"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Primary Crops / Specialty</label>
+                  <input
+                    type="text"
+                    value={form.specialty}
+                    onChange={(e) => setForm({ ...form, specialty: e.target.value })}
+                    placeholder="Heirloom Brassicas, Cover Crops, Stone Fruit"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
               </div>
             </div>
           )}
@@ -332,9 +348,19 @@ export default function RegisterPage() {
                   />
                 </div>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2">
+              <div className="grid gap-3 sm:grid-cols-3">
                 <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Years of Experience</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Location (City / State)</label>
+                  <input
+                    type="text"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    placeholder="e.g. Bangalore, Karnataka"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Years Experience</label>
                   <input
                     type="number"
                     value={form.experienceYears}
@@ -344,13 +370,35 @@ export default function RegisterPage() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹/session)</label>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Fee (₹/session)</label>
                   <input
                     type="number"
                     value={form.consultationFee}
                     onChange={(e) => setForm({ ...form, consultationFee: e.target.value })}
                     className="input-field mt-1 text-xs"
                   />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {errorMessage && (
+            <div className="rounded-2xl border border-rose-300 bg-rose-50 p-4 text-xs text-rose-900 shadow-sm">
+              <div className="flex items-start gap-2.5">
+                <AlertCircle className="h-5 w-5 text-rose-600 shrink-0 mt-0.5" />
+                <div className="flex-1">
+                  <p className="font-bold text-rose-900">Registration Notice</p>
+                  <p className="mt-1 leading-relaxed text-rose-800">{errorMessage}</p>
+                  {errorMessage.toLowerCase().includes('already exists') && (
+                    <div className="mt-2.5 pt-2 border-t border-rose-200">
+                      <Link
+                        to="/login"
+                        className="inline-flex items-center gap-1.5 font-bold text-earthora-forest underline hover:text-earthora-mint"
+                      >
+                        Click here to Sign In with this email &rarr;
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

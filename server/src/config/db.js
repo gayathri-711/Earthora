@@ -43,7 +43,7 @@ export async function connectDatabase(mongoUri) {
   if (uri) {
     try {
       await mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 5000,
+        serverSelectionTimeoutMS: 15000,
         maxPoolSize: 10,
       });
       console.log('[DB] Connected successfully to MongoDB:', usingMemory ? 'Embedded In-Memory' : 'Remote MongoDB');

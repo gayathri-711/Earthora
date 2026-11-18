@@ -25,8 +25,20 @@ export const register = asyncHandler(async (req, res) => {
     consultationFee,
   } = req.body;
 
-  if (!name || !email || !password) {
-    throw new ApiError(400, 'Name, email, and password are required');
+  const trimmedName = (name || '').trim();
+  const normalizedEmail = (email || '').trim().toLowerCase();
+  const trimmedPassword = (password || '').trim();
+
+  if (!trimmedName) {
+    throw new ApiError(400, 'Full name is required');
+  }
+
+  if (!normalizedEmail || !normalizedEmail.includes('@')) {
+    throw new ApiError(400, 'A valid email address is required');
+  }
+
+  if (!trimmedPassword || trimmedPassword.length < 6) {
+    throw new ApiError(400, 'Password must be at least 6 characters long');
   }
 
   // Admin accounts are fixed and cannot be registered publicly
@@ -39,7 +51,6 @@ export const register = asyncHandler(async (req, res) => {
 
   const validRoles = ['customer', 'farmer', 'expert'];
   const normalizedRole = validRoles.includes(role) ? role : 'customer';
-  const normalizedEmail = email.trim().toLowerCase();
 
   // Ensure DB connection is active
   if (mongoose.connection.readyState !== 1) {
@@ -93,13 +104,13 @@ export const register = asyncHandler(async (req, res) => {
   if (mongoose.connection.readyState === 1) {
     try {
       createdUser = await User.create({
-        name,
+        name: trimmedName,
         email: normalizedEmail,
-        password,
+        password: trimmedPassword,
         role: normalizedRole,
         phone: phone || '',
         address: userAddress,
-        organization: organization || (normalizedRole === 'farmer' ? farmName : ''),
+        organization: organization || (normalizedRole === 'farmer' ? (farmName || `${trimmedName}'s Smart Farm`) : ''),
         title: title || (isExpert ? (fieldOfStudy || 'Agricultural Specialist') : ''),
         isApproved,
         approvalStatus,
@@ -111,8 +122,8 @@ export const register = asyncHandler(async (req, res) => {
           user: createdUser._id,
           name: createdUser.name,
           farmName: farmName || `${createdUser.name}'s Smart Farm`,
-          location: location || userAddress.city || 'Sonoma County, CA',
-          specialty: specialty || 'Regenerative Agriculture',
+          location: location || userAddress.city || 'Pune, Maharashtra',
+          specialty: specialty || 'Regenerative Agriculture & Organic Produce',
           totalAcres: Number(totalAcres || 25),
           verified: true,
         });
@@ -123,14 +134,20 @@ export const register = asyncHandler(async (req, res) => {
           title: title || 'Agricultural Specialist',
           fieldOfStudy: fieldOfStudy || 'Soil Science & Precision Agriculture',
           organization: organization || 'Independent Agronomy Consultant',
-          location: location || userAddress.city || 'California, USA',
+          location: location || userAddress.city || 'Bangalore, India',
           experienceYears: Number(experienceYears || 5),
-          consultationFee: Number(consultationFee || 75),
+          consultationFee: Number(consultationFee || 1500),
           verified: false,
           approvalStatus: 'pending',
         });
       }
     } catch (err) {
+      if (err.code === 11000) {
+        throw new ApiError(409, 'An account with this email already exists');
+      }
+      if (err.name === 'ValidationError') {
+        throw new ApiError(400, err.message);
+      }
       console.warn('[Auth] MongoDB create error (falling back to memory):', err.message);
     }
   }
