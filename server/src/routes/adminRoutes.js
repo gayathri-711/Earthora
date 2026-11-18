@@ -10,7 +10,10 @@ import {
   getAllMessagesAdmin,
   getAllOrders,
   getAllReviewsAdmin,
+  getAllSupplyReceipts,
   getAllUsers,
+  createSupplyReceipt,
+  deleteSupplyReceipt,
   rejectExpert,
   resolveMessageAdmin,
   updateExpertVerification,
@@ -25,6 +28,9 @@ router.use(protect, authorize('admin'));
 router.get('/overview', getAdminOverview);
 router.get('/orders', getAllOrders);
 router.patch('/orders/:id', updateOrderStatus);
+router.get('/supply-receipts', getAllSupplyReceipts);
+router.post('/supply-receipts', createSupplyReceipt);
+router.delete('/supply-receipts/:id', deleteSupplyReceipt);
 router.get('/users', getAllUsers);
 router.get('/farmers', getAllFarmers);
 router.patch('/farmers/:id', updateFarmerVerification);

@@ -279,3 +279,58 @@ test('Admin can query all registered customers, experts, and farmers from User d
   assert.ok(expertUser, 'Expert record exists');
   assert.ok(expertUser.email);
 });
+
+test('Orders DB: admin queries outbound orders with items, recipient details, and dispatch status', async () => {
+  const res = await request(app)
+    .get('/api/v1/admin/orders')
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(res.status, 200);
+  assert.ok(Array.isArray(res.body.data.orders));
+  assert.ok(res.body.data.orders.length >= 1);
+
+  const firstOrder = res.body.data.orders[0];
+  assert.ok(firstOrder.orderNumber);
+  assert.ok(firstOrder.items.length >= 1);
+  assert.ok(firstOrder.shippingAddress?.fullName);
+  assert.ok(firstOrder.totalAmount > 0);
+
+  const updateRes = await request(app)
+    .patch(`/api/v1/admin/orders/${firstOrder._id}`)
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({ status: 'Dispatched', courierPartner: 'BlueDart Express' });
+  assert.equal(updateRes.status, 200);
+  assert.equal(updateRes.body.data.order.status, 'Dispatched');
+  assert.ok(updateRes.body.data.order.dispatchedAt);
+});
+
+test('Supply Receipts DB: admin logs inbound products received from farmers into database', async () => {
+  const createRes = await request(app)
+    .post('/api/v1/admin/supply-receipts')
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({
+      productName: 'Organic Heirloom Tomato Seeds',
+      supplierName: 'Elena Vance - Green Valley Farm',
+      supplierContact: '+1 555 014 8899',
+      supplierLocation: 'Sonoma County, CA',
+      quantityReceived: 50,
+      unit: 'boxes',
+      unitCost: 180,
+      batchNumber: 'BATCH-2026-TOM-99',
+      qualityStatus: 'Passed - Grade A Organic',
+      warehouseLocation: 'Central Cold Storage Hub A',
+      notes: 'Passed USDA organic inspection',
+      updateStock: true,
+    });
+  assert.equal(createRes.status, 201);
+  assert.ok(createRes.body.data.receipt.receiptNumber);
+  assert.equal(createRes.body.data.receipt.quantityReceived, 50);
+
+  const listRes = await request(app)
+    .get('/api/v1/admin/supply-receipts')
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(listRes.status, 200);
+  assert.ok(Array.isArray(listRes.body.data.receipts));
+  assert.ok(listRes.body.data.receipts.length >= 1);
+  const found = listRes.body.data.receipts.find((r) => r.batchNumber === 'BATCH-2026-TOM-99');
+  assert.ok(found, 'Receipt found in inbound receiving log');
+});

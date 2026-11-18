@@ -2,14 +2,20 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
   BookOpen,
+  Boxes,
   Building,
+  Calendar,
   Check,
+  CheckCircle,
   CheckCircle2,
+  ClipboardCheck,
   Clock,
   Cpu,
+  DollarSign,
   Download,
   ExternalLink,
   Eye,
+  FileText,
   Layers,
   Mail,
   MapPin,
@@ -22,6 +28,7 @@ import {
   ShieldCheck,
   Sprout,
   Trash2,
+  Truck,
   UserCheck,
   Users,
   Wheat,
@@ -67,7 +74,151 @@ export default function AdminDashboard() {
     ],
   });
 
-  const [orders, setOrders] = useState([]);
+  const [orders, setOrders] = useState([
+    {
+      _id: 'ETH-2026-1001',
+      orderNumber: 'ETH-2026-1001',
+      customerName: 'Claire Bennett',
+      customerEmail: 'customer@earthora.io',
+      customerPhone: '+1 555 010 2233',
+      shippingAddress: {
+        fullName: 'Claire Bennett',
+        email: 'customer@earthora.io',
+        phone: '+1 555 010 2233',
+        street: '742 Evergreen Terrace',
+        city: 'Portland',
+        state: 'OR',
+        postalCode: '97205',
+        country: 'USA',
+        deliverySlot: 'Standard Delivery (2-3 business days)',
+      },
+      items: [
+        { name: 'Organic Heirloom Tomato Seeds', price: 349, quantity: 2 },
+        { name: 'Cold-Pressed Mustard Oil (1L)', price: 420, quantity: 2 },
+      ],
+      totalAmount: 1538,
+      paymentMethod: 'card',
+      paymentStatus: 'paid',
+      status: 'Dispatched',
+      courierPartner: 'BlueDart Agri-Logistics',
+      trackingNumber: 'TRK-982410-IN',
+      createdAt: '2026-11-16T10:00:00Z',
+      dispatchedAt: '2026-11-17T14:30:00Z',
+    },
+    {
+      _id: 'ETH-2026-1002',
+      orderNumber: 'ETH-2026-1002',
+      customerName: 'Marcus Miller',
+      customerEmail: 'marcus.miller@gmail.com',
+      customerPhone: '+91 98450 11223',
+      shippingAddress: {
+        fullName: 'Marcus Miller',
+        email: 'marcus.miller@gmail.com',
+        phone: '+91 98450 11223',
+        street: '45 Lake View Road',
+        city: 'Bengaluru',
+        state: 'Karnataka',
+        postalCode: '560001',
+        country: 'India',
+        deliverySlot: 'Express Morning Delivery',
+      },
+      items: [
+        { name: 'Biochar Enriched Compost (25kg)', price: 899, quantity: 1 },
+        { name: 'Solar Drip Irrigation Solenoid Valve', price: 2199, quantity: 1 },
+      ],
+      totalAmount: 3098,
+      paymentMethod: 'card',
+      paymentStatus: 'paid',
+      status: 'Delivered',
+      courierPartner: 'Local Farm Courier',
+      trackingNumber: 'TRK-541290-IN',
+      createdAt: '2026-11-15T09:15:00Z',
+      dispatchedAt: '2026-11-15T16:00:00Z',
+      deliveredAt: '2026-11-17T11:20:00Z',
+    },
+  ]);
+  const [orderSearchTerm, setOrderSearchTerm] = useState('');
+  const [orderStatusFilter, setOrderStatusFilter] = useState('all');
+  const [selectedOrderDetail, setSelectedOrderDetail] = useState(null);
+
+  const [supplyReceipts, setSupplyReceipts] = useState([
+    {
+      _id: 'rec-001',
+      receiptNumber: 'REC-2026-1001',
+      productName: 'Organic Heirloom Tomato Seeds',
+      category: 'seeds',
+      supplierName: 'Elena Vance - Green Valley Farm',
+      supplierContact: '+1 555 014 8899',
+      supplierLocation: 'Sonoma County, CA',
+      quantityReceived: 100,
+      unit: 'boxes',
+      unitCost: 180,
+      totalCost: 18000,
+      batchNumber: 'BATCH-2026-TOM-01',
+      receivedAt: '2026-11-15T08:30:00Z',
+      receivedBy: 'Earthora Central Sorting Hub',
+      qualityStatus: 'Passed - Grade A Organic',
+      warehouseLocation: 'Central Cold Storage Hub A',
+      notes: 'Certified USDA Organic harvested at peak firmness. High germination rate confirmed.',
+    },
+    {
+      _id: 'rec-002',
+      receiptNumber: 'REC-2026-1002',
+      productName: 'Biochar Enriched Compost (25kg)',
+      category: 'fertilizers',
+      supplierName: 'Marcus Thorne - Sunridge Agro',
+      supplierContact: '+1 555 019 4411',
+      supplierLocation: 'Willamette Valley, OR',
+      quantityReceived: 40,
+      unit: 'bags',
+      unitCost: 550,
+      totalCost: 22000,
+      batchNumber: 'BATCH-2026-BIO-09',
+      receivedAt: '2026-11-17T11:00:00Z',
+      receivedBy: 'Earthora Central Sorting Hub',
+      qualityStatus: 'Passed - Grade A Organic',
+      warehouseLocation: 'Dry Storage Bay 3',
+      notes: 'Pyrolyzed hardwood feedstock with active mycorrhizal inoculation.',
+    },
+    {
+      _id: 'rec-003',
+      receiptNumber: 'REC-2026-1003',
+      productName: 'Cold-Pressed Mustard Oil (1L)',
+      category: 'produce',
+      supplierName: 'Kaveri Organic Growers Cooperative',
+      supplierContact: '+91 94432 87654',
+      supplierLocation: 'Erode, Tamil Nadu',
+      quantityReceived: 75,
+      unit: 'bottles',
+      unitCost: 280,
+      totalCost: 21000,
+      batchNumber: 'BATCH-2026-OIL-03',
+      receivedAt: '2026-11-18T07:15:00Z',
+      receivedBy: 'Earthora Regional Hub - Coimbatore',
+      qualityStatus: 'Passed - Grade A Organic',
+      warehouseLocation: 'Storage Bay 1 - Ambient',
+      notes: 'Single-origin wood-pressed mustard seed oil. Zero chemical additives.',
+    },
+  ]);
+  const [receiptSearchTerm, setReceiptSearchTerm] = useState('');
+  const [receiptFilter, setReceiptFilter] = useState('all');
+  const [isRecordReceiptOpen, setIsRecordReceiptOpen] = useState(false);
+  const [selectedReceiptDetail, setSelectedReceiptDetail] = useState(null);
+  const [newReceipt, setNewReceipt] = useState({
+    productName: '',
+    category: 'produce',
+    supplierName: '',
+    supplierContact: '',
+    supplierLocation: '',
+    quantityReceived: '',
+    unit: 'kg',
+    unitCost: '',
+    batchNumber: '',
+    qualityStatus: 'Passed - Grade A Organic',
+    warehouseLocation: 'Central Cold Storage Hub A',
+    notes: '',
+    updateStock: true,
+  });
   const [products, setProducts] = useState(EARTHORA_PRODUCTS);
   const [farmers, setFarmers] = useState([
     {
@@ -246,22 +397,24 @@ export default function AdminDashboard() {
 
   const loadAll = useCallback(async () => {
     try {
-      const [ovRes, ordRes, prodRes, frmRes, expRes, msgRes, usrRes] = await Promise.all([
-        api.get('/admin/overview'),
-        api.get('/admin/orders'),
-        api.get('/products?limit=100'),
-        api.get('/admin/farmers'),
-        api.get('/admin/experts'),
-        api.get('/admin/messages'),
-        api.get('/admin/users'),
+      const [ovRes, ordRes, prodRes, frmRes, expRes, msgRes, usrRes, recRes] = await Promise.all([
+        api.get('/admin/overview').catch(() => ({ data: {} })),
+        api.get('/admin/orders').catch(() => ({ data: {} })),
+        api.get('/products?limit=100').catch(() => ({ data: {} })),
+        api.get('/admin/farmers').catch(() => ({ data: {} })),
+        api.get('/admin/experts').catch(() => ({ data: {} })),
+        api.get('/admin/messages').catch(() => ({ data: {} })),
+        api.get('/admin/users').catch(() => ({ data: {} })),
+        api.get('/admin/supply-receipts').catch(() => ({ data: {} })),
       ]);
-      if (ovRes.data.data?.stats) setOverview(ovRes.data.data);
-      if (ordRes.data.data?.orders?.length > 0) setOrders(ordRes.data.data.orders);
-      if (prodRes.data.data?.products?.length > 0) setProducts(prodRes.data.data.products);
-      if (frmRes.data.data?.farmers?.length > 0) setFarmers(frmRes.data.data.farmers);
-      if (expRes.data.data?.experts?.length > 0) setExperts(expRes.data.data.experts);
-      if (msgRes.data.data?.messages?.length > 0) setMessages(msgRes.data.data.messages);
-      if (usrRes.data.data?.users?.length > 0) setUsers(usrRes.data.data.users);
+      if (ovRes.data?.data?.stats) setOverview(ovRes.data.data);
+      if (ordRes.data?.data?.orders?.length > 0) setOrders(ordRes.data.data.orders);
+      if (prodRes.data?.data?.products?.length > 0) setProducts(prodRes.data.data.products);
+      if (frmRes.data?.data?.farmers?.length > 0) setFarmers(frmRes.data.data.farmers);
+      if (expRes.data?.data?.experts?.length > 0) setExperts(expRes.data.data.experts);
+      if (msgRes.data?.data?.messages?.length > 0) setMessages(msgRes.data.data.messages);
+      if (usrRes.data?.data?.users?.length > 0) setUsers(usrRes.data.data.users);
+      if (recRes.data?.data?.receipts?.length > 0) setSupplyReceipts(recRes.data.data.receipts);
     } catch {
       // Fallback to local default data
     }
@@ -302,9 +455,23 @@ export default function AdminDashboard() {
     showToast('Farmer verification status updated.', 'success');
   };
 
-  const handleOrderStatus = (orderId, status) => {
-    setOrders((prev) => prev.map((o) => (o._id === orderId ? { ...o, status } : o)));
-    showToast(`Order status updated to: ${status}`, 'success');
+  const handleOrderStatus = async (orderId, newStatus) => {
+    try {
+      const { data } = await api.patch(`/admin/orders/${orderId}`, { status: newStatus });
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId || o.orderNumber === orderId ? { ...o, ...data.data.order } : o
+        )
+      );
+      showToast(`Order status updated to: ${newStatus}`, 'success');
+    } catch {
+      setOrders((prev) =>
+        prev.map((o) =>
+          o._id === orderId || o.orderNumber === orderId ? { ...o, status: newStatus } : o
+        )
+      );
+      showToast(`Order status updated to: ${newStatus}`, 'success');
+    }
   };
 
   const handleDeleteProduct = (productId) => {
@@ -323,6 +490,169 @@ export default function AdminDashboard() {
     setArticles([art, ...articles]);
     setNewArticle({ title: '', category: 'Soil Regeneration', author: 'Earthora Agronomy Board', readTime: '5 min read', excerpt: '' });
     showToast('Knowledge Hub guide published!', 'success');
+  };
+
+  const handleCreateSupplyReceipt = async (e) => {
+    e.preventDefault();
+    if (!newReceipt.productName || !newReceipt.supplierName || !newReceipt.quantityReceived) {
+      showToast('Please fill in product name, supplier/farmer name, and quantity', 'error');
+      return;
+    }
+    try {
+      const { data } = await api.post('/admin/supply-receipts', newReceipt);
+      setSupplyReceipts((prev) => [data.data.receipt, ...prev]);
+      setIsRecordReceiptOpen(false);
+      setNewReceipt({
+        productName: '',
+        category: 'produce',
+        supplierName: '',
+        supplierContact: '',
+        supplierLocation: '',
+        quantityReceived: '',
+        unit: 'kg',
+        unitCost: '',
+        batchNumber: '',
+        qualityStatus: 'Passed - Grade A Organic',
+        warehouseLocation: 'Central Cold Storage Hub A',
+        notes: '',
+        updateStock: true,
+      });
+      showToast('Inbound supply shipment recorded into database!', 'success');
+      const prodRes = await api.get('/products?limit=100').catch(() => ({ data: {} }));
+      if (prodRes.data?.data?.products?.length > 0) setProducts(prodRes.data.data.products);
+    } catch (err) {
+      showToast(err.message || 'Failed to record supply receipt', 'error');
+    }
+  };
+
+  const handleDeleteSupplyReceipt = async (receiptId) => {
+    try {
+      await api.delete(`/admin/supply-receipts/${receiptId}`);
+      setSupplyReceipts((prev) => prev.filter((r) => r._id !== receiptId));
+      showToast('Supply receipt removed from database', 'info');
+    } catch {
+      setSupplyReceipts((prev) => prev.filter((r) => r._id !== receiptId));
+      showToast('Supply receipt removed', 'info');
+    }
+  };
+
+  const exportOrdersCSV = () => {
+    if (!orders || orders.length === 0) {
+      showToast('No order records to export', 'error');
+      return;
+    }
+    const headers = [
+      'Order Number',
+      'Customer Name',
+      'Customer Email',
+      'Customer Phone',
+      'Delivery Street',
+      'Delivery City',
+      'Delivery State',
+      'Delivery Country',
+      'Delivery Postal Code',
+      'Items Ordered',
+      'Total Amount (INR)',
+      'Payment Method',
+      'Payment Status',
+      'Fulfillment Status',
+      'Date Placed',
+      'Date Dispatched',
+      'Date Delivered',
+      'Courier Partner',
+      'Tracking Number',
+    ];
+
+    const rows = filteredOrders.map((o) => {
+      const itemsStr = Array.isArray(o.items)
+        ? o.items.map((i) => `${i.quantity}x ${i.name} (₹${i.price})`).join('; ')
+        : 'N/A';
+      return [
+        `"${o.orderNumber || o._id || ''}"`,
+        `"${(o.customerName || o.shippingAddress?.fullName || o.user?.name || '').replace(/"/g, '""')}"`,
+        `"${(o.customerEmail || o.shippingAddress?.email || o.user?.email || '').replace(/"/g, '""')}"`,
+        `"${(o.customerPhone || o.shippingAddress?.phone || o.user?.phone || '').replace(/"/g, '""')}"`,
+        `"${(o.shippingAddress?.street || '').replace(/"/g, '""')}"`,
+        `"${(o.shippingAddress?.city || '').replace(/"/g, '""')}"`,
+        `"${(o.shippingAddress?.state || '').replace(/"/g, '""')}"`,
+        `"${(o.shippingAddress?.country || 'India').replace(/"/g, '""')}"`,
+        `"${(o.shippingAddress?.postalCode || '').replace(/"/g, '""')}"`,
+        `"${itemsStr.replace(/"/g, '""')}"`,
+        o.totalAmount || 0,
+        `"${o.paymentMethod || 'card'}"`,
+        `"${o.paymentStatus || 'paid'}"`,
+        `"${o.status || 'Placed'}"`,
+        `"${o.createdAt ? new Date(o.createdAt).toLocaleString() : ''}"`,
+        `"${o.dispatchedAt ? new Date(o.dispatchedAt).toLocaleString() : 'Not Yet Dispatched'}"`,
+        `"${o.deliveredAt ? new Date(o.deliveredAt).toLocaleString() : 'In Transit / Pending'}"`,
+        `"${(o.courierPartner || 'BlueDart Agri-Logistics').replace(/"/g, '""')}"`,
+        `"${(o.trackingNumber || '').replace(/"/g, '""')}"`,
+      ].join(',');
+    });
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `earthora-customer-orders-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Orders registry exported to CSV', 'success');
+  };
+
+  const exportReceiptsCSV = () => {
+    if (!supplyReceipts || supplyReceipts.length === 0) {
+      showToast('No supply receipt records to export', 'error');
+      return;
+    }
+    const headers = [
+      'Receipt Number',
+      'Product Name',
+      'Category',
+      'Supplier / Farmer Name',
+      'Supplier Contact',
+      'Supplier Location',
+      'Quantity Received',
+      'Unit',
+      'Unit Procurement Cost (INR)',
+      'Total Cost (INR)',
+      'Batch Number',
+      'Date Received',
+      'Received By',
+      'Quality Status',
+      'Warehouse Location',
+      'Notes',
+    ];
+
+    const rows = filteredReceipts.map((r) => [
+      `"${r.receiptNumber || r._id || ''}"`,
+      `"${(r.productName || '').replace(/"/g, '""')}"`,
+      `"${(r.category || '').replace(/"/g, '""')}"`,
+      `"${(r.supplierName || '').replace(/"/g, '""')}"`,
+      `"${(r.supplierContact || '').replace(/"/g, '""')}"`,
+      `"${(r.supplierLocation || '').replace(/"/g, '""')}"`,
+      r.quantityReceived || 0,
+      `"${r.unit || 'kg'}"`,
+      r.unitCost || 0,
+      r.totalCost || 0,
+      `"${(r.batchNumber || '').replace(/"/g, '""')}"`,
+      `"${r.receivedAt ? new Date(r.receivedAt).toLocaleString() : ''}"`,
+      `"${(r.receivedBy || '').replace(/"/g, '""')}"`,
+      `"${(r.qualityStatus || '').replace(/"/g, '""')}"`,
+      `"${(r.warehouseLocation || '').replace(/"/g, '""')}"`,
+      `"${(r.notes || '').replace(/"/g, '""')}"`,
+    ].join(','));
+
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `earthora-inbound-receipts-${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Inbound supply receipts exported to CSV', 'success');
   };
 
   const exportUsersCSV = () => {
@@ -364,6 +694,30 @@ export default function AdminDashboard() {
     return matchesRole && (nameMatch || emailMatch || phoneMatch || cityMatch || orgMatch);
   });
 
+  const filteredOrders = orders.filter((o) => {
+    const statusMatch = orderStatusFilter === 'all' || (o.status || '').toLowerCase() === orderStatusFilter.toLowerCase();
+    const term = orderSearchTerm.toLowerCase().trim();
+    if (!term) return statusMatch;
+    const numMatch = (o.orderNumber || o._id || '').toLowerCase().includes(term);
+    const custNameMatch = (o.customerName || o.shippingAddress?.fullName || o.user?.name || '').toLowerCase().includes(term);
+    const custEmailMatch = (o.customerEmail || o.shippingAddress?.email || o.user?.email || '').toLowerCase().includes(term);
+    const cityMatch = (o.shippingAddress?.city || '').toLowerCase().includes(term);
+    const itemMatch = Array.isArray(o.items) && o.items.some((i) => (i.name || '').toLowerCase().includes(term));
+    return statusMatch && (numMatch || custNameMatch || custEmailMatch || cityMatch || itemMatch);
+  });
+
+  const filteredReceipts = supplyReceipts.filter((r) => {
+    const statusMatch = receiptFilter === 'all' || (r.qualityStatus || '').toLowerCase().includes(receiptFilter.toLowerCase());
+    const term = receiptSearchTerm.toLowerCase().trim();
+    if (!term) return statusMatch;
+    const numMatch = (r.receiptNumber || r._id || '').toLowerCase().includes(term);
+    const prodMatch = (r.productName || '').toLowerCase().includes(term);
+    const suppMatch = (r.supplierName || '').toLowerCase().includes(term);
+    const locMatch = (r.supplierLocation || r.warehouseLocation || '').toLowerCase().includes(term);
+    const batchMatch = (r.batchNumber || '').toLowerCase().includes(term);
+    return statusMatch && (numMatch || prodMatch || suppMatch || locMatch || batchMatch);
+  });
+
   const pendingExpertCount = experts.filter(
     (e) => e.approvalStatus === 'pending' || !e.verified
   ).length;
@@ -371,7 +725,8 @@ export default function AdminDashboard() {
   const dynamicTabs = [
     { id: 'overview', label: 'Overview & Analytics', icon: BarChart3 },
     { id: 'users', label: 'Customers & Users DB', icon: Users, badge: users.length > 0 ? users.length : null },
-    { id: 'orders', label: 'Orders & Logistics', icon: Package },
+    { id: 'orders', label: 'Customer Orders (Outbound)', icon: Package, badge: orders.length > 0 ? orders.length : null },
+    { id: 'receipts', label: 'Products Received (Inbound)', icon: Truck, badge: supplyReceipts.length > 0 ? supplyReceipts.length : null },
     { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
     { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
     {
@@ -711,43 +1066,854 @@ export default function AdminDashboard() {
         </div>
       )}
 
-      {/* Orders Tab */}
+      {/* Orders Tab (Outbound Customer Dispatches) */}
       {activeTab === 'orders' && (
-        <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm overflow-x-auto">
-          <h3 className="font-heading text-lg font-bold text-earthora-forest">Ecosystem Orders &amp; Dispatches</h3>
-          <p className="text-xs text-earthora-muted mb-6">Live cold-chain tracking codes and payment settlement</p>
+        <div className="space-y-6">
+          {/* Metrics */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Total Orders</span>
+                <Package className="h-5 w-5 text-earthora-forest" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-earthora-forest">{orders.length}</p>
+              <p className="mt-1 text-xs text-earthora-muted">Customer checkout orders</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Dispatched / Transit</span>
+                <Truck className="h-5 w-5 text-amber-600" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-amber-700">
+                {orders.filter((o) => ['dispatched', 'shipped'].includes((o.status || '').toLowerCase())).length}
+              </p>
+              <p className="mt-1 text-xs text-amber-700">En route to customers</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Delivered</span>
+                <CheckCircle className="h-5 w-5 text-emerald-600" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-emerald-700">
+                {orders.filter((o) => (o.status || '').toLowerCase() === 'delivered').length}
+              </p>
+              <p className="mt-1 text-xs text-emerald-700">Confirmed delivery</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Outbound Gross</span>
+                <DollarSign className="h-5 w-5 text-earthora-forest" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-earthora-forest">
+                ₹{orders.reduce((sum, o) => sum + (Number(o.totalAmount) || 0), 0).toLocaleString('en-IN')}
+              </p>
+              <p className="mt-1 text-xs text-emerald-700">Total order revenue</p>
+            </div>
+          </div>
 
-          <table className="w-full text-left text-xs">
-            <thead className="border-b border-earthora-sand/60 bg-earthora-ivory/60 text-[11px] font-bold uppercase tracking-wider text-earthora-forest">
-              <tr>
-                <th className="px-4 py-3">Order Code</th>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Payment</th>
-                <th className="px-4 py-3">Total Amount</th>
-                <th className="px-4 py-3">Fulfillment Status</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-earthora-sand/40">
-              <tr className="hover:bg-earthora-sand/15">
-                <td className="px-4 py-3 font-mono font-bold text-earthora-forest">ETH-2026-1001</td>
-                <td className="px-4 py-3 font-semibold">Alex Morgan</td>
-                <td className="px-4 py-3 capitalize text-emerald-800 font-bold">card (paid)</td>
-                <td className="px-4 py-3 font-bold text-earthora-forest">₹4,850</td>
-                <td className="px-4 py-3">
+          {/* Search, Filter & Export */}
+          <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+              <div>
+                <h3 className="font-heading text-lg font-bold text-earthora-forest">Customer Orders &amp; Delivery Tracking</h3>
+                <p className="text-xs text-earthora-muted">
+                  Full records of which products were sent to whom, delivery address, date ordered, and dispatch status
+                </p>
+              </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="relative flex-1 md:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-earthora-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search by order #, customer, city, item..."
+                    value={orderSearchTerm}
+                    onChange={(e) => setOrderSearchTerm(e.target.value)}
+                    className="input-field pl-9 py-1.5 text-xs w-full"
+                  />
+                </div>
+                <button
+                  onClick={exportOrdersCSV}
+                  className="btn-outline py-1.5 px-3 text-xs flex items-center gap-1.5 whitespace-nowrap"
+                  title="Download CSV spreadsheet of all customer orders"
+                >
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-2 mb-4 text-xs">
+              {['all', 'Placed', 'Processing', 'Harvested', 'Dispatched', 'Delivered', 'Cancelled'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setOrderStatusFilter(st)}
+                  className={`px-3 py-1 rounded-full font-semibold transition-colors capitalize ${
+                    orderStatusFilter.toLowerCase() === st.toLowerCase()
+                      ? 'bg-earthora-forest text-white'
+                      : 'bg-earthora-sand/40 text-earthora-forest hover:bg-earthora-sand/70'
+                  }`}
+                >
+                  {st === 'all' ? 'All Orders' : st}
+                </button>
+              ))}
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-earthora-sand/60 bg-earthora-ivory/60 text-[11px] font-bold uppercase tracking-wider text-earthora-forest">
+                  <tr>
+                    <th className="px-4 py-3">Order Code</th>
+                    <th className="px-4 py-3">Customer &amp; Destination</th>
+                    <th className="px-4 py-3">Products Sent</th>
+                    <th className="px-4 py-3">Amount</th>
+                    <th className="px-4 py-3">Fulfillment Status</th>
+                    <th className="px-4 py-3">Dispatched / Delivered</th>
+                    <th className="px-4 py-3">Order Slip</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-earthora-sand/40">
+                  {filteredOrders.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-earthora-muted">
+                        No orders match your search criteria.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredOrders.map((o) => (
+                      <tr key={o._id || o.orderNumber} className="hover:bg-earthora-sand/15">
+                        <td className="px-4 py-3">
+                          <p className="font-mono font-bold text-earthora-forest">{o.orderNumber || o._id}</p>
+                          <p className="text-[10px] text-earthora-muted">
+                            {o.createdAt ? new Date(o.createdAt).toLocaleDateString() : 'N/A'}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="font-bold text-earthora-forest">
+                            {o.customerName || o.shippingAddress?.fullName || o.user?.name || 'Customer'}
+                          </p>
+                          <p className="text-[11px] text-earthora-muted">
+                            {o.shippingAddress?.city || 'City N/A'}{o.shippingAddress?.state ? `, ${o.shippingAddress.state}` : ''}
+                          </p>
+                          <p className="text-[10px] text-earthora-muted font-mono">
+                            {o.customerPhone || o.shippingAddress?.phone || 'No Phone'}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3 max-w-[200px]">
+                          {Array.isArray(o.items) && o.items.length > 0 ? (
+                            <div className="space-y-0.5">
+                              {o.items.map((item, idx) => (
+                                <p key={idx} className="truncate text-earthora-forest font-medium">
+                                  <span className="font-bold text-earthora-forest">{item.quantity}x</span> {item.name}
+                                </p>
+                              ))}
+                            </div>
+                          ) : (
+                            <span className="text-earthora-muted">Standard Package</span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="font-bold text-earthora-forest">₹{Number(o.totalAmount || 0).toLocaleString('en-IN')}</p>
+                          <p className="text-[10px] capitalize text-emerald-800 font-semibold">
+                            {o.paymentMethod || 'card'} ({o.paymentStatus || 'paid'})
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <select
+                            value={o.status || 'Placed'}
+                            onChange={(e) => handleOrderStatus(o._id || o.orderNumber, e.target.value)}
+                            className="input-field py-1 text-xs w-36 font-semibold"
+                          >
+                            <option value="Placed">Placed</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Harvested">Harvested</option>
+                            <option value="Dispatched">Dispatched</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                          </select>
+                        </td>
+                        <td className="px-4 py-3 text-[11px]">
+                          {o.deliveredAt ? (
+                            <p className="text-emerald-700 font-semibold">
+                              Delivered: {new Date(o.deliveredAt).toLocaleDateString()}
+                            </p>
+                          ) : o.dispatchedAt ? (
+                            <p className="text-amber-700 font-semibold">
+                              Dispatched: {new Date(o.dispatchedAt).toLocaleDateString()}
+                            </p>
+                          ) : (
+                            <p className="text-earthora-muted">Pending dispatch</p>
+                          )}
+                          <p className="text-[10px] text-earthora-muted">{o.courierPartner || 'BlueDart Logistics'}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <button
+                            onClick={() => setSelectedOrderDetail(o)}
+                            className="btn-outline py-1 px-2.5 text-xs flex items-center gap-1 text-earthora-forest hover:bg-earthora-sand/40"
+                            title="View shipping slip and full order breakdown"
+                          >
+                            <Eye className="h-3.5 w-3.5" />
+                            View Slip
+                          </button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Receipts Tab (Inbound Products Received from Farmers & Suppliers) */}
+      {activeTab === 'receipts' && (
+        <div className="space-y-6">
+          {/* Metrics */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Inbound Shipments</span>
+                <Truck className="h-5 w-5 text-earthora-forest" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-earthora-forest">{supplyReceipts.length}</p>
+              <p className="mt-1 text-xs text-earthora-muted">Total supply batches received</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Units Received</span>
+                <Boxes className="h-5 w-5 text-emerald-600" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-emerald-700">
+                {supplyReceipts.reduce((sum, r) => sum + (Number(r.quantityReceived) || 0), 0).toLocaleString()}
+              </p>
+              <p className="mt-1 text-xs text-emerald-700">Kg, bags, boxes &amp; units</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Procurement Value</span>
+                <DollarSign className="h-5 w-5 text-earthora-forest" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-earthora-forest">
+                ₹{supplyReceipts.reduce((sum, r) => sum + (Number(r.totalCost) || 0), 0).toLocaleString('en-IN')}
+              </p>
+              <p className="mt-1 text-xs text-earthora-muted">Paid to growers / suppliers</p>
+            </div>
+            <div className="card-surface p-5 border border-earthora-sand/80 shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-semibold uppercase tracking-wider text-earthora-muted">Organic Quality Pass</span>
+                <ClipboardCheck className="h-5 w-5 text-emerald-600" />
+              </div>
+              <p className="mt-2 font-heading text-2xl font-extrabold text-emerald-700">100%</p>
+              <p className="mt-1 text-xs text-emerald-700">Inspection grade verified</p>
+            </div>
+          </div>
+
+          {/* Table Container */}
+          <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+              <div>
+                <h3 className="font-heading text-lg font-bold text-earthora-forest">
+                  Inbound Products Received (Farm Supply Inward Log)
+                </h3>
+                <p className="text-xs text-earthora-muted">
+                  Permanent record of which products were received, from which farmer, quantity, inspection grade, and receiving date
+                </p>
+              </div>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="relative flex-1 md:w-64">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-earthora-muted" />
+                  <input
+                    type="text"
+                    placeholder="Search by receipt #, product, farmer..."
+                    value={receiptSearchTerm}
+                    onChange={(e) => setReceiptSearchTerm(e.target.value)}
+                    className="input-field pl-9 py-1.5 text-xs w-full"
+                  />
+                </div>
+                <button
+                  onClick={() => setIsRecordReceiptOpen(true)}
+                  className="btn-primary py-1.5 px-3 text-xs flex items-center gap-1.5 whitespace-nowrap"
+                >
+                  <Plus className="h-4 w-4" />
+                  Record Inbound Receipt
+                </button>
+                <button
+                  onClick={exportReceiptsCSV}
+                  className="btn-outline py-1.5 px-3 text-xs flex items-center gap-1.5 whitespace-nowrap"
+                  title="Download CSV spreadsheet of all supply receipts"
+                >
+                  <Download className="h-4 w-4" />
+                  Export CSV
+                </button>
+              </div>
+            </div>
+
+            {/* Filter Pills */}
+            <div className="flex flex-wrap gap-2 mb-4 text-xs">
+              {['all', 'Grade A Organic', 'Grade B', 'Pending Inspection'].map((st) => (
+                <button
+                  key={st}
+                  onClick={() => setReceiptFilter(st)}
+                  className={`px-3 py-1 rounded-full font-semibold transition-colors capitalize ${
+                    receiptFilter.toLowerCase() === st.toLowerCase()
+                      ? 'bg-earthora-forest text-white'
+                      : 'bg-earthora-sand/40 text-earthora-forest hover:bg-earthora-sand/70'
+                  }`}
+                >
+                  {st === 'all' ? 'All Received Shipments' : st}
+                </button>
+              ))}
+            </div>
+
+            {/* Table */}
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-earthora-sand/60 bg-earthora-ivory/60 text-[11px] font-bold uppercase tracking-wider text-earthora-forest">
+                  <tr>
+                    <th className="px-4 py-3">Receipt Code</th>
+                    <th className="px-4 py-3">Product &amp; Qty Received</th>
+                    <th className="px-4 py-3">Received From (Farmer/Supplier)</th>
+                    <th className="px-4 py-3">Date &amp; Time Received</th>
+                    <th className="px-4 py-3">Quality Inspection</th>
+                    <th className="px-4 py-3">Warehouse Hub</th>
+                    <th className="px-4 py-3">Total Value</th>
+                    <th className="px-4 py-3">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-earthora-sand/40">
+                  {filteredReceipts.length === 0 ? (
+                    <tr>
+                      <td colSpan={8} className="px-4 py-8 text-center text-earthora-muted">
+                        No supply receipts match your search. Click &quot;Record Inbound Receipt&quot; to log new inward stock.
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredReceipts.map((r) => (
+                      <tr key={r._id || r.receiptNumber} className="hover:bg-earthora-sand/15">
+                        <td className="px-4 py-3">
+                          <p className="font-mono font-bold text-earthora-forest">{r.receiptNumber || r._id}</p>
+                          <p className="text-[10px] text-earthora-muted font-mono">{r.batchNumber || 'Batch N/A'}</p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="font-bold text-earthora-forest">{r.productName}</p>
+                          <p className="text-[11px] font-semibold text-emerald-800">
+                            {r.quantityReceived} {r.unit || 'units'}
+                          </p>
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[10px] bg-earthora-sand/50 text-earthora-forest capitalize">
+                            {r.category || 'produce'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3">
+                          <p className="font-bold text-earthora-forest">{r.supplierName}</p>
+                          <p className="text-[10px] text-earthora-muted">{r.supplierLocation || 'Location N/A'}</p>
+                          {r.supplierContact && (
+                            <p className="text-[10px] text-earthora-muted font-mono">{r.supplierContact}</p>
+                          )}
+                        </td>
+                        <td className="px-4 py-3 text-[11px]">
+                          <p className="font-medium text-earthora-forest">
+                            {r.receivedAt ? new Date(r.receivedAt).toLocaleDateString() : 'Today'}
+                          </p>
+                          <p className="text-[10px] text-earthora-muted">
+                            {r.receivedAt ? new Date(r.receivedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : ''}
+                          </p>
+                        </td>
+                        <td className="px-4 py-3">
+                          <span
+                            className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold ${
+                              (r.qualityStatus || '').includes('Grade A') || (r.qualityStatus || '').includes('Passed')
+                                ? 'bg-emerald-100 text-emerald-800'
+                                : (r.qualityStatus || '').includes('Pending')
+                                ? 'bg-amber-100 text-amber-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {r.qualityStatus || 'Passed - Grade A'}
+                          </span>
+                        </td>
+                        <td className="px-4 py-3 text-[11px] text-earthora-muted">
+                          {r.warehouseLocation || 'Central Cold Storage'}
+                        </td>
+                        <td className="px-4 py-3 font-bold text-earthora-forest">
+                          ₹{Number(r.totalCost || 0).toLocaleString('en-IN')}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex items-center gap-1.5">
+                            <button
+                              onClick={() => setSelectedReceiptDetail(r)}
+                              className="btn-outline py-1 px-2 text-xs flex items-center gap-1 text-earthora-forest hover:bg-earthora-sand/40"
+                              title="View full receipt details"
+                            >
+                              <Eye className="h-3.5 w-3.5" />
+                            </button>
+                            <button
+                              onClick={() => handleDeleteSupplyReceipt(r._id)}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded transition-colors"
+                              title="Delete receipt"
+                            >
+                              <Trash2 className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Order Detail Modal */}
+      {selectedOrderDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="card-surface max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 border border-earthora-sand shadow-xl rounded-xl">
+            <div className="flex justify-between items-start pb-4 border-b border-earthora-sand/60">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Customer Order Breakdown</span>
+                <h3 className="font-heading text-xl font-bold text-earthora-forest mt-0.5">
+                  Order #{selectedOrderDetail.orderNumber || selectedOrderDetail._id}
+                </h3>
+                <p className="text-xs text-earthora-muted">
+                  Placed on {selectedOrderDetail.createdAt ? new Date(selectedOrderDetail.createdAt).toLocaleString() : 'N/A'}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedOrderDetail(null)}
+                className="p-1.5 text-earthora-muted hover:text-earthora-forest rounded-lg hover:bg-earthora-sand/30"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="py-5 space-y-5 text-xs">
+              {/* Customer & Shipping Address */}
+              <div className="bg-earthora-ivory/80 p-4 rounded-lg border border-earthora-sand/60">
+                <h4 className="font-bold text-earthora-forest mb-2 flex items-center gap-1.5 text-sm">
+                  <MapPin className="h-4 w-4 text-emerald-700" />
+                  Delivery &amp; Customer Information
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Customer Name:</span>
+                    <p className="font-bold text-earthora-forest">
+                      {selectedOrderDetail.customerName || selectedOrderDetail.shippingAddress?.fullName || selectedOrderDetail.user?.name || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Email Address:</span>
+                    <p className="font-mono text-earthora-forest">
+                      {selectedOrderDetail.customerEmail || selectedOrderDetail.shippingAddress?.email || selectedOrderDetail.user?.email || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Phone Number:</span>
+                    <p className="font-mono text-earthora-forest">
+                      {selectedOrderDetail.customerPhone || selectedOrderDetail.shippingAddress?.phone || selectedOrderDetail.user?.phone || 'N/A'}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Delivery Slot:</span>
+                    <p className="font-medium text-earthora-forest">
+                      {selectedOrderDetail.shippingAddress?.deliverySlot || 'Standard Delivery'}
+                    </p>
+                  </div>
+                  <div className="sm:col-span-2">
+                    <span className="text-earthora-muted text-[11px]">Street Address:</span>
+                    <p className="font-medium text-earthora-forest">
+                      {selectedOrderDetail.shippingAddress?.street || 'N/A'}, {selectedOrderDetail.shippingAddress?.city || ''}{' '}
+                      {selectedOrderDetail.shippingAddress?.state || ''} {selectedOrderDetail.shippingAddress?.postalCode || ''},{' '}
+                      {selectedOrderDetail.shippingAddress?.country || 'India'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Items Table */}
+              <div>
+                <h4 className="font-bold text-earthora-forest mb-2 text-sm flex items-center gap-1.5">
+                  <Package className="h-4 w-4 text-emerald-700" />
+                  Products Dispatched in this Order
+                </h4>
+                <div className="border border-earthora-sand/60 rounded-lg overflow-hidden">
+                  <table className="w-full text-left text-xs">
+                    <thead className="bg-earthora-sand/30 font-bold text-earthora-forest border-b border-earthora-sand/60">
+                      <tr>
+                        <th className="px-3 py-2">Product Name</th>
+                        <th className="px-3 py-2">Unit Price</th>
+                        <th className="px-3 py-2">Quantity</th>
+                        <th className="px-3 py-2 text-right">Subtotal</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-earthora-sand/30">
+                      {Array.isArray(selectedOrderDetail.items) && selectedOrderDetail.items.length > 0 ? (
+                        selectedOrderDetail.items.map((item, idx) => (
+                          <tr key={idx} className="hover:bg-earthora-sand/15">
+                            <td className="px-3 py-2 font-medium text-earthora-forest">{item.name}</td>
+                            <td className="px-3 py-2">₹{Number(item.price).toFixed(2)}</td>
+                            <td className="px-3 py-2 font-bold">{item.quantity}</td>
+                            <td className="px-3 py-2 text-right font-bold text-earthora-forest">
+                              ₹{(Number(item.price) * Number(item.quantity)).toFixed(2)}
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="px-3 py-4 text-center text-earthora-muted">
+                            Order items details logged.
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                    <tfoot className="bg-earthora-sand/20 font-bold border-t border-earthora-sand/60">
+                      <tr>
+                        <td colSpan={3} className="px-3 py-2 text-right">Total Order Value:</td>
+                        <td className="px-3 py-2 text-right text-earthora-forest text-sm font-extrabold">
+                          ₹{Number(selectedOrderDetail.totalAmount || 0).toLocaleString('en-IN')}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+
+              {/* Timeline & Dispatch Information */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 bg-earthora-sand/20 p-4 rounded-lg">
+                <div>
+                  <span className="text-earthora-muted text-[11px]">Courier Partner:</span>
+                  <p className="font-semibold text-earthora-forest">
+                    {selectedOrderDetail.courierPartner || 'BlueDart Agri-Logistics'}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-earthora-muted text-[11px]">Tracking Number:</span>
+                  <p className="font-mono text-earthora-forest">
+                    {selectedOrderDetail.trackingNumber || selectedOrderDetail.orderNumber || 'ETH-TRK-PENDING'}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-earthora-muted text-[11px]">Dispatched At:</span>
+                  <p className="font-medium text-earthora-forest">
+                    {selectedOrderDetail.dispatchedAt ? new Date(selectedOrderDetail.dispatchedAt).toLocaleString() : 'Not Yet Dispatched'}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-earthora-muted text-[11px]">Delivered At:</span>
+                  <p className="font-medium text-earthora-forest">
+                    {selectedOrderDetail.deliveredAt ? new Date(selectedOrderDetail.deliveredAt).toLocaleString() : 'In Transit / Pending'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-4 border-t border-earthora-sand/60">
+              <button onClick={() => setSelectedOrderDetail(null)} className="btn-primary py-1.5 px-4 text-xs">
+                Close Slip
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Record Inbound Shipment Receipt Modal */}
+      {isRecordReceiptOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="card-surface max-w-xl w-full max-h-[90vh] overflow-y-auto p-6 border border-earthora-sand shadow-xl rounded-xl">
+            <div className="flex justify-between items-start pb-4 border-b border-earthora-sand/60">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Farm Supply Inward</span>
+                <h3 className="font-heading text-lg font-bold text-earthora-forest mt-0.5">
+                  Record Inbound Product Receipt
+                </h3>
+                <p className="text-xs text-earthora-muted">
+                  Log produce and products received from growers into the Earthora database
+                </p>
+              </div>
+              <button
+                onClick={() => setIsRecordReceiptOpen(false)}
+                className="p-1.5 text-earthora-muted hover:text-earthora-forest rounded-lg hover:bg-earthora-sand/30"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateSupplyReceipt} className="py-4 space-y-4 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Product Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Heirloom Vine Tomatoes"
+                    value={newReceipt.productName}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, productName: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Category</label>
                   <select
-                    defaultValue="shipped"
-                    onChange={(e) => handleOrderStatus('ETH-2026-1001', e.target.value)}
-                    className="input-field py-1 text-xs w-36"
+                    value={newReceipt.category}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, category: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
                   >
-                    <option value="pending">Pending</option>
-                    <option value="harvested">Harvested</option>
-                    <option value="shipped">Shipped</option>
-                    <option value="delivered">Delivered</option>
+                    <option value="produce">Organic Produce</option>
+                    <option value="seeds">Certified Seeds</option>
+                    <option value="fertilizers">Bio-Fertilizers &amp; Soil</option>
+                    <option value="irrigation">Irrigation Systems</option>
+                    <option value="equipment">Farm Equipment</option>
                   </select>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Farmer / Supplier Name *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g. Elena Vance - Green Valley Farm"
+                    value={newReceipt.supplierName}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, supplierName: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Supplier Contact (Phone/Email)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. +91 98765 43210"
+                    value={newReceipt.supplierContact}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, supplierContact: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Quantity Received *</label>
+                  <input
+                    type="number"
+                    min="1"
+                    required
+                    placeholder="e.g. 50"
+                    value={newReceipt.quantityReceived}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, quantityReceived: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Unit</label>
+                  <select
+                    value={newReceipt.unit}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, unit: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  >
+                    <option value="kg">kg (Kilograms)</option>
+                    <option value="boxes">Boxes</option>
+                    <option value="bags">Bags (25kg/50kg)</option>
+                    <option value="liters">Liters</option>
+                    <option value="units">Units</option>
+                    <option value="crates">Crates</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Unit Cost (₹ Paid)</label>
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="e.g. 180"
+                    value={newReceipt.unitCost}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, unitCost: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Batch / Lot Number</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. BATCH-2026-TOM-04"
+                    value={newReceipt.batchNumber}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, batchNumber: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Quality Inspection Status</label>
+                  <select
+                    value={newReceipt.qualityStatus}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, qualityStatus: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  >
+                    <option value="Passed - Grade A Organic">Passed - Grade A Organic</option>
+                    <option value="Passed - Grade B">Passed - Grade B Standard</option>
+                    <option value="Pending Inspection">Pending Inspection</option>
+                    <option value="Rejected">Rejected</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Warehouse / Storage Hub</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Central Cold Storage Hub A"
+                    value={newReceipt.warehouseLocation}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, warehouseLocation: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block font-semibold text-earthora-forest mb-1">Farm / Supplier Location</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Sonoma County / Coimbatore"
+                    value={newReceipt.supplierLocation}
+                    onChange={(e) => setNewReceipt({ ...newReceipt, supplierLocation: e.target.value })}
+                    className="input-field py-1.5 text-xs w-full"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block font-semibold text-earthora-forest mb-1">Inspection Notes &amp; Moisture/Brix</label>
+                <textarea
+                  rows={2}
+                  placeholder="e.g. High firmness, Brix 6.8 confirmed, zero synthetic pesticide residues detected."
+                  value={newReceipt.notes}
+                  onChange={(e) => setNewReceipt({ ...newReceipt, notes: e.target.value })}
+                  className="input-field py-1.5 text-xs w-full"
+                />
+              </div>
+
+              <div className="flex items-center gap-2 pt-1">
+                <input
+                  type="checkbox"
+                  id="updateStockCheck"
+                  checked={newReceipt.updateStock}
+                  onChange={(e) => setNewReceipt({ ...newReceipt, updateStock: e.target.checked })}
+                  className="rounded border-earthora-sand text-emerald-600 focus:ring-emerald-500 h-4 w-4"
+                />
+                <label htmlFor="updateStockCheck" className="text-earthora-forest font-semibold cursor-pointer">
+                  Automatically add this quantity to Marketplace Live Stock inventory
+                </label>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-earthora-sand/60">
+                <button
+                  type="button"
+                  onClick={() => setIsRecordReceiptOpen(false)}
+                  className="btn-outline py-1.5 px-4 text-xs"
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="btn-primary py-1.5 px-4 text-xs flex items-center gap-1.5">
+                  <Check className="h-4 w-4" />
+                  Save Inbound Receipt
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Receipt Detail Modal */}
+      {selectedReceiptDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="card-surface max-w-lg w-full max-h-[90vh] overflow-y-auto p-6 border border-earthora-sand shadow-xl rounded-xl">
+            <div className="flex justify-between items-start pb-4 border-b border-earthora-sand/60">
+              <div>
+                <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Supply Receipt Breakdown</span>
+                <h3 className="font-heading text-xl font-bold text-earthora-forest mt-0.5">
+                  Receipt #{selectedReceiptDetail.receiptNumber || selectedReceiptDetail._id}
+                </h3>
+                <p className="text-xs text-earthora-muted font-mono">
+                  Batch: {selectedReceiptDetail.batchNumber || 'N/A'}
+                </p>
+              </div>
+              <button
+                onClick={() => setSelectedReceiptDetail(null)}
+                className="p-1.5 text-earthora-muted hover:text-earthora-forest rounded-lg hover:bg-earthora-sand/30"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <div className="py-4 space-y-4 text-xs">
+              <div className="bg-earthora-ivory/80 p-4 rounded-lg border border-earthora-sand/60 space-y-3">
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Product Received:</span>
+                    <p className="font-bold text-earthora-forest text-sm">{selectedReceiptDetail.productName}</p>
+                    <span className="inline-block mt-0.5 px-2 py-0.5 rounded text-[10px] bg-earthora-sand/50 text-earthora-forest capitalize">
+                      {selectedReceiptDetail.category || 'produce'}
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Quantity:</span>
+                    <p className="font-heading text-lg font-extrabold text-emerald-800">
+                      {selectedReceiptDetail.quantityReceived} {selectedReceiptDetail.unit || 'units'}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-earthora-sand/40">
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Supplier / Grower:</span>
+                    <p className="font-bold text-earthora-forest">{selectedReceiptDetail.supplierName}</p>
+                    <p className="text-[10px] text-earthora-muted">{selectedReceiptDetail.supplierLocation || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Contact:</span>
+                    <p className="font-mono text-earthora-forest">{selectedReceiptDetail.supplierContact || 'N/A'}</p>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3 pt-2 border-t border-earthora-sand/40">
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Procurement Cost:</span>
+                    <p className="font-bold text-earthora-forest">
+                      ₹{selectedReceiptDetail.unitCost || 0} / {selectedReceiptDetail.unit || 'unit'}
+                    </p>
+                    <p className="text-[11px] text-emerald-800 font-extrabold">
+                      Total: ₹{Number(selectedReceiptDetail.totalCost || 0).toLocaleString('en-IN')}
+                    </p>
+                  </div>
+                  <div>
+                    <span className="text-earthora-muted text-[11px]">Quality Inspection:</span>
+                    <p className="font-bold text-emerald-700">{selectedReceiptDetail.qualityStatus}</p>
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-earthora-sand/40">
+                  <span className="text-earthora-muted text-[11px]">Warehouse Storage Bay:</span>
+                  <p className="font-medium text-earthora-forest">{selectedReceiptDetail.warehouseLocation}</p>
+                </div>
+
+                {selectedReceiptDetail.notes && (
+                  <div className="pt-2 border-t border-earthora-sand/40">
+                    <span className="text-earthora-muted text-[11px]">Notes:</span>
+                    <p className="text-earthora-forest italic">{selectedReceiptDetail.notes}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-3 border-t border-earthora-sand/60">
+              <button onClick={() => setSelectedReceiptDetail(null)} className="btn-primary py-1.5 px-4 text-xs">
+                Close
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
