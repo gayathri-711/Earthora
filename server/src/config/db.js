@@ -8,15 +8,33 @@ let memoryServer = null;
 const ATLAS_PRODUCTION_URI =
   'mongodb+srv://gayatrisenthamarai_db_user:fQCFvIVoc48fKger@cluster0.mx2er0r.mongodb.net/earthora?retryWrites=true&w=majority';
 
+// Global connection cache for serverless environments (e.g. Vercel)
+let cached = global._mongooseConnectionCache;
+if (!cached) {
+  cached = global._mongooseConnectionCache = { conn: null, promise: null };
+}
+
 /**
  * Connects to external MONGO_URI if configured, or falls back to an embedded
  * MongoMemoryServer instance for zero-config local execution and testing.
  * On serverless platforms (e.g. Vercel), connects directly to the user's MongoDB Atlas cluster.
  */
 export async function connectDatabase(mongoUri) {
-  // Reuse existing connection if already connected (vital for serverless container warm executions)
+  // 1. Return immediately if already connected
   if (mongoose.connection.readyState === 1) {
-    return { uri: mongoUri, usingMemory: false };
+    return { uri: mongoUri || ATLAS_PRODUCTION_URI, usingMemory: false };
+  }
+
+  // 2. Await in-flight connection promise to avoid redundant concurrent connections
+  if (cached.promise) {
+    try {
+      await cached.promise;
+      if (mongoose.connection.readyState === 1) {
+        return { uri: mongoUri || ATLAS_PRODUCTION_URI, usingMemory: false };
+      }
+    } catch {
+      cached.promise = null;
+    }
   }
 
   const isTest = process.env.NODE_ENV === 'test';
@@ -42,13 +60,20 @@ export async function connectDatabase(mongoUri) {
 
   if (uri) {
     try {
-      await mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 15000,
+      cached.promise = mongoose.connect(uri, {
+        serverSelectionTimeoutMS: 5000,
+        connectTimeoutMS: 5000,
+        socketTimeoutMS: 15000,
         maxPoolSize: 10,
       });
+
+      await cached.promise;
+      cached.conn = mongoose.connection;
       console.log('[DB] Connected successfully to MongoDB:', usingMemory ? 'Embedded In-Memory' : 'Remote MongoDB');
     } catch (err) {
+      cached.promise = null;
       console.warn('[DB] Mongoose connection attempt failed:', err.message);
+      throw err;
     }
   }
 
@@ -57,6 +82,8 @@ export async function connectDatabase(mongoUri) {
 
 export async function disconnectDatabase() {
   await mongoose.disconnect();
+  cached.conn = null;
+  cached.promise = null;
   if (memoryServer) {
     await memoryServer.stop();
     memoryServer = null;

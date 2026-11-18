@@ -61,25 +61,23 @@ export const register = asyncHandler(async (req, res) => {
     }
   }
 
-  // Check in-memory user registry first
-  const existingInMemory = IN_MEMORY_USERS.find(
-    (u) => u.email.toLowerCase() === normalizedEmail
-  );
-  if (existingInMemory) {
-    throw new ApiError(409, 'An account with this email already exists');
+  // If MongoDB is still disconnected, notify clearly so users are not stored ephemerally
+  if (mongoose.connection.readyState !== 1) {
+    throw new ApiError(
+      503,
+      'Database connection to MongoDB Atlas is pending. In MongoDB Atlas, please add "0.0.0.0/0" to Network Access so your cloud application can permanently store user records.'
+    );
   }
 
-  // If MongoDB is connected, also check database
-  if (mongoose.connection.readyState === 1) {
-    try {
-      const existing = await User.findOne({ email: normalizedEmail });
-      if (existing) {
-        throw new ApiError(409, 'An account with this email already exists');
-      }
-    } catch (err) {
-      if (err.statusCode === 409) throw err;
-      console.warn('[Auth] Database check warning:', err.message);
+  // Check database for existing email
+  try {
+    const existing = await User.findOne({ email: normalizedEmail });
+    if (existing) {
+      throw new ApiError(409, 'An account with this email already exists');
     }
+  } catch (err) {
+    if (err.statusCode === 409) throw err;
+    console.warn('[Auth] Database check warning:', err.message);
   }
 
   // Agriculture experts require administrator approval before login access is granted
@@ -148,7 +146,7 @@ export const register = asyncHandler(async (req, res) => {
       if (err.name === 'ValidationError') {
         throw new ApiError(400, err.message);
       }
-      console.warn('[Auth] MongoDB create error (falling back to memory):', err.message);
+      throw new ApiError(500, `Failed to store user in database: ${err.message}`);
     }
   }
 
