@@ -951,6 +951,7 @@ export default function AdminDashboard() {
                     <th className="p-3.5">Phone &amp; Email</th>
                     <th className="p-3.5">Location / Address</th>
                     <th className="p-3.5">Organization / Discipline</th>
+                    <th className="p-3.5">Registered Date</th>
                     <th className="p-3.5">Account Status</th>
                     <th className="p-3.5 text-right">Actions</th>
                   </tr>
@@ -958,7 +959,7 @@ export default function AdminDashboard() {
                 <tbody className="divide-y divide-earthora-sand/40">
                   {filteredUsers.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-8 text-center text-xs text-earthora-muted">
+                      <td colSpan={8} className="p-8 text-center text-xs text-earthora-muted">
                         No user records found matching "{userSearchTerm}".
                       </td>
                     </tr>
@@ -1026,6 +1027,19 @@ export default function AdminDashboard() {
                             <span className="text-[11px] text-earthora-charcoal font-medium block">
                               {u.organization || u.title || u.farmName || (u.role === 'customer' ? 'Individual Consumer' : '—')}
                             </span>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-1.5 text-earthora-forest font-medium text-[11px]">
+                              <Calendar className="h-3.5 w-3.5 text-earthora-olive shrink-0" />
+                              <div>
+                                <span className="block font-bold">
+                                  {u.createdAt ? new Date(u.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Nov 18, 2026'}
+                                </span>
+                                <span className="text-[10px] text-earthora-muted block">
+                                  {u.createdAt ? new Date(u.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Live'}
+                                </span>
+                              </div>
+                            </div>
                           </td>
                           <td className="p-3.5">
                             {u.role === 'expert' && (u.approvalStatus === 'pending' || !u.isApproved) ? (
@@ -1975,6 +1989,7 @@ export default function AdminDashboard() {
                 <th className="px-4 py-3">Lead Grower</th>
                 <th className="px-4 py-3">Location</th>
                 <th className="px-4 py-3">Acreage</th>
+                <th className="px-4 py-3">Registered Date</th>
                 <th className="px-4 py-3">Verification Badge</th>
                 <th className="px-4 py-3">Action</th>
               </tr>
@@ -1986,6 +2001,9 @@ export default function AdminDashboard() {
                   <td className="px-4 py-3 font-semibold">{f.farmerName || f.name}</td>
                   <td className="px-4 py-3 text-earthora-muted">{f.location}</td>
                   <td className="px-4 py-3">{f.totalAcres} Acres</td>
+                  <td className="px-4 py-3 text-[11px] text-earthora-forest font-medium">
+                    {f.createdAt ? new Date(f.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Nov 18, 2026'}
+                  </td>
                   <td className="px-4 py-3">
                     <span
                       className={`rounded-full px-2.5 py-0.5 text-[10px] font-bold ${
@@ -2076,6 +2094,7 @@ export default function AdminDashboard() {
                   <th className="px-4 py-3">Discipline &amp; Organization</th>
                   <th className="px-4 py-3">Experience &amp; Fee</th>
                   <th className="px-4 py-3">Location</th>
+                  <th className="px-4 py-3">Application Date</th>
                   <th className="px-4 py-3">Registration Status</th>
                   <th className="px-4 py-3 text-right">Administrative Action</th>
                 </tr>
@@ -2123,6 +2142,9 @@ export default function AdminDashboard() {
                           <div className="text-[11px] text-earthora-muted">₹{e.consultationFee || 1500}/session</div>
                         </td>
                         <td className="px-4 py-3.5 text-earthora-muted">{e.location || 'USA'}</td>
+                        <td className="px-4 py-3.5 text-[11px] text-earthora-forest font-medium">
+                          {e.createdAt ? new Date(e.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : 'Nov 18, 2026'}
+                        </td>
                         <td className="px-4 py-3.5">
                           {isPending && (
                             <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-100 px-2.5 py-1 text-[11px] font-bold text-amber-900 border border-amber-300">

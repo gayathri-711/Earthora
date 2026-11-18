@@ -5,11 +5,13 @@ mongoose.set('bufferCommands', false);
 
 let memoryServer = null;
 
+const ATLAS_PRODUCTION_URI =
+  'mongodb+srv://gayatrisenthamarai_db_user:fQCFvIVoc48fKger@cluster0.mx2er0r.mongodb.net/earthora?retryWrites=true&w=majority';
+
 /**
  * Connects to external MONGO_URI if configured, or falls back to an embedded
  * MongoMemoryServer instance for zero-config local execution and testing.
- * On serverless platforms (e.g. Vercel), gracefully falls back to in-memory demo mode
- * if MONGO_URI environment variable is not configured.
+ * On serverless platforms (e.g. Vercel), connects directly to the user's MongoDB Atlas cluster.
  */
 export async function connectDatabase(mongoUri) {
   // Reuse existing connection if already connected (vital for serverless container warm executions)
@@ -17,19 +19,16 @@ export async function connectDatabase(mongoUri) {
     return { uri: mongoUri, usingMemory: false };
   }
 
+  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
   let uri = mongoUri?.trim() || process.env.MONGO_URI?.trim();
   let usingMemory = false;
 
-  // On Vercel / serverless: do NOT attempt to spawn MongoMemoryServer binary
-  // (which exceeds 50MB limits and crashes or times out in AWS Lambda)
-  const isServerless = Boolean(process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME);
+  // On Vercel / serverless: automatically connect to MongoDB Atlas cluster
+  if (!uri && isServerless) {
+    uri = ATLAS_PRODUCTION_URI;
+  }
 
   if (!uri) {
-    if (isServerless) {
-      console.warn('[DB] Running on Vercel without MONGO_URI. Fallback demo mode active. Add MONGO_URI to Vercel Project Settings for permanent database records.');
-      return { uri: null, usingMemory: true };
-    }
-
     try {
       const { MongoMemoryServer } = await import('mongodb-memory-server');
       memoryServer = await MongoMemoryServer.create();

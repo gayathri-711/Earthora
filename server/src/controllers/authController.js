@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import Expert from '../models/Expert.js';
 import Farmer from '../models/Farmer.js';
 import User from '../models/User.js';
+import { connectDatabase } from '../config/db.js';
 import { signToken } from '../middleware/authMiddleware.js';
 import { DEMO_USERS, IN_MEMORY_USERS, IN_MEMORY_EXPERTS } from '../config/demoUsers.js';
 import { ApiError, asyncHandler, sendSuccess } from '../utils/http.js';
@@ -39,6 +40,15 @@ export const register = asyncHandler(async (req, res) => {
   const validRoles = ['customer', 'farmer', 'expert'];
   const normalizedRole = validRoles.includes(role) ? role : 'customer';
   const normalizedEmail = email.trim().toLowerCase();
+
+  // Ensure DB connection is active
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Auth] Database connect retry warning:', err.message);
+    }
+  }
 
   // Check in-memory user registry first
   const existingInMemory = IN_MEMORY_USERS.find(
@@ -201,6 +211,15 @@ export const login = asyncHandler(async (req, res) => {
   const normalizedEmail = email.trim().toLowerCase();
   let user = null;
   let isDbUser = false;
+
+  // Ensure DB connection is active
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Auth] Database connect retry warning:', err.message);
+    }
+  }
 
   // 1. If database is connected, search User collection
   if (mongoose.connection.readyState === 1) {
