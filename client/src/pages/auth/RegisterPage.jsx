@@ -225,6 +225,36 @@ export default function RegisterPage() {
           </div>
 
           {/* Role-Specific Fields */}
+          {role === 'customer' && (
+            <div className="space-y-3 rounded-2xl border border-blue-100 bg-blue-50/40 p-4">
+              <span className="text-xs font-bold text-blue-950 uppercase tracking-wider">
+                Customer Location &amp; Delivery Details
+              </span>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">City / District</label>
+                  <input
+                    type="text"
+                    value={form.location}
+                    onChange={(e) => setForm({ ...form, location: e.target.value })}
+                    placeholder="e.g. Pune, Maharashtra / Portland, OR"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Delivery Address / Street</label>
+                  <input
+                    type="text"
+                    value={form.street || ''}
+                    onChange={(e) => setForm({ ...form, street: e.target.value })}
+                    placeholder="e.g. 742 Evergreen Terrace"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
+
           {role === 'farmer' && (
             <div className="space-y-3 rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4">
               <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">

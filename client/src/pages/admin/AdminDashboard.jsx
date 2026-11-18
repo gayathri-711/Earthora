@@ -2,21 +2,30 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   BarChart3,
   BookOpen,
+  Building,
   Check,
   CheckCircle2,
   Clock,
   Cpu,
+  Download,
+  ExternalLink,
+  Eye,
   Layers,
+  Mail,
+  MapPin,
   MessageSquare,
   Package,
+  Phone,
   Plus,
   Radio,
+  Search,
   ShieldCheck,
   Sprout,
   Trash2,
   UserCheck,
   Users,
   Wheat,
+  X,
   XCircle,
 } from 'lucide-react';
 import {
@@ -117,6 +126,88 @@ export default function AdminDashboard() {
   ]);
   const [expertFilter, setExpertFilter] = useState('all');
 
+  const [users, setUsers] = useState([
+    {
+      _id: 'usr-1',
+      name: 'Claire Bennett',
+      email: 'customer@earthora.io',
+      role: 'customer',
+      phone: '+1 555 010 2233',
+      address: {
+        street: '742 Evergreen Terrace',
+        city: 'Portland',
+        state: 'OR',
+        postalCode: '97205',
+        country: 'USA',
+      },
+      isActive: true,
+      createdAt: '2026-11-01T10:00:00.000Z',
+    },
+    {
+      _id: 'usr-2',
+      name: 'Elena Vance',
+      email: 'farmer@earthora.io',
+      role: 'farmer',
+      phone: '+1 555 014 8899',
+      organization: 'Green Valley Regenerative Farm',
+      address: { city: 'Sonoma County', state: 'CA', country: 'USA' },
+      isActive: true,
+      createdAt: '2026-11-02T11:30:00.000Z',
+    },
+    {
+      _id: 'usr-3',
+      name: 'Marcus Thorne',
+      email: 'marcus@earthora.io',
+      role: 'farmer',
+      phone: '+1 555 019 4411',
+      organization: 'Sunridge Agro-Ecosystems',
+      address: { city: 'Willamette Valley', state: 'OR', country: 'USA' },
+      isActive: true,
+      createdAt: '2026-11-03T14:15:00.000Z',
+    },
+    {
+      _id: 'usr-4',
+      name: 'Dr. Aris Thorne',
+      email: 'expert@earthora.io',
+      role: 'expert',
+      phone: '+1 555 017 9900',
+      title: 'Principal Soil Microbiologist',
+      organization: 'Earthora Agronomy Advisory',
+      address: { city: 'Davis', state: 'CA', country: 'USA' },
+      isApproved: true,
+      approvalStatus: 'approved',
+      isActive: true,
+      createdAt: '2026-11-04T09:00:00.000Z',
+    },
+    {
+      _id: 'usr-5',
+      name: 'Sofia Al-Mansoor',
+      email: 'sofia@earthora.io',
+      role: 'expert',
+      phone: '+1 555 018 7744',
+      title: 'Precision Irrigation Engineer',
+      organization: 'Global Smart Water Systems',
+      address: { city: 'Fresno', state: 'CA', country: 'USA' },
+      isApproved: true,
+      approvalStatus: 'approved',
+      isActive: true,
+      createdAt: '2026-11-05T16:45:00.000Z',
+    },
+    {
+      _id: 'usr-6',
+      name: 'Earthora Admin',
+      email: 'admin@earthora.io',
+      role: 'admin',
+      phone: '+1 800 555 0194',
+      organization: 'EARTHORA Headquarters',
+      isActive: true,
+      createdAt: '2026-10-25T08:00:00.000Z',
+    },
+  ]);
+  const [userRoleFilter, setUserRoleFilter] = useState('all');
+  const [userSearchTerm, setUserSearchTerm] = useState('');
+  const [selectedUserDetail, setSelectedUserDetail] = useState(null);
+
   const [articles, setArticles] = useState([
     {
       _id: 'art-1',
@@ -155,13 +246,14 @@ export default function AdminDashboard() {
 
   const loadAll = useCallback(async () => {
     try {
-      const [ovRes, ordRes, prodRes, frmRes, expRes, msgRes] = await Promise.all([
+      const [ovRes, ordRes, prodRes, frmRes, expRes, msgRes, usrRes] = await Promise.all([
         api.get('/admin/overview'),
         api.get('/admin/orders'),
         api.get('/products?limit=100'),
         api.get('/admin/farmers'),
         api.get('/admin/experts'),
         api.get('/admin/messages'),
+        api.get('/admin/users'),
       ]);
       if (ovRes.data.data?.stats) setOverview(ovRes.data.data);
       if (ordRes.data.data?.orders?.length > 0) setOrders(ordRes.data.data.orders);
@@ -169,6 +261,7 @@ export default function AdminDashboard() {
       if (frmRes.data.data?.farmers?.length > 0) setFarmers(frmRes.data.data.farmers);
       if (expRes.data.data?.experts?.length > 0) setExperts(expRes.data.data.experts);
       if (msgRes.data.data?.messages?.length > 0) setMessages(msgRes.data.data.messages);
+      if (usrRes.data.data?.users?.length > 0) setUsers(usrRes.data.data.users);
     } catch {
       // Fallback to local default data
     }
@@ -232,12 +325,52 @@ export default function AdminDashboard() {
     showToast('Knowledge Hub guide published!', 'success');
   };
 
+  const exportUsersCSV = () => {
+    const headers = ['ID', 'Name', 'Email', 'Role', 'Phone', 'City', 'State', 'Country', 'Street', 'Organization', 'Status', 'CreatedAt'];
+    const rows = filteredUsers.map((u) => [
+      u._id,
+      `"${u.name || ''}"`,
+      u.email,
+      u.role,
+      `"${u.phone || ''}"`,
+      `"${u.address?.city || u.location || ''}"`,
+      `"${u.address?.state || ''}"`,
+      `"${u.address?.country || ''}"`,
+      `"${u.address?.street || ''}"`,
+      `"${u.organization || u.title || u.farmName || ''}"`,
+      u.approvalStatus || (u.isActive ? 'Active' : 'Inactive'),
+      u.createdAt || '',
+    ]);
+    const csvContent = 'data:text/csv;charset=utf-8,' + [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `earthora_users_customers_${new Date().toISOString().slice(0, 10)}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    showToast('Customer & user database records exported to CSV!', 'success');
+  };
+
+  const filteredUsers = users.filter((u) => {
+    const matchesRole = userRoleFilter === 'all' || u.role === userRoleFilter;
+    const term = userSearchTerm.toLowerCase().trim();
+    if (!term) return matchesRole;
+    const nameMatch = (u.name || '').toLowerCase().includes(term);
+    const emailMatch = (u.email || '').toLowerCase().includes(term);
+    const phoneMatch = (u.phone || '').toLowerCase().includes(term);
+    const cityMatch = (u.address?.city || u.location || '').toLowerCase().includes(term);
+    const orgMatch = (u.organization || u.farmName || u.title || '').toLowerCase().includes(term);
+    return matchesRole && (nameMatch || emailMatch || phoneMatch || cityMatch || orgMatch);
+  });
+
   const pendingExpertCount = experts.filter(
     (e) => e.approvalStatus === 'pending' || !e.verified
   ).length;
 
   const dynamicTabs = [
     { id: 'overview', label: 'Overview & Analytics', icon: BarChart3 },
+    { id: 'users', label: 'Customers & Users DB', icon: Users, badge: users.length > 0 ? users.length : null },
     { id: 'orders', label: 'Orders & Logistics', icon: Package },
     { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
     { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
@@ -330,6 +463,249 @@ export default function AdminDashboard() {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Customers & Users Master Database Tab */}
+      {activeTab === 'users' && (
+        <div className="space-y-6">
+          {/* Top Metric Cards */}
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="card-surface p-5 border border-blue-200 bg-gradient-to-br from-blue-50/50 to-white shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-blue-900">Total Customers</span>
+                <span className="rounded-xl bg-blue-100 p-2 text-blue-700">
+                  <Users className="h-5 w-5" />
+                </span>
+              </div>
+              <p className="mt-3 font-heading text-3xl font-extrabold text-blue-950">
+                {users.filter((u) => u.role === 'customer').length}
+              </p>
+              <p className="mt-1 text-[11px] text-blue-700">Registered retail &amp; commercial buyers</p>
+            </div>
+
+            <div className="card-surface p-5 border border-emerald-200 bg-gradient-to-br from-emerald-50/50 to-white shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-emerald-900">Farmers &amp; Producers</span>
+                <span className="rounded-xl bg-emerald-100 p-2 text-emerald-700">
+                  <Sprout className="h-5 w-5" />
+                </span>
+              </div>
+              <p className="mt-3 font-heading text-3xl font-extrabold text-emerald-950">
+                {users.filter((u) => u.role === 'farmer').length}
+              </p>
+              <p className="mt-1 text-[11px] text-emerald-700">Registered agro-ecosystem stewards</p>
+            </div>
+
+            <div className="card-surface p-5 border border-amber-200 bg-gradient-to-br from-amber-50/50 to-white shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-amber-900">Agricultural Experts</span>
+                <span className="rounded-xl bg-amber-100 p-2 text-amber-700">
+                  <UserCheck className="h-5 w-5" />
+                </span>
+              </div>
+              <p className="mt-3 font-heading text-3xl font-extrabold text-amber-950">
+                {users.filter((u) => u.role === 'expert').length}
+              </p>
+              <p className="mt-1 text-[11px] text-amber-700">Accredited agronomists &amp; soil scientists</p>
+            </div>
+
+            <div className="card-surface p-5 border border-earthora-sand/80 bg-white shadow-sm">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-bold uppercase tracking-wider text-earthora-forest">Total System Accounts</span>
+                <span className="rounded-xl bg-earthora-ivory p-2 text-earthora-forest">
+                  <Layers className="h-5 w-5" />
+                </span>
+              </div>
+              <p className="mt-3 font-heading text-3xl font-extrabold text-earthora-forest">
+                {users.length}
+              </p>
+              <p className="mt-1 text-[11px] text-earthora-muted">Active database user profiles</p>
+            </div>
+          </div>
+
+          {/* Database Control Bar */}
+          <div className="card-surface p-6 border border-earthora-sand/80 shadow-sm space-y-4">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 className="font-heading text-lg font-bold text-earthora-forest flex items-center gap-2">
+                  <Users className="h-5 w-5 text-earthora-olive" />
+                  Customer &amp; User Master Database
+                </h3>
+                <p className="text-xs text-earthora-muted">
+                  Full directory of all accounts registered on the Earthora platform with complete address, contact, and credential telemetry.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={exportUsersCSV}
+                className="btn-secondary py-2 px-4 text-xs font-bold flex items-center gap-2 self-start sm:self-auto shrink-0 shadow-2xs"
+              >
+                <Download className="h-4 w-4" />
+                Export CSV Records
+              </button>
+            </div>
+
+            {/* Filter Pills & Search Input */}
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex flex-wrap gap-1.5 text-xs">
+                {[
+                  { id: 'all', label: `All Accounts (${users.length})` },
+                  { id: 'customer', label: `Customers (${users.filter((u) => u.role === 'customer').length})` },
+                  { id: 'farmer', label: `Farmers (${users.filter((u) => u.role === 'farmer').length})` },
+                  { id: 'expert', label: `Experts (${users.filter((u) => u.role === 'expert').length})` },
+                  { id: 'admin', label: `Admins (${users.filter((u) => u.role === 'admin').length})` },
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    type="button"
+                    onClick={() => setUserRoleFilter(f.id)}
+                    className={`rounded-lg px-3 py-1.5 font-bold transition-all text-xs ${
+                      userRoleFilter === f.id
+                        ? 'bg-earthora-forest text-white shadow-xs'
+                        : 'bg-earthora-ivory/80 text-earthora-charcoal hover:bg-earthora-sand/50'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="relative w-full sm:w-72">
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-earthora-muted" />
+                <input
+                  type="text"
+                  value={userSearchTerm}
+                  onChange={(e) => setUserSearchTerm(e.target.value)}
+                  placeholder="Search by name, email, city, phone..."
+                  className="input-field pl-9 pr-3 py-1.5 text-xs w-full"
+                />
+              </div>
+            </div>
+
+            {/* Users Directory Table */}
+            <div className="overflow-x-auto rounded-2xl border border-earthora-sand/60">
+              <table className="w-full text-left text-xs">
+                <thead className="border-b border-earthora-sand/60 bg-earthora-ivory/60 text-earthora-muted uppercase font-bold text-[10px] tracking-wider">
+                  <tr>
+                    <th className="p-3.5">User / Contact</th>
+                    <th className="p-3.5">Role</th>
+                    <th className="p-3.5">Phone &amp; Email</th>
+                    <th className="p-3.5">Location / Address</th>
+                    <th className="p-3.5">Organization / Discipline</th>
+                    <th className="p-3.5">Account Status</th>
+                    <th className="p-3.5 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-earthora-sand/40">
+                  {filteredUsers.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="p-8 text-center text-xs text-earthora-muted">
+                        No user records found matching "{userSearchTerm}".
+                      </td>
+                    </tr>
+                  ) : (
+                    filteredUsers.map((u) => {
+                      const initials = (u.name || 'User')
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .toUpperCase()
+                        .slice(0, 2);
+
+                      const roleBadge = {
+                        customer: 'border-blue-200 bg-blue-50 text-blue-700',
+                        farmer: 'border-emerald-200 bg-emerald-50 text-emerald-800',
+                        expert: 'border-amber-200 bg-amber-50 text-amber-800',
+                        admin: 'border-purple-200 bg-purple-50 text-purple-700',
+                      }[u.role] || 'border-gray-200 bg-gray-50 text-gray-700';
+
+                      const formattedLoc = u.address?.city
+                        ? `${u.address.city}${u.address.state ? `, ${u.address.state}` : ''}${u.address.country ? ` (${u.address.country})` : ''}`
+                        : (u.location || 'Location Not Specified');
+
+                      return (
+                        <tr key={u._id} className="hover:bg-earthora-ivory/30 transition-colors">
+                          <td className="p-3.5">
+                            <div className="flex items-center gap-3">
+                              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-earthora-forest font-heading font-extrabold text-earthora-mint text-xs">
+                                {initials}
+                              </div>
+                              <div>
+                                <span className="font-bold text-earthora-forest block text-xs">{u.name}</span>
+                                <span className="text-[10px] text-earthora-muted font-mono">{u._id?.slice(-8) || u._id}</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-3.5">
+                            <span className={`inline-flex items-center rounded-full border px-2.5 py-0.5 text-[10px] font-bold capitalize ${roleBadge}`}>
+                              {u.role}
+                            </span>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="space-y-0.5">
+                              <a href={`mailto:${u.email}`} className="text-earthora-forest hover:underline block font-medium">
+                                {u.email}
+                              </a>
+                              {u.phone ? (
+                                <a href={`tel:${u.phone}`} className="text-earthora-muted text-[11px] hover:text-earthora-forest block">
+                                  {u.phone}
+                                </a>
+                              ) : (
+                                <span className="text-[10px] text-earthora-sand-dark">No phone</span>
+                              )}
+                            </div>
+                          </td>
+                          <td className="p-3.5">
+                            <div className="flex items-start gap-1.5 text-earthora-charcoal max-w-[200px]">
+                              <MapPin className="h-3.5 w-3.5 text-earthora-olive shrink-0 mt-0.5" />
+                              <span className="line-clamp-2 text-[11px] leading-tight">
+                                {u.address?.street ? `${u.address.street}, ` : ''}{formattedLoc}
+                              </span>
+                            </div>
+                          </td>
+                          <td className="p-3.5">
+                            <span className="text-[11px] text-earthora-charcoal font-medium block">
+                              {u.organization || u.title || u.farmName || (u.role === 'customer' ? 'Individual Consumer' : '—')}
+                            </span>
+                          </td>
+                          <td className="p-3.5">
+                            {u.role === 'expert' && (u.approvalStatus === 'pending' || !u.isApproved) ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">
+                                <Clock className="h-3 w-3" />
+                                Pending Review
+                              </span>
+                            ) : u.isActive ? (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800">
+                                <CheckCircle2 className="h-3 w-3" />
+                                Active
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-bold text-red-800">
+                                <XCircle className="h-3 w-3" />
+                                Inactive
+                              </span>
+                            )}
+                          </td>
+                          <td className="p-3.5 text-right">
+                            <button
+                              type="button"
+                              onClick={() => setSelectedUserDetail(u)}
+                              className="rounded-lg border border-earthora-sand bg-white px-2.5 py-1 text-[11px] font-bold text-earthora-forest hover:bg-earthora-forest hover:text-white transition-all shadow-2xs inline-flex items-center gap-1"
+                            >
+                              <Eye className="h-3 w-3" />
+                              Details
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -769,6 +1145,95 @@ export default function AdminDashboard() {
                 <p className="text-xs text-earthora-charcoal mt-2 leading-relaxed">{m.message}</p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* User Record Detail Modal */}
+      {selectedUserDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs animate-fade-in">
+          <div className="card-surface w-full max-w-lg border border-earthora-sand p-6 shadow-2xl relative sm:p-8">
+            <button
+              type="button"
+              onClick={() => setSelectedUserDetail(null)}
+              className="absolute right-4 top-4 rounded-xl p-1.5 text-earthora-muted hover:bg-earthora-ivory hover:text-earthora-forest transition"
+            >
+              <X className="h-5 w-5" />
+            </button>
+
+            <div className="flex items-center gap-3.5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-earthora-forest font-heading text-lg font-extrabold text-earthora-mint">
+                {(selectedUserDetail.name || 'User').slice(0, 2).toUpperCase()}
+              </div>
+              <div>
+                <h4 className="font-heading text-lg font-extrabold text-earthora-forest">
+                  {selectedUserDetail.name}
+                </h4>
+                <span className="inline-flex items-center rounded-full border border-earthora-sand bg-earthora-ivory px-2 py-0.5 text-[10px] font-bold capitalize text-earthora-forest">
+                  {selectedUserDetail.role} Account
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 space-y-3 rounded-2xl border border-earthora-sand/60 bg-earthora-ivory/40 p-4 text-xs">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Email</span>
+                  <p className="font-semibold text-earthora-forest">{selectedUserDetail.email}</p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Phone</span>
+                  <p className="font-semibold text-earthora-charcoal">{selectedUserDetail.phone || 'Not provided'}</p>
+                </div>
+              </div>
+
+              <div className="border-t border-earthora-sand/50 pt-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Delivery Address / Location</span>
+                <p className="font-semibold text-earthora-charcoal mt-0.5">
+                  {selectedUserDetail.address?.street ? `${selectedUserDetail.address.street}, ` : ''}
+                  {selectedUserDetail.address?.city || selectedUserDetail.location || 'City not specified'}
+                  {selectedUserDetail.address?.state ? `, ${selectedUserDetail.address.state}` : ''}
+                  {selectedUserDetail.address?.postalCode ? ` - ${selectedUserDetail.address.postalCode}` : ''}
+                  {selectedUserDetail.address?.country ? `, ${selectedUserDetail.address.country}` : ''}
+                </p>
+              </div>
+
+              <div className="border-t border-earthora-sand/50 pt-2 grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Organization / Farm</span>
+                  <p className="font-semibold text-earthora-charcoal">{selectedUserDetail.organization || selectedUserDetail.farmName || '—'}</p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Title / Discipline</span>
+                  <p className="font-semibold text-earthora-charcoal">{selectedUserDetail.title || selectedUserDetail.fieldOfStudy || '—'}</p>
+                </div>
+              </div>
+
+              <div className="border-t border-earthora-sand/50 pt-2 grid grid-cols-2 gap-2">
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Account Status</span>
+                  <p className="font-semibold text-earthora-forest capitalize">
+                    {selectedUserDetail.approvalStatus || (selectedUserDetail.isActive ? 'Active' : 'Deactivated')}
+                  </p>
+                </div>
+                <div>
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-muted">Registration Timestamp</span>
+                  <p className="font-semibold text-earthora-charcoal">
+                    {selectedUserDetail.createdAt ? new Date(selectedUserDetail.createdAt).toLocaleString() : 'System Seeded'}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setSelectedUserDetail(null)}
+                className="btn-accent py-2 px-5 text-xs font-bold"
+              >
+                Close Record
+              </button>
+            </div>
           </div>
         </div>
       )}

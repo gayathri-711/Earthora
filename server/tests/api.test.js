@@ -262,3 +262,20 @@ test('Agriculture expert registration requires admin acceptance before login', a
   assert.ok(approvedLogin.body.data.token);
   assert.equal(approvedLogin.body.data.user.role, 'expert');
 });
+
+test('Admin can query all registered customers, experts, and farmers from User database', async () => {
+  const res = await request(app)
+    .get('/api/v1/admin/users')
+    .set('Authorization', `Bearer ${adminToken}`);
+  assert.equal(res.status, 200);
+  assert.ok(Array.isArray(res.body.data.users));
+  assert.ok(res.body.data.users.length >= 4);
+
+  const customerUser = res.body.data.users.find((u) => u.role === 'customer');
+  assert.ok(customerUser, 'Customer record exists');
+  assert.ok(customerUser.email);
+
+  const expertUser = res.body.data.users.find((u) => u.role === 'expert');
+  assert.ok(expertUser, 'Expert record exists');
+  assert.ok(expertUser.email);
+});

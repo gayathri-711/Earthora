@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 
+// Disable command buffering so calls don't hang if MongoDB connection is pending or unavailable
+mongoose.set('bufferCommands', false);
+
 let memoryServer = null;
 
 /**
@@ -9,7 +12,12 @@ let memoryServer = null;
  * if MONGO_URI environment variable is not configured.
  */
 export async function connectDatabase(mongoUri) {
-  let uri = mongoUri?.trim();
+  // Reuse existing connection if already connected (vital for serverless container warm executions)
+  if (mongoose.connection.readyState === 1) {
+    return { uri: mongoUri, usingMemory: false };
+  }
+
+  let uri = mongoUri?.trim() || process.env.MONGO_URI?.trim();
   let usingMemory = false;
 
   // On Vercel / serverless: do NOT attempt to spawn MongoMemoryServer binary
@@ -18,7 +26,7 @@ export async function connectDatabase(mongoUri) {
 
   if (!uri) {
     if (isServerless) {
-      console.warn('[DB] Running on Vercel without MONGO_URI. Fallback demo mode active.');
+      console.warn('[DB] Running on Vercel without MONGO_URI. Fallback demo mode active. Add MONGO_URI to Vercel Project Settings for permanent database records.');
       return { uri: null, usingMemory: true };
     }
 
@@ -37,6 +45,7 @@ export async function connectDatabase(mongoUri) {
     try {
       await mongoose.connect(uri, {
         serverSelectionTimeoutMS: 5000,
+        maxPoolSize: 10,
       });
       console.log('[DB] Connected successfully to MongoDB:', usingMemory ? 'Embedded In-Memory' : 'Remote MongoDB');
     } catch (err) {

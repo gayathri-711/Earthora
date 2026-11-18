@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import Article from '../models/Article.js';
 import Category from '../models/Category.js';
 import { Consultation, Question } from '../models/Consultation.js';
@@ -12,6 +13,7 @@ import SoilTest from '../models/SoilTest.js';
 import User from '../models/User.js';
 
 export async function seedIfEmpty() {
+  if (mongoose.connection.readyState !== 1) return;
   const userCount = await User.countDocuments();
   if (userCount > 0) return;
 

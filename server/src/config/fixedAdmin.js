@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 
@@ -15,6 +16,7 @@ export const FIXED_ADMIN_CREDENTIALS = {
  * is active, approved, and has the designated fixed credentials.
  */
 export async function ensureFixedAdmin() {
+  if (mongoose.connection.readyState !== 1) return;
   try {
     const adminEmails = [
       FIXED_ADMIN_CREDENTIALS.email.toLowerCase(),

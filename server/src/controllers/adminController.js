@@ -114,16 +114,26 @@ export const updateOrderStatus = asyncHandler(async (req, res) => {
 });
 
 export const getAllUsers = asyncHandler(async (_req, res) => {
-  if (mongoose.connection.readyState !== 1) {
-    const safeUsers = IN_MEMORY_USERS.map((u) => {
-      const copy = { ...u };
-      delete copy.password;
-      return copy;
-    });
-    return sendSuccess(res, { users: safeUsers });
+  let dbUsers = [];
+  if (mongoose.connection.readyState === 1) {
+    try {
+      dbUsers = await User.find().select('-password').sort({ createdAt: -1 });
+    } catch (err) {
+      console.warn('[Admin] getAllUsers DB error:', err.message);
+    }
   }
-  const users = await User.find().sort({ createdAt: -1 });
-  sendSuccess(res, { users });
+
+  const existingEmails = new Set(dbUsers.map((u) => u.email.toLowerCase()));
+  const extraInMem = IN_MEMORY_USERS.filter(
+    (u) => !existingEmails.has(u.email.toLowerCase())
+  ).map((u) => {
+    const copy = { ...u };
+    delete copy.password;
+    return copy;
+  });
+
+  const combined = [...dbUsers, ...extraInMem];
+  sendSuccess(res, { users: combined });
 });
 
 export const getAllFarmers = asyncHandler(async (_req, res) => {
@@ -229,10 +239,23 @@ export const approveExpert = asyncHandler(async (req, res) => {
         await expert.save();
 
         if (expert.user) {
-          await User.findByIdAndUpdate(expert.user, {
-            isApproved: true,
-            approvalStatus: 'approved',
-          });
+          const userDoc = await User.findByIdAndUpdate(
+            expert.user,
+            {
+              isApproved: true,
+              approvalStatus: 'approved',
+            },
+            { new: true }
+          );
+          if (userDoc) {
+            const inMem = IN_MEMORY_USERS.find(
+              (u) => u.email.toLowerCase() === userDoc.email.toLowerCase()
+            );
+            if (inMem) {
+              inMem.isApproved = true;
+              inMem.approvalStatus = 'approved';
+            }
+          }
         }
 
         updated = await Expert.findById(expert._id).populate(

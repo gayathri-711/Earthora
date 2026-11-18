@@ -66,6 +66,16 @@ export const register = asyncHandler(async (req, res) => {
   const isApproved = !isExpert;
   const approvalStatus = isExpert ? 'pending' : 'approved';
 
+  const userAddress = typeof req.body.address === 'object' && req.body.address !== null
+    ? req.body.address
+    : {
+        street: req.body.street || (typeof req.body.address === 'string' ? req.body.address : ''),
+        city: req.body.city || location || '',
+        state: req.body.state || '',
+        postalCode: req.body.postalCode || '',
+        country: req.body.country || 'India',
+      };
+
   const generatedUserId = `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
   let createdUser = null;
 
@@ -78,6 +88,7 @@ export const register = asyncHandler(async (req, res) => {
         password,
         role: normalizedRole,
         phone: phone || '',
+        address: userAddress,
         organization: organization || (normalizedRole === 'farmer' ? farmName : ''),
         title: title || (isExpert ? (fieldOfStudy || 'Agricultural Specialist') : ''),
         isApproved,
@@ -90,7 +101,7 @@ export const register = asyncHandler(async (req, res) => {
           user: createdUser._id,
           name: createdUser.name,
           farmName: farmName || `${createdUser.name}'s Smart Farm`,
-          location: location || 'Sonoma County, CA',
+          location: location || userAddress.city || 'Sonoma County, CA',
           specialty: specialty || 'Regenerative Agriculture',
           totalAcres: Number(totalAcres || 25),
           verified: true,
@@ -102,7 +113,7 @@ export const register = asyncHandler(async (req, res) => {
           title: title || 'Agricultural Specialist',
           fieldOfStudy: fieldOfStudy || 'Soil Science & Precision Agriculture',
           organization: organization || 'Independent Agronomy Consultant',
-          location: location || 'California, USA',
+          location: location || userAddress.city || 'California, USA',
           experienceYears: Number(experienceYears || 5),
           consultationFee: Number(consultationFee || 75),
           verified: false,
@@ -123,6 +134,7 @@ export const register = asyncHandler(async (req, res) => {
     password,
     role: normalizedRole,
     phone: phone || '',
+    address: userAddress,
     organization: organization || (normalizedRole === 'farmer' ? farmName : ''),
     title: title || (isExpert ? (fieldOfStudy || 'Agricultural Specialist') : ''),
     isApproved,
@@ -258,21 +270,23 @@ export const login = asyncHandler(async (req, res) => {
 
   // 4. Gate Agriculture Expert logins behind administrator approval
   if (user.role === 'expert') {
-    // Check latest approvalStatus from IN_MEMORY_USERS or DB
     const memStatus = IN_MEMORY_USERS.find((u) => u.email.toLowerCase() === normalizedEmail);
-    const effectiveStatus = memStatus?.approvalStatus || user.approvalStatus;
-    const effectiveApproved = memStatus ? memStatus.isApproved : user.isApproved;
-
-    if (effectiveStatus === 'pending' || !effectiveApproved) {
-      throw new ApiError(
-        403,
-        'Your Agriculture Expert account is currently pending administrator approval. Please wait for an administrator to review and accept your profile before logging in.'
-      );
-    }
-    if (effectiveStatus === 'rejected') {
+    const isRejected = user.approvalStatus === 'rejected' || memStatus?.approvalStatus === 'rejected';
+    if (isRejected) {
       throw new ApiError(
         403,
         'Your Agriculture Expert registration application was not approved by the administrator.'
+      );
+    }
+
+    const isApproved = isDbUser
+      ? (user.isApproved && user.approvalStatus === 'approved')
+      : (memStatus ? (memStatus.isApproved && memStatus.approvalStatus === 'approved') : (user.isApproved && user.approvalStatus === 'approved'));
+
+    if (!isApproved) {
+      throw new ApiError(
+        403,
+        'Your Agriculture Expert account is currently pending administrator approval. Please wait for an administrator to review and accept your profile before logging in.'
       );
     }
   }
