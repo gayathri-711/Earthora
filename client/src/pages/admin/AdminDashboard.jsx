@@ -788,9 +788,9 @@ export default function AdminDashboard() {
     { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
     {
       id: 'experts',
-      label: 'Expert Approvals',
+      label: 'Add & Manage Experts',
       icon: UserCheck,
-      badge: pendingExpertCount > 0 ? pendingExpertCount : null,
+      badge: experts.length > 0 ? experts.length : null,
     },
     { id: 'knowledge', label: 'Knowledge Hub Articles', icon: BookOpen },
     { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
@@ -838,6 +838,40 @@ export default function AdminDashboard() {
                 {products.length}
               </p>
               <p className="mt-1 text-xs text-amber-700">{overview.stats.lowStockCount || 2} low-stock warnings</p>
+            </div>
+          </div>
+
+          {/* Quick Admin Actions (Add Expert & Manage Hub) */}
+          <div className="card-surface p-5 border border-emerald-300/80 bg-gradient-to-r from-emerald-50/70 via-white to-earthora-sand/30 shadow-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-earthora-forest text-white shadow-sm shrink-0">
+                <UserCheck className="h-6 w-6 text-earthora-mint" />
+              </div>
+              <div>
+                <h4 className="font-heading text-base font-bold text-earthora-forest">
+                  Expert Agronomist Provisioning
+                </h4>
+                <p className="text-xs text-earthora-muted mt-0.5">
+                  Create dedicated login credentials for consulting agronomists, soil microbiologists, and crop advisors to enable immediate portal access.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsAddExpertOpen(true)}
+                className="btn-accent py-2.5 px-4 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-earthora-mint/20"
+              >
+                <Plus className="h-4 w-4" />
+                + Add Expert
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('experts')}
+                className="btn-outline py-2.5 px-4 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap"
+              >
+                View Experts Directory ({experts.length})
+              </button>
             </div>
           </div>
 
@@ -951,14 +985,24 @@ export default function AdminDashboard() {
                 </p>
               </div>
 
-              <button
-                type="button"
-                onClick={exportUsersCSV}
-                className="btn-secondary py-2 px-4 text-xs font-bold flex items-center gap-2 self-start sm:self-auto shrink-0 shadow-2xs"
-              >
-                <Download className="h-4 w-4" />
-                Export CSV Records
-              </button>
+              <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsAddExpertOpen(true)}
+                  className="btn-accent py-2 px-4 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-earthora-mint/20"
+                >
+                  <Plus className="h-4 w-4" />
+                  + Add Expert
+                </button>
+                <button
+                  type="button"
+                  onClick={exportUsersCSV}
+                  className="btn-secondary py-2 px-4 text-xs font-bold flex items-center gap-2 shadow-2xs"
+                >
+                  <Download className="h-4 w-4" />
+                  Export CSV Records
+                </button>
+              </div>
             </div>
 
             {/* Filter Pills & Search Input */}
@@ -2099,10 +2143,10 @@ export default function AdminDashboard() {
               <div>
                 <h3 className="font-heading text-lg font-bold text-earthora-forest flex items-center gap-2">
                   <UserCheck className="h-5 w-5 text-earthora-olive" />
-                  Agriculture Expert Verification &amp; Access Control
+                  Agriculture Experts &amp; Agronomist Management
                 </h3>
                 <p className="text-xs text-earthora-muted mt-0.5">
-                  Review agronomist registrations, verify academic credentials &amp; consultation fees, and accept or reject account access.
+                  Directly provision and manage accredited agronomists, soil microbiologists, and crop advisors with instant login credentials.
                 </p>
               </div>
 
@@ -2110,10 +2154,10 @@ export default function AdminDashboard() {
                 <button
                   type="button"
                   onClick={() => setIsAddExpertOpen(true)}
-                  className="btn-primary py-2 px-3.5 text-xs flex items-center gap-1.5 whitespace-nowrap shadow-sm"
+                  className="btn-accent py-2 px-4 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-earthora-mint/20"
                 >
                   <Plus className="h-4 w-4" />
-                  Create Expert Account
+                  + Add Expert
                 </button>
 
                 {/* Status Filter */}
