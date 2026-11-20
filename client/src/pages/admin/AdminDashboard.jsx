@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
+  ArrowLeft,
+  Award,
   BarChart3,
   BookOpen,
   Boxes,
   Building,
   Calendar,
+  Camera,
   Check,
   CheckCircle,
   CheckCircle2,
@@ -26,10 +29,13 @@ import {
   Radio,
   Search,
   ShieldCheck,
+  Sparkles,
   Sprout,
   Trash2,
   Truck,
+  Upload,
   UserCheck,
+  UserPlus,
   Users,
   Wheat,
   X,
@@ -278,18 +284,53 @@ export default function AdminDashboard() {
   const [expertFilter, setExpertFilter] = useState('all');
   const [isAddExpertOpen, setIsAddExpertOpen] = useState(false);
   const [addExpertLoading, setAddExpertLoading] = useState(false);
+
+  const PRESET_EXPERT_AVATARS = [
+    { label: 'Dr. Aris Thorne', url: '/assets/img/experts/expert-aris-thorne.jpg' },
+    { label: 'Sofia Al-Mansoor', url: '/assets/img/experts/expert-sofia-almansoor.jpg' },
+    { label: 'Dr. Julian Morales', url: '/assets/img/experts/expert-julian-morales.jpg' },
+    { label: 'Maya Lin', url: '/assets/img/experts/expert-maya-lin.jpg' },
+  ];
+
   const [newExpertForm, setNewExpertForm] = useState({
     name: '',
     email: '',
     password: '',
     phone: '',
     title: 'Senior Agronomist',
+    qualification: 'Ph.D / M.Sc in Agronomy & Soil Science',
+    specialization: 'Soil Microbiology & Regenerative Systems',
     fieldOfStudy: 'Soil Science & Precision Agriculture',
     organization: 'Earthora Agronomy Advisory',
     location: 'Bangalore, Karnataka',
     experienceYears: 8,
     consultationFee: 1500,
+    bio: 'Accredited agronomist specializing in organic crop rotation, mycorrhizal rhizosphere health, and biological pest control.',
+    image: '/assets/img/experts/expert-aris-thorne.jpg',
+    status: 'active',
   });
+
+  const handlePhotoUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      showToast('Please upload a valid image file (PNG, JPG, WEBP)', 'error');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      showToast('Photo size exceeds 5MB. Please choose a smaller image.', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setNewExpertForm((prev) => ({ ...prev, image: reader.result }));
+      showToast('Expert photo uploaded and preview updated!', 'success');
+    };
+    reader.readAsDataURL(file);
+  };
 
   const [users, setUsers] = useState([
     {
@@ -457,7 +498,7 @@ export default function AdminDashboard() {
     try {
       await api.post('/admin/experts', newExpertForm);
       showToast(
-        `Expert account created for ${newExpertForm.name}! Login credentials are now active.`,
+        `Expert account created for ${newExpertForm.name}! Credentials and profile photo are saved in MongoDB Atlas.`,
         'success'
       );
       setIsAddExpertOpen(false);
@@ -467,12 +508,18 @@ export default function AdminDashboard() {
         password: '',
         phone: '',
         title: 'Senior Agronomist',
+        qualification: 'Ph.D / M.Sc in Agronomy & Soil Science',
+        specialization: 'Soil Microbiology & Regenerative Systems',
         fieldOfStudy: 'Soil Science & Precision Agriculture',
         organization: 'Earthora Agronomy Advisory',
         location: 'Bangalore, Karnataka',
         experienceYears: 8,
         consultationFee: 1500,
+        bio: 'Accredited agronomist specializing in organic crop rotation, mycorrhizal rhizosphere health, and biological pest control.',
+        image: '/assets/img/experts/expert-aris-thorne.jpg',
+        status: 'active',
       });
+      setActiveTab('experts');
       loadAll();
     } catch (err) {
       showToast(err.message || 'Failed to create expert account', 'error');
@@ -779,28 +826,57 @@ export default function AdminDashboard() {
     (e) => e.approvalStatus === 'pending' || !e.verified
   ).length;
 
-  const dynamicTabs = [
-    { id: 'overview', label: 'Overview & Analytics', icon: BarChart3 },
-    { id: 'users', label: 'Customers & Users DB', icon: Users, badge: users.length > 0 ? users.length : null },
-    { id: 'orders', label: 'Customer Orders (Outbound)', icon: Package, badge: orders.length > 0 ? orders.length : null },
-    { id: 'receipts', label: 'Products Received (Inbound)', icon: Truck, badge: supplyReceipts.length > 0 ? supplyReceipts.length : null },
-    { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
-    { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
+  const adminSidebarGroups = [
     {
-      id: 'experts',
-      label: 'Add & Manage Experts',
-      icon: UserCheck,
-      badge: experts.length > 0 ? experts.length : null,
+      title: 'Console & Radar',
+      items: [
+        { id: 'overview', label: 'Overview & Radar', icon: BarChart3 },
+        { id: 'users', label: 'Customers & Users DB', icon: Users, badge: users.length > 0 ? users.length : null },
+      ],
     },
-    { id: 'knowledge', label: 'Knowledge Hub Articles', icon: BookOpen },
-    { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
+    {
+      title: 'Expert Management',
+      items: [
+        {
+          id: 'experts',
+          label: 'All Experts Directory',
+          icon: UserCheck,
+          badge: pendingExpertCount > 0 ? `${pendingExpertCount} pending` : (experts.length > 0 ? experts.length : null),
+          badgeColor: pendingExpertCount > 0 ? 'amber' : 'forest',
+        },
+        {
+          id: 'experts-add',
+          label: '+ Add New Expert',
+          icon: UserPlus,
+          badge: 'Form',
+          badgeColor: 'emerald',
+        },
+      ],
+    },
+    {
+      title: 'Commerce & Logistics',
+      items: [
+        { id: 'orders', label: 'Customer Orders (Outbound)', icon: Package, badge: orders.length > 0 ? orders.length : null },
+        { id: 'receipts', label: 'Inbound Products Received', icon: Truck, badge: supplyReceipts.length > 0 ? supplyReceipts.length : null },
+        { id: 'marketplace', label: 'Marketplace Inventory', icon: Sprout },
+      ],
+    },
+    {
+      title: 'Producers & Community',
+      items: [
+        { id: 'farmers', label: 'Farmers & Verification', icon: ShieldCheck },
+        { id: 'knowledge', label: 'Knowledge Hub Articles', icon: BookOpen },
+        { id: 'messages', label: 'Contact Messages', icon: MessageSquare },
+      ],
+    },
   ];
 
   return (
     <DashboardLayout
       title="Earthora Platform Administration"
       subtitle="Ecosystem governance, producer verifications, expert credentials, orders, and marketplace control."
-      tabs={dynamicTabs}
+      sidebar={true}
+      sidebarGroups={adminSidebarGroups}
       activeTab={activeTab}
       onTabChange={setActiveTab}
     >
@@ -859,7 +935,7 @@ export default function AdminDashboard() {
             <div className="flex items-center gap-2.5 w-full md:w-auto shrink-0">
               <button
                 type="button"
-                onClick={() => setIsAddExpertOpen(true)}
+                onClick={() => setActiveTab('experts-add')}
                 className="btn-accent py-2.5 px-4 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-earthora-mint/20"
               >
                 <Plus className="h-4 w-4" />
@@ -988,7 +1064,7 @@ export default function AdminDashboard() {
               <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
                 <button
                   type="button"
-                  onClick={() => setIsAddExpertOpen(true)}
+                  onClick={() => setActiveTab('experts-add')}
                   className="btn-accent py-2 px-4 text-xs font-bold flex items-center gap-1.5 shadow-md shadow-earthora-mint/20"
                 >
                   <Plus className="h-4 w-4" />
@@ -2153,7 +2229,7 @@ export default function AdminDashboard() {
               <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsAddExpertOpen(true)}
+                  onClick={() => setActiveTab('experts-add')}
                   className="btn-accent py-2 px-4 text-xs font-bold flex items-center gap-1.5 whitespace-nowrap shadow-md shadow-earthora-mint/20"
                 >
                   <Plus className="h-4 w-4" />
@@ -2324,6 +2400,353 @@ export default function AdminDashboard() {
                   })}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* Dedicated Add New Expert Page Tab (with Photo Upload) */}
+      {activeTab === 'experts-add' && (
+        <div className="space-y-6 max-w-4xl mx-auto">
+          {/* Top Back Action */}
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={() => setActiveTab('experts')}
+              className="inline-flex items-center gap-2 rounded-xl border border-earthora-sand bg-white px-3.5 py-2 text-xs font-bold text-earthora-forest hover:bg-earthora-sand/30 transition shadow-2xs"
+            >
+              <ArrowLeft className="h-4 w-4 text-earthora-olive" />
+              <span>Back to Experts Directory</span>
+            </button>
+
+            <div className="flex items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-100 border border-emerald-300 px-3 py-1 text-xs font-bold text-emerald-900">
+                <ShieldCheck className="h-4 w-4 text-emerald-600" />
+                Admin Direct Provisioning
+              </span>
+            </div>
+          </div>
+
+          {/* Form Card */}
+          <div className="card-surface p-6 sm:p-8 border border-earthora-sand/80 shadow-md">
+            <div className="flex items-start gap-3.5 border-b border-earthora-sand/60 pb-5">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-earthora-forest text-white shadow-sm shrink-0">
+                <UserPlus className="h-6 w-6 text-earthora-mint" />
+              </div>
+              <div>
+                <h3 className="font-heading text-xl font-black text-earthora-forest">
+                  Provision New Agricultural Expert
+                </h3>
+                <p className="text-xs text-earthora-muted mt-1">
+                  Create accredited credentials, assign agronomic specializations, and upload a verified portrait photo for instant platform login access.
+                </p>
+              </div>
+            </div>
+
+            <form onSubmit={handleCreateExpert} className="mt-6 space-y-6">
+              {/* Photo Upload Section */}
+              <div className="rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/40 p-5">
+                <div className="flex flex-col sm:flex-row items-center gap-6">
+                  {/* Photo Preview with border ring */}
+                  <div className="relative group shrink-0">
+                    <img
+                      src={newExpertForm.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+                      alt="Expert Portrait Preview"
+                      className="h-28 w-28 rounded-2xl object-cover border-2 border-emerald-500 shadow-md bg-white"
+                      onError={(err) => {
+                        err.currentTarget.onerror = null;
+                        err.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                      }}
+                    />
+                    {newExpertForm.image && (
+                      <button
+                        type="button"
+                        onClick={() => setNewExpertForm({ ...newExpertForm, image: '' })}
+                        className="absolute -top-2 -right-2 rounded-full bg-rose-600 text-white p-1 shadow-md hover:bg-rose-700 transition"
+                        title="Remove photo"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Photo Upload Actions */}
+                  <div className="flex-1 space-y-3 text-center sm:text-left w-full">
+                    <div>
+                      <h4 className="text-sm font-bold text-earthora-forest flex items-center justify-center sm:justify-start gap-1.5">
+                        <Camera className="h-4 w-4 text-emerald-600" />
+                        Expert Profile Photo / Portrait
+                      </h4>
+                      <p className="text-xs text-earthora-muted mt-0.5">
+                        Upload a photo from your computer or phone, or choose one of the curated agronomy portraits below.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2.5">
+                      <label className="btn-accent py-2 px-4 text-xs font-bold cursor-pointer inline-flex items-center gap-2 shadow-xs">
+                        <Upload className="h-4 w-4" />
+                        <span>Upload Photo File</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoUpload}
+                        />
+                      </label>
+
+                      {newExpertForm.image && (
+                        <button
+                          type="button"
+                          onClick={() => setNewExpertForm({ ...newExpertForm, image: '/assets/img/experts/expert-aris-thorne.jpg' })}
+                          className="btn-outline py-2 px-3 text-xs font-semibold"
+                        >
+                          Reset to Default
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Preset Avatars Fast Selection */}
+                    <div className="pt-2 border-t border-emerald-200/60">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-earthora-olive block mb-2">
+                        Or Pick a Curated Agronomist Portrait:
+                      </span>
+                      <div className="flex flex-wrap gap-2 justify-center sm:justify-start">
+                        {PRESET_EXPERT_AVATARS.map((av) => (
+                          <button
+                            key={av.url}
+                            type="button"
+                            onClick={() => setNewExpertForm({ ...newExpertForm, image: av.url })}
+                            className={`flex items-center gap-2 rounded-xl border p-1.5 text-xs font-semibold transition ${
+                              newExpertForm.image === av.url
+                                ? 'border-emerald-600 bg-emerald-100/80 text-emerald-950 font-bold ring-2 ring-emerald-500 shadow-xs'
+                                : 'border-earthora-sand/80 bg-white text-earthora-charcoal hover:bg-earthora-sand/30'
+                            }`}
+                          >
+                            <img
+                              src={av.url}
+                              alt={av.label}
+                              className="h-7 w-7 rounded-lg object-cover border border-earthora-sand/60"
+                            />
+                            <span className="text-[11px] pr-1">{av.label}</span>
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Personal & Login Credentials */}
+              <div className="space-y-3">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-earthora-olive">
+                  1. Login Credentials &amp; Contact Details
+                </h4>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Full Name *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newExpertForm.name}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, name: e.target.value })}
+                      placeholder="e.g. Dr. Rajeshwari Nair"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Login Email Address *</label>
+                    <input
+                      type="email"
+                      required
+                      value={newExpertForm.email}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, email: e.target.value })}
+                      placeholder="e.g. rajeshwari@earthora.io"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">
+                      Initial Login Password * (min 6 chars)
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      minLength={6}
+                      value={newExpertForm.password}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, password: e.target.value })}
+                      placeholder="••••••••"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Phone Number</label>
+                    <input
+                      type="tel"
+                      value={newExpertForm.phone}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, phone: e.target.value })}
+                      placeholder="+91 98765 43210"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Professional Qualifications */}
+              <div className="space-y-3 pt-3 border-t border-earthora-sand/60">
+                <h4 className="text-xs font-extrabold uppercase tracking-wider text-earthora-olive">
+                  2. Academic Qualifications &amp; Specialization
+                </h4>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Professional Title *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newExpertForm.title}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, title: e.target.value })}
+                      placeholder="e.g. Senior Agronomist / Soil Microbiologist"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Degree / Qualification *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newExpertForm.qualification}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, qualification: e.target.value })}
+                      placeholder="e.g. Ph.D / M.Sc in Agronomy & Soil Science"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Primary Agriculture Specialization *</label>
+                    <select
+                      value={newExpertForm.specialization}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, specialization: e.target.value })}
+                      className="input-field mt-1 text-xs"
+                    >
+                      <option value="Soil Microbiology & Regenerative Systems">Soil Microbiology & Regenerative Systems</option>
+                      <option value="Precision Drip & IoT Irrigation">Precision Drip & IoT Irrigation</option>
+                      <option value="Organic Pest IPM & Biocontrol">Organic Pest IPM & Biocontrol</option>
+                      <option value="Agroforestry & Carbon Inoculation">Agroforestry & Carbon Inoculation</option>
+                      <option value="Greenhouse Hydroponics & CEA">Greenhouse Hydroponics & CEA</option>
+                      <option value="Crop Nutrition & Telemetry">Crop Nutrition & Telemetry</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Field of Study / Discipline *</label>
+                    <input
+                      type="text"
+                      required
+                      value={newExpertForm.fieldOfStudy}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, fieldOfStudy: e.target.value })}
+                      placeholder="e.g. Rhizosphere Biology & Bio-Inputs"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-3">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Organization / Research Institute</label>
+                    <input
+                      type="text"
+                      value={newExpertForm.organization}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, organization: e.target.value })}
+                      placeholder="e.g. Earthora Agronomy Advisory"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Location (City, State / Region)</label>
+                    <input
+                      type="text"
+                      value={newExpertForm.location}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, location: e.target.value })}
+                      placeholder="e.g. Coimbatore, Tamil Nadu"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Years Experience</label>
+                    <input
+                      type="number"
+                      min={1}
+                      value={newExpertForm.experienceYears}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, experienceYears: e.target.value })}
+                      placeholder="8"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Consultation Fee (₹/session) *</label>
+                    <input
+                      type="number"
+                      required
+                      min={0}
+                      step={50}
+                      value={newExpertForm.consultationFee}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, consultationFee: e.target.value })}
+                      placeholder="1500"
+                      className="input-field mt-1 text-xs"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-xs font-semibold text-earthora-charcoal block">Initial Account Status</label>
+                    <select
+                      value={newExpertForm.status}
+                      onChange={(e) => setNewExpertForm({ ...newExpertForm, status: e.target.value })}
+                      className="input-field mt-1 text-xs font-bold text-emerald-900"
+                    >
+                      <option value="active">Active & Verified (Immediate Login)</option>
+                      <option value="pending">Pending Review (Requires Approval)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              {/* Professional Description */}
+              <div className="space-y-2 pt-3 border-t border-earthora-sand/60">
+                <label className="text-xs font-semibold text-earthora-charcoal block">
+                  Professional Bio &amp; Guidance Description
+                </label>
+                <textarea
+                  rows={3}
+                  value={newExpertForm.bio}
+                  onChange={(e) => setNewExpertForm({ ...newExpertForm, bio: e.target.value })}
+                  placeholder="Outline the expert's core agricultural advisory focus, research publications, or grower guidance specialities..."
+                  className="input-field text-xs"
+                />
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-4 border-t border-earthora-sand/60 flex flex-wrap items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => setActiveTab('experts')}
+                  className="btn-secondary py-2.5 px-5 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addExpertLoading}
+                  className="btn-accent py-2.5 px-7 text-xs font-bold shadow-md shadow-earthora-mint/20 flex items-center gap-2"
+                >
+                  <UserPlus className="h-4 w-4" />
+                  {addExpertLoading ? 'Provisioning Account...' : 'Create Expert & Activate Login'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
@@ -2569,8 +2992,69 @@ export default function AdminDashboard() {
               <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-900 flex items-start gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
                 <span>
-                  <strong>Admin Provisioning:</strong> This expert account will be immediately approved and verified. The agronomist can log in at <span className="font-mono underline">/login</span> using the email and password you assign below.
+                  <strong>Admin Direct Provisioning:</strong> This expert account will be immediately approved and verified in MongoDB Atlas. The agronomist can log in at <span className="font-mono underline">/login</span> using the assigned email and password.
                 </span>
+              </div>
+
+              {/* Photo Upload Section */}
+              <div className="rounded-2xl border-2 border-dashed border-emerald-300 bg-emerald-50/40 p-4">
+                <div className="flex items-center gap-4">
+                  <div className="relative shrink-0">
+                    <img
+                      src={newExpertForm.image || '/assets/img/experts/expert-aris-thorne.jpg'}
+                      alt="Expert Portrait Preview"
+                      className="h-20 w-20 rounded-2xl object-cover border-2 border-emerald-500 shadow-md bg-white"
+                      onError={(err) => {
+                        err.currentTarget.onerror = null;
+                        err.currentTarget.src = '/assets/img/experts/expert-aris-thorne.jpg';
+                      }}
+                    />
+                    {newExpertForm.image && (
+                      <button
+                        type="button"
+                        onClick={() => setNewExpertForm({ ...newExpertForm, image: '' })}
+                        className="absolute -top-1.5 -right-1.5 rounded-full bg-rose-600 text-white p-0.5 shadow-sm hover:bg-rose-700"
+                        title="Remove photo"
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    )}
+                  </div>
+
+                  <div className="flex-1 space-y-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <label className="btn-accent py-1.5 px-3 text-xs font-bold cursor-pointer inline-flex items-center gap-1.5 shadow-2xs">
+                        <Upload className="h-3.5 w-3.5" />
+                        <span>Upload Photo</span>
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handlePhotoUpload}
+                        />
+                      </label>
+                      <span className="text-[11px] text-earthora-muted">JPG, PNG, WEBP &lt; 5MB</span>
+                    </div>
+
+                    <div className="flex flex-wrap gap-1.5">
+                      {PRESET_EXPERT_AVATARS.map((av) => (
+                        <button
+                          key={av.url}
+                          type="button"
+                          onClick={() => setNewExpertForm({ ...newExpertForm, image: av.url })}
+                          className={`flex items-center gap-1 rounded-lg border p-1 text-[11px] transition ${
+                            newExpertForm.image === av.url
+                              ? 'border-emerald-600 bg-emerald-100/90 text-emerald-950 font-bold ring-1 ring-emerald-500'
+                              : 'border-earthora-sand/80 bg-white text-earthora-charcoal hover:bg-earthora-sand/30'
+                          }`}
+                        >
+                          <img src={av.url} alt={av.label} className="h-5 w-5 rounded object-cover" />
+                          <span>{av.label.split(' ')[1] || av.label}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="grid gap-3 sm:grid-cols-2">
@@ -2636,6 +3120,35 @@ export default function AdminDashboard() {
                   />
                 </div>
                 <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Qualification *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newExpertForm.qualification}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, qualification: e.target.value })}
+                    placeholder="e.g. Ph.D in Agronomy & Soil Science"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Agriculture Specialization *</label>
+                  <select
+                    value={newExpertForm.specialization}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, specialization: e.target.value })}
+                    className="input-field mt-1 text-xs"
+                  >
+                    <option value="Soil Microbiology & Regenerative Systems">Soil Microbiology & Regenerative Systems</option>
+                    <option value="Precision Drip & IoT Irrigation">Precision Drip & IoT Irrigation</option>
+                    <option value="Organic Pest IPM & Biocontrol">Organic Pest IPM & Biocontrol</option>
+                    <option value="Agroforestry & Carbon Inoculation">Agroforestry & Carbon Inoculation</option>
+                    <option value="Greenhouse Hydroponics & CEA">Greenhouse Hydroponics & CEA</option>
+                    <option value="Crop Nutrition & Telemetry">Crop Nutrition & Telemetry</option>
+                  </select>
+                </div>
+                <div>
                   <label className="text-xs font-semibold text-earthora-charcoal">Field of Study / Discipline *</label>
                   <input
                     type="text"
@@ -2673,6 +3186,7 @@ export default function AdminDashboard() {
                   <label className="text-xs font-semibold text-earthora-charcoal">Years Experience</label>
                   <input
                     type="number"
+                    min={1}
                     value={newExpertForm.experienceYears}
                     onChange={(e) => setNewExpertForm({ ...newExpertForm, experienceYears: e.target.value })}
                     placeholder="10"
@@ -2681,15 +3195,40 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹/session) *</label>
+                  <input
+                    type="number"
+                    required
+                    min={0}
+                    value={newExpertForm.consultationFee}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, consultationFee: e.target.value })}
+                    placeholder="1500"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Account Status</label>
+                  <select
+                    value={newExpertForm.status}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, status: e.target.value })}
+                    className="input-field mt-1 text-xs font-bold text-emerald-900"
+                  >
+                    <option value="active">Active & Verified (Immediate Login)</option>
+                    <option value="pending">Pending Review (Requires Approval)</option>
+                  </select>
+                </div>
+              </div>
+
               <div>
-                <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹/session) *</label>
-                <input
-                  type="number"
-                  required
-                  value={newExpertForm.consultationFee}
-                  onChange={(e) => setNewExpertForm({ ...newExpertForm, consultationFee: e.target.value })}
-                  placeholder="1500"
-                  className="input-field mt-1 text-xs"
+                <label className="text-xs font-semibold text-earthora-charcoal">Professional Bio</label>
+                <textarea
+                  rows={2}
+                  value={newExpertForm.bio}
+                  onChange={(e) => setNewExpertForm({ ...newExpertForm, bio: e.target.value })}
+                  placeholder="Summary of agricultural credentials and grower advisory focus..."
+                  className="input-field text-xs"
                 />
               </div>
 
@@ -2704,8 +3243,9 @@ export default function AdminDashboard() {
                 <button
                   type="submit"
                   disabled={addExpertLoading}
-                  className="btn-accent py-2 px-6 text-xs font-bold shadow-md shadow-earthora-mint/20"
+                  className="btn-accent py-2 px-6 text-xs font-bold shadow-md shadow-earthora-mint/20 flex items-center gap-2"
                 >
+                  <UserPlus className="h-4 w-4" />
                   {addExpertLoading ? 'Creating Account...' : 'Create Expert & Activate Login'}
                 </button>
               </div>

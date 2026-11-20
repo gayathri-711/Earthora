@@ -5,6 +5,7 @@ import {
   createProductAdmin,
   deleteProductAdmin,
   deleteReviewAdmin,
+  getAdminExpertById,
   getAdminOverview,
   getAllExperts,
   getAllFarmers,
@@ -17,6 +18,8 @@ import {
   deleteSupplyReceipt,
   rejectExpert,
   resolveMessageAdmin,
+  toggleExpertStatusAdmin,
+  updateExpertAdmin,
   updateExpertVerification,
   updateFarmerVerification,
   updateOrderStatus,
@@ -37,9 +40,12 @@ router.get('/farmers', getAllFarmers);
 router.patch('/farmers/:id', updateFarmerVerification);
 router.get('/experts', getAllExperts);
 router.post('/experts', createExpertAdmin);
+router.get('/experts/:id', getAdminExpertById);
+router.put('/experts/:id', updateExpertAdmin);
+router.patch('/experts/:id', updateExpertAdmin);
+router.patch('/experts/:id/status', toggleExpertStatusAdmin);
 router.patch('/experts/:id/approve', approveExpert);
 router.patch('/experts/:id/reject', rejectExpert);
-router.patch('/experts/:id', updateExpertVerification);
 router.post('/products', createProductAdmin);
 router.delete('/products/:id', deleteProductAdmin);
 router.get('/reviews', getAllReviewsAdmin);
