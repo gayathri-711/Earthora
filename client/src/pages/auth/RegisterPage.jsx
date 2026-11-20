@@ -19,14 +19,14 @@ import { useToast } from '../../context/ToastContext';
 
 export default function RegisterPage() {
   const [searchParams] = useSearchParams();
-  const initialRole = searchParams.get('role') || 'customer';
+  const requestedExpert = searchParams.get('role') === 'expert';
+  const initialRole = requestedExpert ? 'customer' : (searchParams.get('role') || 'customer');
 
   const { register } = useAuth();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [role, setRole] = useState(initialRole);
-  const [submittedExpert, setSubmittedExpert] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const [form, setForm] = useState({
     name: '',
@@ -37,10 +37,6 @@ export default function RegisterPage() {
     location: '',
     specialty: '',
     totalAcres: '',
-    fieldOfStudy: '',
-    organization: '',
-    experienceYears: '',
-    consultationFee: 1500,
   });
   const [loading, setLoading] = useState(false);
 
@@ -50,14 +46,9 @@ export default function RegisterPage() {
     setLoading(true);
     try {
       const res = await register({ ...form, role });
-      if (res.requiresApproval) {
-        setSubmittedExpert(res.user);
-        showToast('Expert registration submitted! Pending administrator approval.', 'info');
-      } else {
-        showToast(`Welcome to the Earthora Ecosystem, ${res.user.name}!`, 'success');
-        if (res.user.role === 'farmer') navigate('/dashboard/farmer', { replace: true });
-        else navigate('/dashboard/customer', { replace: true });
-      }
+      showToast(`Welcome to the Earthora Ecosystem, ${res.user.name}!`, 'success');
+      if (res.user.role === 'farmer') navigate('/dashboard/farmer', { replace: true });
+      else navigate('/dashboard/customer', { replace: true });
     } catch (err) {
       const msg = err.message || 'Registration failed';
       setErrorMessage(msg);
@@ -66,49 +57,6 @@ export default function RegisterPage() {
       setLoading(false);
     }
   };
-
-  if (submittedExpert) {
-    return (
-      <div className="bg-earthora-ivory min-h-screen py-16 flex items-center justify-center px-4">
-        <div className="card-surface w-full max-w-lg border border-earthora-sand/80 p-8 shadow-xl text-center sm:p-10">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
-            <Clock className="h-8 w-8" />
-          </div>
-
-          <h2 className="mt-6 font-heading text-2xl font-extrabold text-earthora-forest sm:text-3xl">
-            Application Submitted for Administrator Review
-          </h2>
-          <p className="mt-2 text-xs text-earthora-muted">
-            Thank you, <strong className="text-earthora-forest">{submittedExpert.name}</strong>. Your Agriculture Expert registration has been registered and placed in the administrative verification queue.
-          </p>
-
-          <div className="mt-6 rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-left text-xs">
-            <div className="flex items-center gap-2 font-bold text-amber-900">
-              <ShieldCheck className="h-4 w-4 text-amber-700" />
-              Administrative Verification Process
-            </div>
-            <p className="mt-1 text-[11px] text-amber-800 leading-relaxed">
-              In accordance with Earthora Agronomic Standards, all consulting agronomists must be reviewed and accepted by a system administrator before login credentials are activated.
-            </p>
-            <ul className="mt-3 space-y-1.5 text-[11px] text-earthora-charcoal">
-              <li>• <strong>Account Email:</strong> {submittedExpert.email}</li>
-              <li>• <strong>Role:</strong> Agriculture Expert / Agronomist</li>
-              <li>• <strong>Status:</strong> <span className="inline-flex items-center rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800">Pending Admin Approval</span></li>
-            </ul>
-          </div>
-
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:justify-center">
-            <Link to="/login" className="btn-accent py-2.5 px-6 text-xs font-bold shadow-md shadow-earthora-mint/20">
-              Go to Sign In
-            </Link>
-            <Link to="/" className="btn-secondary py-2.5 px-6 text-xs font-bold">
-              Return to Homepage
-            </Link>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="bg-earthora-ivory min-h-screen py-16 flex items-center justify-center px-4">
@@ -132,12 +80,30 @@ export default function RegisterPage() {
           Select your ecosystem role to access dedicated agronomy tools and marketplaces.
         </p>
 
-        {/* Role Picker (3 user-facing roles) */}
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-2 sm:gap-3">
+        {requestedExpert && (
+          <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50/80 p-4 text-xs text-amber-900 shadow-xs">
+            <div className="flex items-start gap-2.5">
+              <ShieldCheck className="h-4.5 w-4.5 text-amber-700 shrink-0 mt-0.5" />
+              <div>
+                <p className="font-bold text-amber-950">Agriculture Expert Provisioning Notice</p>
+                <p className="mt-1 text-[11px] text-amber-800 leading-relaxed">
+                  Agriculture Expert / Agronomist accounts cannot be registered publicly. They are provisioned directly by Earthora administrators. If credentials were provided to you, please{' '}
+                  <Link to="/login" className="font-bold underline hover:text-earthora-forest">
+                    Sign In here
+                  </Link>
+                  . For new agronomist onboarding, contact <strong className="font-mono">admin@earthora.io</strong>.
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Role Picker (Public roles: Customer & Farmer) */}
+        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => { setRole('customer'); setErrorMessage(''); }}
-            className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
+            className={`flex flex-col items-center rounded-2xl border p-3.5 text-center transition-all ${
               role === 'customer'
                 ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
                 : 'border-earthora-sand bg-white text-earthora-charcoal hover:border-earthora-forest'
@@ -145,13 +111,13 @@ export default function RegisterPage() {
           >
             <Users className="h-5 w-5 mb-1" />
             <span className="text-xs font-bold">Customer</span>
-            <span className="text-[9px] opacity-80">Produce &amp; Inputs</span>
+            <span className="text-[9px] opacity-80">Produce &amp; Organic Inputs</span>
           </button>
 
           <button
             type="button"
             onClick={() => { setRole('farmer'); setErrorMessage(''); }}
-            className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
+            className={`flex flex-col items-center rounded-2xl border p-3.5 text-center transition-all ${
               role === 'farmer'
                 ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
                 : 'border-earthora-sand bg-white text-earthora-charcoal hover:border-earthora-forest'
@@ -159,21 +125,7 @@ export default function RegisterPage() {
           >
             <Sprout className="h-5 w-5 mb-1" />
             <span className="text-xs font-bold">Grower / Farm</span>
-            <span className="text-[9px] opacity-80">Crops &amp; Harvest</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => { setRole('expert'); setErrorMessage(''); }}
-            className={`flex flex-col items-center rounded-2xl border p-3 text-center transition-all ${
-              role === 'expert'
-                ? 'border-earthora-forest bg-earthora-forest text-white shadow-md'
-                : 'border-earthora-sand bg-white text-earthora-charcoal hover:border-earthora-forest'
-            }`}
-          >
-            <UserCheck className="h-5 w-5 mb-1" />
-            <span className="text-xs font-bold">Agronomist</span>
-            <span className="text-[9px] opacity-80">Expert Advisory</span>
+            <span className="text-[9px] opacity-80">Crops &amp; Field Telemetry</span>
           </button>
         </div>
 
@@ -305,76 +257,6 @@ export default function RegisterPage() {
                     value={form.specialty}
                     onChange={(e) => setForm({ ...form, specialty: e.target.value })}
                     placeholder="Heirloom Brassicas, Cover Crops, Stone Fruit"
-                    className="input-field mt-1 text-xs"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
-
-          {role === 'expert' && (
-            <div className="space-y-3 rounded-2xl border border-amber-200 bg-amber-50/70 p-4">
-              <div className="flex items-start gap-2.5">
-                <AlertCircle className="h-4.5 w-4.5 text-amber-600 shrink-0 mt-0.5" />
-                <div>
-                  <span className="text-xs font-bold text-amber-950 uppercase tracking-wider block">
-                    Agriculture Expert Accreditation Notice
-                  </span>
-                  <p className="mt-0.5 text-[11px] text-amber-800 leading-relaxed">
-                    Agriculture Expert accounts require administrator review and approval. After registering, your credentials will be verified by an Earthora administrator before login access is activated.
-                  </p>
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-2 pt-1">
-                <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Field of Study / Discipline *</label>
-                  <input
-                    type="text"
-                    required
-                    value={form.fieldOfStudy}
-                    onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })}
-                    placeholder="Soil Microbiology &amp; Rhizosphere"
-                    className="input-field mt-1 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Institution / Advisory Firm</label>
-                  <input
-                    type="text"
-                    value={form.organization}
-                    onChange={(e) => setForm({ ...form, organization: e.target.value })}
-                    placeholder="University of California, Davis"
-                    className="input-field mt-1 text-xs"
-                  />
-                </div>
-              </div>
-              <div className="grid gap-3 sm:grid-cols-3">
-                <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Location (City / State)</label>
-                  <input
-                    type="text"
-                    value={form.location}
-                    onChange={(e) => setForm({ ...form, location: e.target.value })}
-                    placeholder="e.g. Bangalore, Karnataka"
-                    className="input-field mt-1 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Years Experience</label>
-                  <input
-                    type="number"
-                    value={form.experienceYears}
-                    onChange={(e) => setForm({ ...form, experienceYears: e.target.value })}
-                    placeholder="12"
-                    className="input-field mt-1 text-xs"
-                  />
-                </div>
-                <div>
-                  <label className="text-xs font-semibold text-earthora-charcoal">Fee (₹/session)</label>
-                  <input
-                    type="number"
-                    value={form.consultationFee}
-                    onChange={(e) => setForm({ ...form, consultationFee: e.target.value })}
                     className="input-field mt-1 text-xs"
                   />
                 </div>

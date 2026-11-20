@@ -276,6 +276,20 @@ export default function AdminDashboard() {
     },
   ]);
   const [expertFilter, setExpertFilter] = useState('all');
+  const [isAddExpertOpen, setIsAddExpertOpen] = useState(false);
+  const [addExpertLoading, setAddExpertLoading] = useState(false);
+  const [newExpertForm, setNewExpertForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+    phone: '',
+    title: 'Senior Agronomist',
+    fieldOfStudy: 'Soil Science & Precision Agriculture',
+    organization: 'Earthora Agronomy Advisory',
+    location: 'Bangalore, Karnataka',
+    experienceYears: 8,
+    consultationFee: 1500,
+  });
 
   const [users, setUsers] = useState([
     {
@@ -436,6 +450,36 @@ export default function AdminDashboard() {
   useEffect(() => {
     loadAll();
   }, [loadAll]);
+
+  const handleCreateExpert = async (e) => {
+    e.preventDefault();
+    setAddExpertLoading(true);
+    try {
+      await api.post('/admin/experts', newExpertForm);
+      showToast(
+        `Expert account created for ${newExpertForm.name}! Login credentials are now active.`,
+        'success'
+      );
+      setIsAddExpertOpen(false);
+      setNewExpertForm({
+        name: '',
+        email: '',
+        password: '',
+        phone: '',
+        title: 'Senior Agronomist',
+        fieldOfStudy: 'Soil Science & Precision Agriculture',
+        organization: 'Earthora Agronomy Advisory',
+        location: 'Bangalore, Karnataka',
+        experienceYears: 8,
+        consultationFee: 1500,
+      });
+      loadAll();
+    } catch (err) {
+      showToast(err.message || 'Failed to create expert account', 'error');
+    } finally {
+      setAddExpertLoading(false);
+    }
+  };
 
   const handleApproveExpert = async (expertId) => {
     try {
@@ -2062,41 +2106,52 @@ export default function AdminDashboard() {
                 </p>
               </div>
 
-              {/* Status Filter */}
-              <div className="flex items-center gap-1 rounded-xl border border-earthora-sand/80 bg-earthora-sand/20 p-1 text-xs">
+              <div className="flex flex-wrap items-center gap-3">
                 <button
                   type="button"
-                  onClick={() => setExpertFilter('all')}
-                  className={`rounded-lg px-3 py-1 font-semibold transition ${
-                    expertFilter === 'all'
-                      ? 'bg-white text-earthora-forest shadow-sm'
-                      : 'text-earthora-muted hover:text-earthora-forest'
-                  }`}
+                  onClick={() => setIsAddExpertOpen(true)}
+                  className="btn-primary py-2 px-3.5 text-xs flex items-center gap-1.5 whitespace-nowrap shadow-sm"
                 >
-                  All Experts ({experts.length})
+                  <Plus className="h-4 w-4" />
+                  Create Expert Account
                 </button>
-                <button
-                  type="button"
-                  onClick={() => setExpertFilter('pending')}
-                  className={`rounded-lg px-3 py-1 font-semibold transition ${
-                    expertFilter === 'pending'
-                      ? 'bg-amber-500 text-white shadow-sm'
-                      : 'text-earthora-muted hover:text-earthora-forest'
-                  }`}
-                >
-                  Pending Review ({experts.filter((e) => e.approvalStatus === 'pending' || !e.verified).length})
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setExpertFilter('approved')}
-                  className={`rounded-lg px-3 py-1 font-semibold transition ${
-                    expertFilter === 'approved'
-                      ? 'bg-emerald-600 text-white shadow-sm'
-                      : 'text-earthora-muted hover:text-earthora-forest'
-                  }`}
-                >
-                  Approved ({experts.filter((e) => e.approvalStatus === 'approved' && e.verified).length})
-                </button>
+
+                {/* Status Filter */}
+                <div className="flex items-center gap-1 rounded-xl border border-earthora-sand/80 bg-earthora-sand/20 p-1 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setExpertFilter('all')}
+                    className={`rounded-lg px-3 py-1 font-semibold transition ${
+                      expertFilter === 'all'
+                        ? 'bg-white text-earthora-forest shadow-sm'
+                        : 'text-earthora-muted hover:text-earthora-forest'
+                    }`}
+                  >
+                    All Experts ({experts.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpertFilter('pending')}
+                    className={`rounded-lg px-3 py-1 font-semibold transition ${
+                      expertFilter === 'pending'
+                        ? 'bg-amber-500 text-white shadow-sm'
+                        : 'text-earthora-muted hover:text-earthora-forest'
+                    }`}
+                  >
+                    Pending Review ({experts.filter((e) => e.approvalStatus === 'pending' || !e.verified).length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setExpertFilter('approved')}
+                    className={`rounded-lg px-3 py-1 font-semibold transition ${
+                      expertFilter === 'approved'
+                        ? 'bg-emerald-600 text-white shadow-sm'
+                        : 'text-earthora-muted hover:text-earthora-forest'
+                    }`}
+                  >
+                    Approved ({experts.filter((e) => e.approvalStatus === 'approved' && e.verified).length})
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -2435,6 +2490,182 @@ export default function AdminDashboard() {
                 Close Record
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Expert Account Modal (Admin Provisioning) */}
+      {isAddExpertOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-xs">
+          <div className="card-surface max-w-xl w-full border border-earthora-sand/80 p-6 sm:p-8 shadow-2xl overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-earthora-sand/60 pb-4">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-earthora-forest text-white">
+                  <UserCheck className="h-5 w-5" />
+                </div>
+                <div>
+                  <h3 className="font-heading text-lg font-bold text-earthora-forest">
+                    Create Agriculture Expert Account
+                  </h3>
+                  <p className="text-[11px] text-earthora-muted">
+                    Provision login credentials for an accredited agronomist or consulting specialist
+                  </p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsAddExpertOpen(false)}
+                className="rounded-lg p-1 text-earthora-muted hover:bg-earthora-sand/40 hover:text-earthora-charcoal"
+              >
+                <X className="h-5 w-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleCreateExpert} className="mt-5 space-y-4">
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 text-xs text-emerald-900 flex items-start gap-2">
+                <ShieldCheck className="h-4 w-4 text-emerald-700 shrink-0 mt-0.5" />
+                <span>
+                  <strong>Admin Provisioning:</strong> This expert account will be immediately approved and verified. The agronomist can log in at <span className="font-mono underline">/login</span> using the email and password you assign below.
+                </span>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Full Name *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newExpertForm.name}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, name: e.target.value })}
+                    placeholder="e.g. Dr. Rajeshwari Nair"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Login Email Address *</label>
+                  <input
+                    type="email"
+                    required
+                    value={newExpertForm.email}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, email: e.target.value })}
+                    placeholder="e.g. rajeshwari@earthora.io"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Initial Password (min 6 chars) *</label>
+                  <input
+                    type="password"
+                    required
+                    minLength={6}
+                    value={newExpertForm.password}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, password: e.target.value })}
+                    placeholder="••••••••"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Phone Number</label>
+                  <input
+                    type="tel"
+                    value={newExpertForm.phone}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, phone: e.target.value })}
+                    placeholder="+91 98765 43210"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Professional Title *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newExpertForm.title}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, title: e.target.value })}
+                    placeholder="e.g. Senior Soil Microbiologist"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Field of Study / Discipline *</label>
+                  <input
+                    type="text"
+                    required
+                    value={newExpertForm.fieldOfStudy}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, fieldOfStudy: e.target.value })}
+                    placeholder="e.g. Rhizosphere Biology & Bio-Inputs"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3">
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Organization / Institute</label>
+                  <input
+                    type="text"
+                    value={newExpertForm.organization}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, organization: e.target.value })}
+                    placeholder="e.g. ICAR Research Station"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Location (City / State)</label>
+                  <input
+                    type="text"
+                    value={newExpertForm.location}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, location: e.target.value })}
+                    placeholder="e.g. Coimbatore, Tamil Nadu"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-earthora-charcoal">Years Experience</label>
+                  <input
+                    type="number"
+                    value={newExpertForm.experienceYears}
+                    onChange={(e) => setNewExpertForm({ ...newExpertForm, experienceYears: e.target.value })}
+                    placeholder="10"
+                    className="input-field mt-1 text-xs"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="text-xs font-semibold text-earthora-charcoal">Consultation Fee (₹/session) *</label>
+                <input
+                  type="number"
+                  required
+                  value={newExpertForm.consultationFee}
+                  onChange={(e) => setNewExpertForm({ ...newExpertForm, consultationFee: e.target.value })}
+                  placeholder="1500"
+                  className="input-field mt-1 text-xs"
+                />
+              </div>
+
+              <div className="mt-6 flex justify-end gap-3 pt-3 border-t border-earthora-sand/60">
+                <button
+                  type="button"
+                  onClick={() => setIsAddExpertOpen(false)}
+                  className="btn-secondary py-2 px-4 text-xs font-bold"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={addExpertLoading}
+                  className="btn-accent py-2 px-6 text-xs font-bold shadow-md shadow-earthora-mint/20"
+                >
+                  {addExpertLoading ? 'Creating Account...' : 'Create Expert & Activate Login'}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

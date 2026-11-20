@@ -207,11 +207,11 @@ test('Admin credentials are fixed and public admin registration is rejected', as
   assert.equal(adminLogin.body.data.user.role, 'admin');
 });
 
-test('Agriculture expert registration requires admin acceptance before login', async () => {
+test('Agriculture expert account can only be created by admin, then expert logs in', async () => {
   const expEmail = `agronomist_${Date.now()}@earthora.io`;
 
-  // 1. Register as agriculture expert
-  const expReg = await request(app)
+  // 1. Public registration as expert is forbidden
+  const publicExpReg = await request(app)
     .post('/api/v1/auth/register')
     .send({
       name: 'Dr. Jane Plantington',
@@ -224,43 +224,41 @@ test('Agriculture expert registration requires admin acceptance before login', a
       consultationFee: 95,
     });
 
-  assert.equal(expReg.status, 201);
-  assert.equal(expReg.body.data.requiresApproval, true);
-  assert.equal(expReg.body.data.token, null, 'No token issued before approval');
-
-  // 2. Expert cannot log in while pending
-  const prematureLogin = await request(app)
-    .post('/api/v1/auth/login')
-    .send({ email: expEmail, password: 'Earthora123!' });
-  assert.equal(prematureLogin.status, 403);
-  assert.ok(prematureLogin.body.message.includes('pending administrator approval'));
-
-  // 3. Admin lists experts and finds the pending applicant
-  const expertsList = await request(app)
-    .get('/api/v1/admin/experts')
-    .set('Authorization', `Bearer ${adminToken}`);
-  assert.equal(expertsList.status, 200);
-  const pendingExpert = expertsList.body.data.experts.find(
-    (e) => e.user?.email === expEmail || e.name === 'Dr. Jane Plantington'
+  assert.equal(publicExpReg.status, 403);
+  assert.ok(
+    publicExpReg.body.message.includes('cannot be registered publicly') ||
+    publicExpReg.body.message.includes('created exclusively by platform administrators')
   );
-  assert.ok(pendingExpert, 'Pending expert should appear in admin queue');
-  assert.equal(pendingExpert.approvalStatus, 'pending');
 
-  // 4. Admin accepts / approves the agriculture expert
-  const approveRes = await request(app)
-    .patch(`/api/v1/admin/experts/${pendingExpert._id}/approve`)
-    .set('Authorization', `Bearer ${adminToken}`);
-  assert.equal(approveRes.status, 200);
-  assert.equal(approveRes.body.data.expert.approvalStatus, 'approved');
-  assert.equal(approveRes.body.data.expert.verified, true);
+  // 2. Admin creates the expert account via POST /api/v1/admin/experts
+  const adminCreateExp = await request(app)
+    .post('/api/v1/admin/experts')
+    .set('Authorization', `Bearer ${adminToken}`)
+    .send({
+      name: 'Dr. Jane Plantington',
+      email: expEmail,
+      password: 'Earthora123!',
+      title: 'Senior Agronomist',
+      fieldOfStudy: 'Biochar & Nitrogen Stabilization',
+      organization: 'Soil Carbon Institute',
+      location: 'Coimbatore, Tamil Nadu',
+      experienceYears: 14,
+      consultationFee: 1800,
+    });
 
-  // 5. Expert can now log in successfully!
-  const approvedLogin = await request(app)
+  assert.equal(adminCreateExp.status, 201);
+  assert.equal(adminCreateExp.body.data.expert.approvalStatus, 'approved');
+  assert.equal(adminCreateExp.body.data.expert.verified, true);
+  assert.equal(adminCreateExp.body.data.user.role, 'expert');
+
+  // 3. Expert immediately logs in using the credentials set by Admin
+  const expertLogin = await request(app)
     .post('/api/v1/auth/login')
     .send({ email: expEmail, password: 'Earthora123!' });
-  assert.equal(approvedLogin.status, 200);
-  assert.ok(approvedLogin.body.data.token);
-  assert.equal(approvedLogin.body.data.user.role, 'expert');
+  assert.equal(expertLogin.status, 200);
+  assert.ok(expertLogin.body.data.token);
+  assert.equal(expertLogin.body.data.user.role, 'expert');
+  assert.equal(expertLogin.body.data.user.email, expEmail);
 });
 
 test('Admin can query all registered customers, experts, and farmers from User database', async () => {

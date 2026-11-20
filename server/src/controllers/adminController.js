@@ -634,6 +634,176 @@ export const rejectExpert = asyncHandler(async (req, res) => {
   sendSuccess(res, { expert: updated || mem }, 'Agriculture Expert registration rejected.');
 });
 
+export const createExpertAdmin = asyncHandler(async (req, res) => {
+  const {
+    name,
+    email,
+    password,
+    phone,
+    title = 'Agricultural Specialist',
+    fieldOfStudy = 'Soil Science & Precision Agriculture',
+    organization = 'Earthora Agronomy Advisory',
+    location = 'Bangalore, Karnataka',
+    experienceYears = 5,
+    consultationFee = 1500,
+    specializations,
+    bio,
+  } = req.body;
+
+  const trimmedName = (name || '').trim();
+  const normalizedEmail = (email || '').trim().toLowerCase();
+  const trimmedPassword = (password || '').trim();
+
+  if (!trimmedName) {
+    throw new ApiError(400, 'Full name is required');
+  }
+
+  if (!normalizedEmail || !normalizedEmail.includes('@')) {
+    throw new ApiError(400, 'Valid email address is required');
+  }
+
+  if (!trimmedPassword || trimmedPassword.length < 6) {
+    throw new ApiError(400, 'Password must be at least 6 characters long');
+  }
+
+  if (mongoose.connection.readyState !== 1) {
+    try {
+      await connectDatabase();
+    } catch (err) {
+      console.warn('[Admin] createExpertAdmin connect retry:', err.message);
+    }
+  }
+
+  // Check database for existing email
+  if (mongoose.connection.readyState === 1) {
+    try {
+      const existing = await User.findOne({ email: normalizedEmail });
+      if (existing) {
+        throw new ApiError(409, 'An account with this email already exists');
+      }
+    } catch (err) {
+      if (err.statusCode === 409) throw err;
+      console.warn('[Admin] Check existing user error:', err.message);
+    }
+  }
+
+  const existingMem = IN_MEMORY_USERS.find(
+    (u) => u.email.toLowerCase() === normalizedEmail
+  );
+  if (existingMem) {
+    throw new ApiError(409, 'An account with this email already exists');
+  }
+
+  let createdUser = null;
+  let createdExpert = null;
+
+  if (mongoose.connection.readyState === 1) {
+    try {
+      createdUser = await User.create({
+        name: trimmedName,
+        email: normalizedEmail,
+        password: trimmedPassword,
+        role: 'expert',
+        phone: phone || '',
+        title,
+        organization,
+        isApproved: true,
+        approvalStatus: 'approved',
+        isActive: true,
+      });
+
+      createdExpert = await Expert.create({
+        user: createdUser._id,
+        name: createdUser.name,
+        title,
+        fieldOfStudy,
+        organization,
+        location,
+        experienceYears: Number(experienceYears) || 5,
+        consultationFee: Number(consultationFee) || 1500,
+        specializations: Array.isArray(specializations)
+          ? specializations
+          : [
+              'Soil pH Optimization',
+              'Organic Pest IPM',
+              'Precision Drip',
+              'Crop Rotation',
+            ],
+        bio: bio || `Accredited ${title} specializing in ${fieldOfStudy}.`,
+        verified: true,
+        approvalStatus: 'approved',
+      });
+    } catch (err) {
+      if (err.code === 11000) {
+        throw new ApiError(409, 'An account with this email already exists');
+      }
+      if (err.name === 'ValidationError') {
+        throw new ApiError(400, err.message);
+      }
+      throw new ApiError(500, `Failed to create expert in database: ${err.message}`);
+    }
+  }
+
+  const userId = createdUser?._id ? createdUser._id.toString() : `usr_${Date.now()}`;
+  const expertId = createdExpert?._id ? createdExpert._id.toString() : `exp_${Date.now()}`;
+
+  const inMemUser = {
+    _id: userId,
+    id: userId,
+    name: trimmedName,
+    email: normalizedEmail,
+    password: trimmedPassword,
+    role: 'expert',
+    phone: phone || '',
+    title,
+    organization,
+    isApproved: true,
+    approvalStatus: 'approved',
+    isActive: true,
+    createdAt: new Date(),
+  };
+  IN_MEMORY_USERS.push(inMemUser);
+
+  const inMemExpert = {
+    _id: expertId,
+    user: userId,
+    name: trimmedName,
+    title,
+    fieldOfStudy,
+    organization,
+    location,
+    experienceYears: Number(experienceYears) || 5,
+    consultationFee: Number(consultationFee) || 1500,
+    verified: true,
+    approvalStatus: 'approved',
+    createdAt: new Date(),
+    userObj: {
+      _id: userId,
+      name: trimmedName,
+      email: normalizedEmail,
+      role: 'expert',
+      phone: phone || '',
+      isApproved: true,
+      approvalStatus: 'approved',
+      createdAt: new Date(),
+    },
+  };
+  IN_MEMORY_EXPERTS.unshift(inMemExpert);
+
+  const safeUser = { ...inMemUser };
+  delete safeUser.password;
+
+  sendSuccess(
+    res,
+    {
+      expert: createdExpert || inMemExpert,
+      user: safeUser,
+    },
+    'Agriculture Expert account created successfully by administrator! Credentials are now active for login.',
+    201
+  );
+});
+
 export const updateExpertVerification = asyncHandler(async (req, res) => {
   const { id } = req.params;
   const { verified, approvalStatus } = req.body;

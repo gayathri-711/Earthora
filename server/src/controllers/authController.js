@@ -49,7 +49,15 @@ export const register = asyncHandler(async (req, res) => {
     );
   }
 
-  const validRoles = ['customer', 'farmer', 'expert'];
+  // Agriculture experts are created exclusively by platform administrators
+  if (role === 'expert') {
+    throw new ApiError(
+      403,
+      'Agriculture Expert accounts cannot be registered publicly. Expert credentials are created exclusively by platform administrators.'
+    );
+  }
+
+  const validRoles = ['customer', 'farmer'];
   const normalizedRole = validRoles.includes(role) ? role : 'customer';
 
   // Ensure DB connection is active
